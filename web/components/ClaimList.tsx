@@ -889,6 +889,18 @@ export default function ClaimList({
       >
         <ClaimDistributionBar dist={distribution} />
 
+        {/* The arithmetic, printed so it can be checked on camera. */}
+        {isObj(distribution) && distribution.reconciliation ? (
+          <p className="mt-2 font-mono text-[11px] leading-relaxed text-zinc-500">
+            {String(distribution.reconciliation)}
+          </p>
+        ) : null}
+        {isObj(distribution) && distribution.plain_line ? (
+          <p className="mt-1.5 text-[12px] leading-relaxed text-zinc-400">
+            {String(distribution.plain_line)}
+          </p>
+        ) : null}
+
         {states.length ? (
           <div className="mt-3 flex flex-wrap items-center gap-1.5">
             <span className="text-[10px] uppercase tracking-wider text-zinc-500">

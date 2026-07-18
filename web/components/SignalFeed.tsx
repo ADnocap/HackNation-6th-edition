@@ -320,6 +320,14 @@ function FeedRow({
             </span>
           ) : null}
         </div>
+
+        {/* Why this row moved. The reorder is the argument, so the sentence
+            that explains it belongs next to the row, not in a caption. */}
+        {row?.note ? (
+          <p className="mt-1.5 max-w-2xl text-[11.5px] leading-relaxed text-zinc-500">
+            {row.note}
+          </p>
+        ) : null}
       </div>
 
       {/* score for the active mode */}
@@ -369,14 +377,18 @@ export default function SignalFeed({
   trigger,
   derived,
   neutralizationNote,
+  meta,
 }: {
   rows: Json[];
   funnel: Json;
   trigger: Json;
   derived: boolean;
   neutralizationNote?: string | null;
+  /** The signal_feed block itself, for its authored headline and reorder summary. */
+  meta?: Json;
 }) {
   const [mode, setMode] = useState<Mode>("raw");
+  const reorder = isObj(meta) ? meta.reorder_summary : null;
 
   const canNeutralize = useMemo(
     () => hasAnyScore(rows, "neutralized") && hasAnyScore(rows, "raw"),
@@ -431,6 +443,21 @@ export default function SignalFeed({
 
   return (
     <div className="space-y-4">
+      {/* The claim the whole board is making. */}
+      {isObj(meta) && meta.headline_line ? (
+        <div className="rounded-md border border-zinc-800 bg-zinc-900/40 px-4 py-3">
+          <p className="max-w-3xl text-[13.5px] leading-relaxed text-zinc-200">
+            {String(meta.headline_line)}
+          </p>
+          {meta.never_met_an_investor ? (
+            <p className="mt-1.5 text-[11.5px] text-zinc-500">
+              never met an investor:{" "}
+              <N q={meta.never_met_an_investor} digits={0} />
+            </p>
+          ) : null}
+        </div>
+      ) : null}
+
       {/* Trigger banner */}
       {isObj(trigger) && (trigger.text || trigger.headline || trigger.event) ? (
         <div className="flex items-start gap-3 rounded-md border border-amber-500/40 bg-amber-500/[0.07] px-4 py-3">
@@ -478,7 +505,7 @@ export default function SignalFeed({
       <Panel
         dense
         title="Signal feed"
-        plain="The ranked board. Flip the switch and the ranking is recomputed with pedigree signals — elite school, prior VC-backed employer, accelerator brand, follower count — regressed out. Watch the order change."
+        plain="The ranked board. Flip the switch and the ranking is recomputed with access signals — prior VC-backed employer, company and domain age, whether a funding announcement already exists — regressed out. Watch the order change."
         right={
           <div className="flex flex-col items-end gap-1.5">
             <div
@@ -499,13 +526,27 @@ export default function SignalFeed({
                       : "bg-zinc-950 text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200"
                   }`}
                 >
-                  {m === "raw" ? "Raw" : "Pedigree-neutralized"}
+                  {m === "raw" ? "Raw" : "Access-neutralized"}
                 </button>
               ))}
             </div>
             {mode === "neutralized" && canNeutralize ? (
               <span className="text-[11px] text-amber-300">
                 {movers} of {ordered.length} rows moved
+              </span>
+            ) : null}
+            {mode === "neutralized" && canNeutralize && isObj(reorder) ? (
+              <span className="max-w-[16rem] text-right text-[10.5px] leading-snug text-zinc-500">
+                {reorder.largest_fall
+                  ? `largest fall ${(reorder.largest_fall as Json)?.from}→${
+                      (reorder.largest_fall as Json)?.to
+                    }`
+                  : null}
+                {reorder.largest_climb
+                  ? ` · largest climb ${(reorder.largest_climb as Json)?.from}→${
+                      (reorder.largest_climb as Json)?.to
+                    }`
+                  : null}
               </span>
             ) : null}
             {!canNeutralize ? (
@@ -525,10 +566,20 @@ export default function SignalFeed({
             <div className="border-b border-zinc-900 px-3 py-1.5">
               <p className="text-[11.5px] leading-relaxed text-zinc-500">
                 {mode === "raw"
-                  ? "Raw ranking. Pedigree signals are still in the score."
+                  ? "Raw ranking. Access signals are still in the score."
                   : neutralizationNote ??
-                    "Pedigree-neutralized. We deliberately do not print an R² — it would not be externally anchored, and the reorder carries the argument on its own."}
+                    "Access-neutralized. We deliberately do not print an R² — it would not be externally anchored, and the reorder carries the argument on its own."}
               </p>
+              {mode === "neutralized" && isObj(reorder) && reorder.line ? (
+                <p className="mt-1 text-[11.5px] font-medium text-amber-300">
+                  {String(reorder.line)}
+                </p>
+              ) : null}
+              {isObj(meta) && meta.n_rows_note ? (
+                <p className="mt-1 text-[10.5px] text-zinc-600">
+                  {String(meta.n_rows_note)}
+                </p>
+              ) : null}
             </div>
             <div>
               {ordered.map((o, i) => (

@@ -5,6 +5,7 @@ import {
   SourceArtifact,
   StageTimeline,
 } from "@/components/opportunity";
+import { DomainProbe, SourcingOrigin } from "@/components/sourcing";
 import {
   EmptyState,
   Panel,
@@ -96,6 +97,20 @@ export default async function OpportunityPage({
         <PanelBoundary label="sla">
           <SlaStrip sla={opp.sla} />
         </PanelBoundary>
+
+        {/* How this person was discovered. Sourcing is the priority in the
+            brief, and the cold-start channel is the part worth showing. */}
+        {opp.sourcing_origin ? (
+          <PanelBoundary label="sourcing origin">
+            <SourcingOrigin origin={opp.sourcing_origin} />
+          </PanelBoundary>
+        ) : null}
+
+        {opp.domain_probe ? (
+          <PanelBoundary label="domain probe">
+            <DomainProbe probe={opp.domain_probe} />
+          </PanelBoundary>
+        ) : null}
 
         <PanelBoundary label="claims">
           {claims.length ? (
