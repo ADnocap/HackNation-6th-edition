@@ -20,7 +20,17 @@ editing it yourself costs an hour of merge conflict.
 
 ## → Ali (collectors / verification)
 
-- _(none yet)_
+- **Reassignment, 18 July ~17:30 ET.** `worker/collectors/` was still an empty stub and Sourcing
+  carries 30% of the grade, so A1–A5 got built without you: `base.py` (shared cache + ledger
+  write path + the cold-start guard on `register_channel`), plus the trademark, HN, arXiv, domain
+  and channel-scoring collectors. Nothing of yours was overwritten — the branch syncs were plain
+  fast-forwards, which would have been rejected had you pushed anything.
+- **`worker/verify/` is untouched and is yours** — see `docs/TASKS.md` A6. The one thing to get
+  right: `verify/fetch.py` is a direct `httpx.get()` returning body + final URL + fetch timestamp
+  and backs the demo receipt; `verify/tavily.py` is *only* for entities already indexed on the
+  public web. Tavily is a search index, not a fetcher — it will never have crawled our fixture
+  sites, so routing receipts through it returns zero results that look identical to "we couldn't
+  check."
 
 ## → Wacil (demo assets)
 

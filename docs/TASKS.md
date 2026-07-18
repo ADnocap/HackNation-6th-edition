@@ -48,6 +48,12 @@ Merge before you sleep, no matter what state you're in.
 
 # ALI — Sourcing & Verification
 
+> **STATUS UPDATE (18 July, ~17:30 ET).** A1–A5 (the four collectors and the days-of-edge /
+> not-collected layer) are being built now, because they were still empty stubs and Sourcing is
+> 30% of the grade. **A6 — the verification layer in `worker/verify/` — is untouched and is
+> yours.** It is the highest-value remaining piece: it backs the receipt that is the peak of our
+> whole demo. Start there, and check `git log` before touching `worker/collectors/`.
+
 You have the largest and highest-scoring block. **Sourcing is 30% of the grade and the brief
 names it as the priority**: *"least commercial competition today — go further here than
 anywhere else."* Everything you build lands in the ledger through `append_observation()`
