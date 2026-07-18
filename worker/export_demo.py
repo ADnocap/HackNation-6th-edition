@@ -261,6 +261,38 @@ def derive_from_ledger(demo: dict, asof: str) -> list[str]:
         except Exception as exc:
             print(f"  {person_id}.founder_score_history: kept override ({exc})")
 
+    # -- the honesty panel must be computed, or it is the worst block to fake -
+    #
+    # The authored overrides advertised medians at n=9/18/22/31/41. The ledger
+    # supports n=1 on three channels and no median at all on arXiv, because
+    # only one person in it has become consensus-visible yet. A panel whose
+    # entire purpose is demonstrating that we do not fabricate, carrying
+    # numbers the committed database contradicts, is the single most
+    # discrediting thing we could ship — and cross-checking a stated n against
+    # the repo is exactly what this sponsor would do.
+    #
+    # The computed version is also the better line: 530 arXiv people surfaced,
+    # none the market has noticed, reported as a lower bound that is still
+    # running rather than a median we do not have.
+    try:
+        from worker.collectors import channels  # noqa: PLC0415
+
+        panel = channels.honesty_panel(asof)
+        for block in ("days_of_edge", "not_collected", "channel_outcomes"):
+            value = panel.get(block)
+            if not value:
+                print(f"  honesty.{block}: kept override — computed panel returned nothing")
+                continue
+            rows = value.get("rows") if isinstance(value, dict) else value
+            if not rows:
+                print(f"  honesty.{block}: kept override — computed panel had no rows")
+                continue
+            demo["honesty"][block] = value
+            derived.append(f"honesty.{block}")
+            print(f"  honesty.{block}: derived from ledger ({len(rows)} rows)")
+    except Exception as exc:  # noqa: BLE001
+        print(f"  honesty.*: kept override ({type(exc).__name__}: {exc})")
+
     # -- the latency tile reads a real log or does not render ---------------
     log_path = REPO_ROOT / "logs" / "batch_7f3a91.jsonl"
     demo["honesty"]["latency"]["log_present"] = log_path.exists()
