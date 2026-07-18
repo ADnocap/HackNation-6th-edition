@@ -17,17 +17,36 @@ brain at ``asof=now`` and a point-in-time backtest at ``asof=past``.
 
 from __future__ import annotations
 
+import os
+import shutil
 import sqlite3
 import sys
+import tempfile
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+# ---------------------------------------------------------------------------
+# Redirect to a scratch ledger BEFORE importing anything from worker.
+#
+# This proof reseeds from scratch because it needs a known, fixed dataset. That
+# makes it destructive, and `worker/db.py` freezes DB_PATH from the environment
+# at IMPORT time — so redirecting inside main() is already too late and silently
+# wipes the working ledger. That is not hypothetical: it destroyed ~1,800 live
+# collected observations twice before this guard existed, and the README tells
+# judges to run this command.
+#
+# Set COUNTERPROOF_DB yourself and we honour it; otherwise we make our own
+# throwaway and delete it on the way out. Either way db/counterproof.db is never
+# opened by this script.
+# ---------------------------------------------------------------------------
+_OWNED_SCRATCH: str | None = None
+if not os.environ.get("COUNTERPROOF_DB"):
+    _OWNED_SCRATCH = tempfile.mkdtemp(prefix="counterproof-proof-")
+    os.environ["COUNTERPROOF_DB"] = os.path.join(_OWNED_SCRATCH, "proof.db")
+
 from worker import ledger, seed, store, timing  # noqa: E402
 from worker.ledger import read_observations  # noqa: E402
-import os
-import shutil
-import tempfile
 
 ASOF_POINTS = [
     ("2024-01-01T00:00:00Z", "before anything existed"),
@@ -45,34 +64,13 @@ def rule(title: str) -> None:
 
 
 def main() -> int:
-    # This proof needs a known, fixed dataset, so it reseeds from scratch. It must
-    # therefore NEVER touch the working ledger: that database holds ~1,800 live
-    # observations collected over hours from USPTO, HN, arXiv and domain probes,
-    # and reseeding it in place destroys all of them. It has already happened once.
-    #
-    # So we redirect to a scratch database for the duration. Judges are told in the
-    # README to run this command, and a demo script that silently deletes the
-    # project's collected data is not a demo script.
-    scratch = tempfile.mkdtemp(prefix="counterproof-proof-")
-    scratch_db = os.path.join(scratch, "proof.db")
-    previous_db = os.environ.get("COUNTERPROOF_DB")
-    os.environ["COUNTERPROOF_DB"] = scratch_db
-    store.open_ledger(scratch_db)
-    print(f"scratch ledger: {scratch_db}")
-    print("  (the working ledger at db/counterproof.db is not touched)")
-
+    print(f"scratch ledger: {os.environ['COUNTERPROOF_DB']}")
+    print("  (db/counterproof.db is never opened by this script)")
     try:
         return _run_proof()
     finally:
-        if previous_db is None:
-            os.environ.pop("COUNTERPROOF_DB", None)
-        else:
-            os.environ["COUNTERPROOF_DB"] = previous_db
-        try:
-            store.open_ledger()  # rebind to the working ledger
-        except Exception:
-            pass
-        shutil.rmtree(scratch, ignore_errors=True)
+        if _OWNED_SCRATCH:
+            shutil.rmtree(_OWNED_SCRATCH, ignore_errors=True)
 
 
 def _run_proof() -> int:

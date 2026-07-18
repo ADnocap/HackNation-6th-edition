@@ -151,24 +151,43 @@ def _interpretation(att: dict[str, Any]) -> str:
         )
     top = att["rows"][0]
     widest = max(att["rows"], key=lambda r: r["width_delta"])
-    parts = [
-        f"Dropping '{top['dropped']}' moves the score by {top['delta']:+.1f} points "
-        f"({att['point']} -> {top['point_without']}), which makes it the load-bearing "
-        f"evidence on this component. It stands on {top['n_rows']} ledger row"
-        f"{'' if top['n_rows'] == 1 else 's'}."
-    ]
+    rows_word = f"{top['n_rows']} ledger row" + ("" if top["n_rows"] == 1 else "s")
+    if abs(top["delta"]) < 0.05:
+        parts = [
+            f"No single stream moves the point estimate here: dropping '{top['dropped']}' "
+            f"({rows_word}) leaves the score at {att['point']} because this person's "
+            "evidence and their reference class agree. What the evidence bought was the "
+            f"interval — width {att['interval_width']:.1f} with it, "
+            f"{top['width_without']:.1f} without. Certainty, not score, which is exactly "
+            "the distinction the Cold-Start Bench draws."
+        ]
+    else:
+        parts = [
+            f"Dropping '{top['dropped']}' moves the score by {top['delta']:+.1f} points "
+            f"({att['point']} -> {top['point_without']}), which makes it the load-bearing "
+            f"evidence on this component. It stands on {rows_word}."
+        ]
     if widest["evidence_id"] != top["evidence_id"] and widest["width_delta"] > 0.5:
         parts.append(
             f"'{widest['dropped']}' barely moves the point ({widest['delta']:+.1f}) but "
             f"widens the interval by {widest['width_delta']:+.1f} points — it was buying "
             "certainty, not score."
         )
-    parts.append(
-        f"With everything removed the score falls back to "
-        f"{att['prior_only']['point_without']} on an interval of width "
-        f"{att['prior_only']['width_without']:.1f}: that gap is exactly what our "
-        "collection contributed."
-    )
+    prior = att["prior_only"]
+    if abs(prior["delta"]) < 0.05:
+        parts.append(
+            f"With everything removed the score stays at {prior['point_without']} on an "
+            f"interval of width {prior['width_without']:.1f} (from "
+            f"{att['interval_width']:.1f}): our collection bought "
+            f"{prior['width_without'] - att['interval_width']:.1f} points of interval and "
+            "confirmed the class rather than departing from it."
+        )
+    else:
+        parts.append(
+            f"With everything removed the score falls back to {prior['point_without']} on "
+            f"an interval of width {prior['width_without']:.1f}: that gap is exactly what "
+            "our collection contributed."
+        )
     return " ".join(parts)
 
 
