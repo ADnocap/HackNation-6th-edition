@@ -11,12 +11,17 @@
     "chokepoint": "worker/ledger.py :: read_observations(asof) — the only function in the codebase that reads the observation table, and it always filters WHERE observed_at <= :asof.",
     "no_averaged_axes": "There is no averaged axis anywhere in this system. Not in the schema, not in this file, not on screen.",
     "views": ["signal_feed", "person", "claims_and_receipt", "memo_and_decision", "honesty"],
-    "generated_at": "2026-07-18T19:19:23Z",
+    "generated_at": "2026-07-18T21:01:42Z",
     "generated_by": "worker/export_demo.py",
     "provenance_of_this_file": {
       "hand_authored_source": "worker/demo_overrides.json",
-      "blocks_derived_from_ledger": [],
-      "n_blocks_derived": {"value": 0, "n": 0},
+      "blocks_derived_from_ledger": [
+        "memory.observations_ingested",
+        "asof_slices.available",
+        "honesty.days_of_edge",
+        "honesty.not_collected"
+      ],
+      "n_blocks_derived": {"value": 4, "n": 4},
       "statement": "Every block not listed as derived came from the hand-authored overrides file, which is committed and readable. We would rather show you which numbers we wrote by hand than let you guess."
     }
   },
@@ -51,7 +56,7 @@
   "memory": {
     "title": "Memory — one append-only ledger",
     "plain_line": "Nothing in here is ever updated or deleted. Every score is a pure function of the rows, which is why a score can never quietly reset.",
-    "observations_ingested": {"value": 1847, "n": 1847},
+    "observations_ingested": {"value": 1815, "n": 1815},
     "deduplicated": {"value": 213, "n": 2060},
     "enriched": {"value": 96, "n": 1847},
     "people": {"value": 63, "n": 63},
@@ -100,7 +105,8 @@
         }
       ],
       "n": {"value": 2, "n": 2}
-    }
+    },
+    "derived_from_ledger": true
   },
   "compound_query": {
     "title": "Multi-attribute reasoning in one pass",
@@ -3964,56 +3970,63 @@
     "days_of_edge": {
       "title": "Days of Edge — median lag from channel signal to consensus visibility",
       "plain_language": "How many days earlier this channel finds someone than the market does.",
-      "method": "One GROUP BY over observation.observed_at. Consensus visibility = first funding announcement, press mention, or database entry. Pure date arithmetic — no outcome labels, no model recognition, nothing to leak.",
-      "design_rule": "A channel qualifies only if it can fire for a person with no GitHub, no funding and no network.",
+      "method": "One pass over observation.observed_at at this asof. Consensus visibility = the first observation about that person whose source is a press mention, a funding announcement, or a startup-database entry. First signal to that date, in days. Pure date arithmetic — no outcome labels, no model recognition, nothing to leak. Intervals are distribution-free order-statistic intervals on the median; below n=6 the bar is the observed range and is labelled as such. People the market has not noticed yet are censored, counted, and excluded from the median rather than silently scored as zero.",
+      "design_rule": "A channel qualifies as discovery only if it can fire for a person with no GitHub, no funding and no network.",
       "asof": "2026-07-19T02:14:33Z",
-      "render_hint": "horizontal bar chart with asymmetric error bars; n printed inside every bar; declined channels greyed",
+      "render_hint": "horizontal bar chart with asymmetric error bars; n printed inside every bar; declined channels greyed; rows with basis='insufficient_data' render the statement instead of a bar",
       "rows": [
-        {
-          "channel_id": "arxiv",
-          "channel": "arXiv preprints — first-time sole authors",
-          "kind": "discovery",
-          "status": "active",
-          "median_days": {"value": 58, "n": 9, "ci": [17, 88]},
-          "volume_30d": {"value": 12, "n": 63},
-          "thin_cell": true,
-          "coverage_gap": true,
-          "cold_start_native": true,
-          "recommendation": "UNDEREXPLORED — recommend investing here. High edge, low volume, n too thin to be confident. The error bar says so."
-        },
         {
           "channel_id": "uspto_tm_1b",
           "channel": "Self-filed trademark — 1(b), no attorney",
           "kind": "discovery",
           "status": "active",
-          "median_days": {"value": 47, "n": 18, "ci": [29, 66]},
-          "volume_30d": {"value": 41, "n": 63},
-          "thin_cell": false,
-          "coverage_gap": false,
+          "median_days": {"value": 319.0, "n": 1, "ci": [319.0, 319.0]},
+          "volume_30d": {"value": 1, "n": 599},
+          "thin_cell": true,
+          "coverage_gap": true,
           "cold_start_native": true,
-          "limitation": "Foreign-domiciled applicants have been required to appoint US counsel since 2019, so the empty-attorney marker selects for US-domiciled founders. We name this rather than let you find it."
+          "basis": "measured",
+          "interval_kind": "single_observation",
+          "n_censored": 32,
+          "edge_floor_days": 453.1,
+          "statement": "n=1. This is a single observed lag, not a median, and it has no error bar worth the name. It is printed so the channel is visible, and it should not be quoted as a measurement until n grows. 32 further person(s) from this channel are still invisible to the market and are excluded from the median rather than scored as zero — dropping them silently would bias every channel downward.",
+          "recommendation": "UNDEREXPLORED — recommend investing here. Edge 319d at n=1, but only 1 observation(s) in the last 30 days. High edge, low volume, cold-start-native. PROVISIONAL at n=1: too thin to be a measurement. The recommendation here is to COLLECT MORE, which is the cheap half of acting on it anyway.",
+          "limitation": "Foreign-domiciled applicants have been required to appoint US counsel since 2019, so the empty-attorney marker selects for US-domiciled founders. We name this rather than let you find it.",
+          "note": "n=1. This is a single observed lag, not a median, and it has no error bar worth the name. It is printed so the channel is visible, and it should not be quoted as a measurement until n grows. 32 further person(s) from this channel are still invisible to the market and are excluded from the median rather than scored as zero — dropping them silently would bias every channel downward."
         },
         {
           "channel_id": "domain_probe",
           "channel": "Domain page probe — transacting vs parked",
           "kind": "discovery",
           "status": "active",
-          "median_days": {"value": 31, "n": 22, "ci": [12, 49]},
-          "volume_30d": {"value": 88, "n": 63},
-          "thin_cell": false,
-          "coverage_gap": false,
-          "cold_start_native": true
+          "median_days": {"value": 300.0, "n": 1, "ci": [300.0, 300.0]},
+          "volume_30d": {"value": 7, "n": 599},
+          "thin_cell": true,
+          "coverage_gap": true,
+          "cold_start_native": true,
+          "basis": "measured",
+          "interval_kind": "single_observation",
+          "n_censored": 1,
+          "edge_floor_days": 10.1,
+          "statement": "n=1. This is a single observed lag, not a median, and it has no error bar worth the name. It is printed so the channel is visible, and it should not be quoted as a measurement until n grows. 1 further person(s) from this channel are still invisible to the market and are excluded from the median rather than scored as zero — dropping them silently would bias every channel downward.",
+          "recommendation": "UNDEREXPLORED — recommend investing here. Edge 300d at n=1, but only 7 observation(s) in the last 30 days. High edge, low volume, cold-start-native. PROVISIONAL at n=1: too thin to be a measurement. The recommendation here is to COLLECT MORE, which is the cheap half of acting on it anyway.",
+          "note": "n=1. This is a single observed lag, not a median, and it has no error bar worth the name. It is printed so the channel is visible, and it should not be quoted as a measurement until n grows. 1 further person(s) from this channel are still invisible to the market and are excluded from the median rather than scored as zero — dropping them silently would bias every channel downward."
         },
         {
           "channel_id": "hn_algolia",
           "channel": "Hacker News — first Show HN, account <90d",
           "kind": "discovery",
           "status": "active",
-          "median_days": {"value": 23, "n": 31, "ci": [14, 35]},
-          "volume_30d": {"value": 156, "n": 63},
-          "thin_cell": false,
+          "median_days": {"value": 211.0, "n": 1, "ci": [211.0, 211.0]},
+          "volume_30d": {"value": 259, "n": 599},
+          "thin_cell": true,
           "coverage_gap": false,
           "cold_start_native": true,
+          "basis": "measured",
+          "interval_kind": "single_observation",
+          "n_censored": 283,
+          "edge_floor_days": 12.5,
+          "statement": "n=1. This is a single observed lag, not a median, and it has no error bar worth the name. It is printed so the channel is visible, and it should not be quoted as a measurement until n grows. 283 further person(s) from this channel are still invisible to the market and are excluded from the median rather than scored as zero — dropping them silently would bias every channel downward.",
           "note": "Our best-sampled channel. We score the comment text for lived domain exposure, never the karma."
         },
         {
@@ -4021,12 +4034,52 @@
           "channel": "Inbound Apply",
           "kind": "discovery",
           "status": "active",
-          "median_days": {"value": 0, "n": 17, "ci": [0, 0]},
-          "volume_30d": {"value": 17, "n": 63},
+          "median_days": {"value": 0.0, "n": 1, "ci": [0.0, 0.0]},
+          "volume_30d": {"value": 1, "n": 599},
           "thin_cell": false,
           "coverage_gap": false,
           "cold_start_native": true,
+          "basis": "by_construction",
+          "interval_kind": "by_construction",
+          "n_censored": 0,
+          "edge_floor_days": null,
+          "statement": "Zero by construction. Inbound is not an edge, it is a queue — the founder tells us at the same moment they tell everyone else.",
           "note": "Zero by construction. Inbound is not an edge, it is a queue."
+        },
+        {
+          "channel_id": "github_trending",
+          "channel": "GitHub Trending — by stars",
+          "kind": "declined",
+          "status": "defunded",
+          "median_days": {"value": 0.0, "n": 0, "ci": [0.0, 0.0]},
+          "volume_30d": {"value": 0, "n": 599},
+          "thin_cell": false,
+          "coverage_gap": false,
+          "cold_start_native": false,
+          "basis": "by_construction",
+          "interval_kind": "by_construction",
+          "n_censored": 0,
+          "edge_floor_days": null,
+          "statement": "Zero by construction. The trending list IS the consensus event — the day a repo trends is the day the whole market can see it. There is no lag left to measure.",
+          "rationale": "Zero days of edge. It is beta. Everyone reads it. We defunded it — on our own metric, not on principle. Ranking repos by stars is track-record sourcing with extra steps: it rebuilds the exact network gate this product exists to replace.",
+          "note": "Zero by construction. The trending list IS the consensus event — the day a repo trends is the day the whole market can see it. There is no lag left to measure."
+        },
+        {
+          "channel_id": "arxiv",
+          "channel": "arXiv preprints — first-time sole authors",
+          "kind": "discovery",
+          "status": "active",
+          "median_days": {"value": null, "n": 0, "ci": null},
+          "volume_30d": {"value": 331, "n": 599},
+          "thin_cell": false,
+          "coverage_gap": false,
+          "cold_start_native": true,
+          "basis": "fully_censored",
+          "interval_kind": "insufficient_data",
+          "n_censored": 530,
+          "edge_floor_days": 34.6,
+          "statement": "No median: all 530 people this channel surfaced are still invisible to the market at this asof, so no lag has finished running. Median time since we surfaced them is 35 days and counting — that is a LOWER BOUND on the edge, not a measurement of it. It resolves into a real median only as the market catches up.",
+          "note": "No median: all 530 people this channel surfaced are still invisible to the market at this asof, so no lag has finished running. Median time since we surfaced them is 34 days and counting — that is a LOWER BOUND on the edge, not a measurement of it. It resolves into a real median only as the market catches up."
         },
         {
           "channel_id": "github_person",
@@ -4034,23 +4087,16 @@
           "kind": "confirmation",
           "status": "active",
           "median_days": {"value": null, "n": 0, "ci": null},
-          "volume_30d": {"value": 0, "n": 63},
+          "volume_30d": {"value": 0, "n": 599},
           "thin_cell": false,
           "coverage_gap": false,
           "cold_start_native": false,
+          "basis": "not_applicable_confirmation",
+          "interval_kind": "insufficient_data",
+          "n_censored": 0,
+          "edge_floor_days": null,
+          "statement": "Confirmation source, not discovery — it is keyed to a person we already found, so days of edge is undefined for it by construction.",
           "note": "CONFIRMATION source only — first-commit date, commit cadence, artifact existence. Never stars, never followers. It is never a discovery source."
-        },
-        {
-          "channel_id": "github_trending",
-          "channel": "GitHub Trending — by stars",
-          "kind": "declined",
-          "status": "defunded",
-          "median_days": {"value": 0, "n": 41, "ci": [0, 1]},
-          "volume_30d": {"value": 0, "n": 63},
-          "thin_cell": false,
-          "coverage_gap": false,
-          "cold_start_native": false,
-          "rationale": "Zero days of edge. It is beta. Everyone reads it. We defunded it — on our own metric, not on principle. Ranking repos by stars is track-record sourcing with extra steps: it rebuilds the exact network gate this product exists to replace."
         }
       ]
     },
@@ -4110,73 +4156,79 @@
     },
     "not_collected": {
       "title": "Not collected, and why",
-      "n": {"value": 11, "n": 11},
+      "n": {"value": 12, "n": 12},
       "rows": [
         {
-          "source_name": "LinkedIn headlines and connection counts",
-          "brief_named": false,
-          "reason_class": "pedigree_proxy",
-          "reason_text": "Encodes access, not capability. Ranking on it rebuilds the network gate this product exists to replace. Also ToS. This is why we checked the Ledgerline headcount claim with a team page and a job board rather than LinkedIn."
-        },
-        {
-          "source_name": "GitHub stars and follower counts",
-          "brief_named": true,
-          "reason_class": "measures_already_visible",
-          "reason_text": "Measures who is already visible. Zero days of edge on our own metric."
-        },
-        {
-          "source_name": "Social traction (follower counts, engagement)",
-          "brief_named": true,
-          "reason_class": "pedigree_proxy",
-          "reason_text": "Named in the brief as a Memory ingest. Declined: it measures audience, not capability, and it is the single most pedigree-loaded signal available. Named here so you find it addressed rather than missing."
-        },
-        {
-          "source_name": "Accelerator cohort rosters",
-          "brief_named": true,
-          "reason_class": "pedigree_proxy",
-          "reason_text": "Named in the brief as an Identify source. Declined: admission to a top-tier accelerator IS the network gate. The compound query resolves 'top-tier accelerator' to NO SOURCE and points at this row."
-        },
-        {
           "source_name": "Product Hunt",
-          "brief_named": true,
+          "brief_named": 1,
           "reason_class": "auth_wall",
           "reason_text": "OAuth required. Not obtainable inside the sprint."
         },
         {
           "source_name": "SAM.gov, EU TED",
-          "brief_named": false,
+          "brief_named": 0,
           "reason_class": "auth_wall",
           "reason_text": "Registration approval latency exceeds the sprint."
         },
         {
+          "source_name": "Any JS-rendered source requiring a headless browser",
+          "brief_named": 0,
+          "reason_class": "js_rendering",
+          "reason_text": "Playwright is too fragile at 3am. Any source needing JS rendering is cut, not debugged."
+        },
+        {
           "source_name": "Devpost / Luma / MLH rosters",
-          "brief_named": true,
+          "brief_named": 1,
           "reason_class": "js_rendering",
           "reason_text": "The brief names hackathons. Declined: Cloudflare, JS-rendered, partly non-public."
         },
         {
-          "source_name": "OpenAlex acknowledgement parsing",
-          "brief_named": false,
-          "reason_class": "out_of_scope",
-          "reason_text": "A research project, not a collector. arXiv covers the 'papers' ingest instead."
+          "source_name": "GitHub Trending as a discovery surface",
+          "brief_named": 1,
+          "reason_class": "measures_already_visible",
+          "reason_text": "Ranking repos by stars is track-record sourcing with extra steps. It measures who is already visible — zero days of edge on our own metric, see the table above — and it structurally cannot fire for a founder with no GitHub, which is the exact founder this project is built for. GitHub is welcome as a CONFIRMATION source keyed to a person we already found (first-commit date, commit cadence, artifact existence), never as discovery."
+        },
+        {
+          "source_name": "GitHub stars and follower counts",
+          "brief_named": 1,
+          "reason_class": "measures_already_visible",
+          "reason_text": "Measures who is already visible. Zero days of edge on our own metric."
         },
         {
           "source_name": "npm / PyPI / HuggingFace download curves",
-          "brief_named": false,
+          "brief_named": 0,
           "reason_class": "measures_already_visible",
           "reason_text": "They measure the already-visible. Zero expected edge."
         },
         {
-          "source_name": "Marketplace operator history (Amazon, Etsy, Shopify)",
-          "brief_named": false,
-          "reason_class": "tos_risk",
-          "reason_text": "Cloudflare and ToS. Retained in the pitch as hand-authored hero evidence, labelled 'illustrated, not crawled'."
+          "source_name": "OpenAlex acknowledgement parsing",
+          "brief_named": 0,
+          "reason_class": "out_of_scope",
+          "reason_text": "A research project, not a collector. arXiv covers the 'papers' ingest instead."
         },
         {
-          "source_name": "Any JS-rendered source requiring a headless browser",
-          "brief_named": false,
-          "reason_class": "js_rendering",
-          "reason_text": "Playwright is too fragile at 3am. Any source needing JS rendering is cut, not debugged."
+          "source_name": "Accelerator cohort rosters",
+          "brief_named": 1,
+          "reason_class": "pedigree_proxy",
+          "reason_text": "Named in the brief as an Identify source. Declined: admission to a top-tier accelerator IS the network gate."
+        },
+        {
+          "source_name": "LinkedIn headlines and connection counts",
+          "brief_named": 0,
+          "reason_class": "pedigree_proxy",
+          "reason_text": "Encodes access, not capability. Ranking on it rebuilds the network gate this product exists to replace. Also ToS. This is why we checked the Ledgerline headcount claim with a team page and a job board rather than LinkedIn."
+        },
+        {
+          "source_name": "Social traction (follower counts, engagement)",
+          "brief_named": 1,
+          "reason_class": "pedigree_proxy",
+          "reason_text": "Named in the brief as a Memory ingest. Declined: it measures audience, not capability, and it is the single most pedigree-loaded signal available."
+        },
+        {
+          "source_name": "Marketplace operator history (Amazon, Etsy, Shopify)",
+          "brief_named": 0,
+          "reason_class": "tos_risk",
+          "reason_text": "Cloudflare and ToS. Retained in the pitch as hand-authored hero evidence, labelled 'illustrated, not crawled'."
         }
       ]
     },
@@ -4328,24 +4380,24 @@
     "default": "2026-07-19T02:14:33Z",
     "available": [
       {
-        "asof": "2026-04-20T00:00:00Z",
+        "asof": "2026-04-20T02:14:33Z",
         "label": "-90d",
-        "n_observations_visible": {"value": 1102, "n": 1847}
+        "n_observations_visible": {"value": 759, "n": 1815}
       },
       {
-        "asof": "2026-05-20T00:00:00Z",
+        "asof": "2026-05-20T02:14:33Z",
         "label": "-60d",
-        "n_observations_visible": {"value": 1341, "n": 1847}
+        "n_observations_visible": {"value": 943, "n": 1815}
       },
       {
-        "asof": "2026-06-19T00:00:00Z",
+        "asof": "2026-06-19T02:14:33Z",
         "label": "-30d",
-        "n_observations_visible": {"value": 1588, "n": 1847}
+        "n_observations_visible": {"value": 1213, "n": 1815}
       },
       {
         "asof": "2026-07-19T02:14:33Z",
         "label": "now",
-        "n_observations_visible": {"value": 1847, "n": 1847}
+        "n_observations_visible": {"value": 1815, "n": 1815}
       }
     ]
   },

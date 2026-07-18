@@ -32,6 +32,19 @@ the fixture sites (C2). See `wl/plan_wacil.md` for the full fact sheet.
 Both are absolutely positioned in the HTML and verified by cropping the PDF with pdfplumber.
 If you edit the deck, re-run that check before committing.
 
+## Structure — real-deck anatomy inside contractual slide numbers
+
+The slide *numbers* are fixed by `demo_overrides.json` (`deck_slide` per claim), so the deck
+follows real seed-deck anatomy (cover → problem → solution/product proof → team → moat &
+alternatives → bottom-up market → traction chart → unit economics → milestone-driven ask,
+per YC / VeryCreatives 2026 structure guides) *within* those positions: the cover carries a
+one-line metric teaser, slide 2 is problem-framed with quantified pain, slide 3 shows a
+product-UI mock as proof it's real, slide 6 does the market bottom-up (43K merchants × €4.6K
+ACV ≈ €200M SOM inside €2.4B TAM), slide 7 has an MRR bar chart (Jan→Jun 26, ending €41K —
+deliberately consistent with the deck's own founding lie, and inconsistent with the fixture
+changelog), and slide 9 states milestones + use-of-funds with **no round amount, no
+post-money, no instrument**.
+
 ## What's planted where
 
 | Slide | Claim | Type |
@@ -42,9 +55,9 @@ If you edit the deck, re-run that check before committing.
 | 4 | 12 employees | **contradiction #2** — team page names 3 |
 | 5 | Trademark serial 98/441,207, filed 2026-04-08, attorney of record | verified — deliberate contrast vs. Northgate's no-attorney filing |
 | 6 | €2.4B market; comparable **Tallystack** raised at €60M post "in this exact wedge" | **contradiction #4** — Tallystack raised at Series A, not this stage (unverified, misleading not false) |
-| 7 | **€41K MRR, June 2026** | **contradiction #1** — changelog cadence + 11 reviews imply <200 users |
+| 7 | **€41K MRR, June 2026** + growth chart Jan–Jun 26 | **contradiction #1** — changelog cadence + 11 reviews imply <200 users; the chart's Jan–Apr bars predate the first public release (2026-04-30), reinforcing #1 and #3 |
 | 8 | €180K pipeline · 14 design partners · <2% churn · 4.1x LTV:CAC | deliberately unverifiable (state stays "unverified", not contradicted) |
-| 9 | "Raising our seed round" — **no post-money, no instrument, no cap table anywhere** | **the gap** — memo renders "Cap table: not disclosed" |
+| 9 | "Raising our seed round" — **no round amount, no post-money, no instrument, no cap table anywhere** | **the gap** — memo renders "Cap table: not disclosed", decision card renders "ownership: cannot compute" |
 
 ## Names that must stay in sync with the C2 fixture sites
 
