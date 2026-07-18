@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Ledgerline — Seed Deck 2026</title>
+<style>
+  /* ------------------------------------------------------------------
+     Fixture deck for the Counterproof demo. AUTHORED, not received.
+     Slide NUMBERS and two crop bboxes are contractual (demo_overrides.json):
+       slide 2: [70, 156, 498, 204]  "Founded January 2025 · 18 months of engineering"
+       slide 7: [64, 388, 512, 452]  "€41K MRR, June 2026 · 12 employees · founded January 2025"
+     claim slides: incorporation=1 founding=2 product_live=3 headcount=4
+                   trademark=5 comparable=6 mrr=7 kpis=8. Do not reorder.
+     Structure inside each slide follows real seed-deck anatomy
+     (problem→solution→product proof→market bottom-up→traction chart→ask).
+     ------------------------------------------------------------------ */
+  @page { size: 960pt 540pt; margin: 0; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { font-family: "Segoe UI", Arial, sans-serif; color: #14213d; }
+  .slide {
+    position: relative;
+    width: 960pt; height: 540pt;
+    page-break-after: always;
+    overflow: hidden;
+    background: #ffffff;
+    padding: 44pt 64pt;
+  }
+  .slide:last-child { page-break-after: auto; }
+
+  .kicker {
+    font-size: 9.5pt; letter-spacing: 2.5pt; text-transform: uppercase;
+    color: #0e7c7b; font-weight: 600; margin-bottom: 8pt;
+  }
+  h1 { font-size: 46pt; font-weight: 700; letter-spacing: -0.5pt; }
+  h2 { font-size: 28pt; font-weight: 700; letter-spacing: -0.3pt; margin-bottom: 4pt; }
+  p  { font-size: 12.5pt; line-height: 1.5; color: #3a4356; }
+  .accent { color: #0e7c7b; }
+
+  .logo {
+    display: inline-block; width: 18pt; height: 18pt; border-radius: 4pt;
+    background: linear-gradient(135deg, #0e7c7b 50%, #14213d 50%);
+    vertical-align: -3pt; margin-right: 7pt;
+  }
+
+  .footer {
+    position: absolute; left: 64pt; right: 64pt; bottom: 20pt;
+    display: flex; justify-content: space-between;
+    font-size: 8.5pt; color: #9aa3b2; letter-spacing: 0.5pt;
+  }
+
+  .statgrid { display: flex; gap: 24pt; margin-top: 22pt; }
+  .stat { flex: 1; border-top: 3pt solid #0e7c7b; padding-top: 10pt; }
+  .stat .num { font-size: 28pt; font-weight: 700; color: #14213d; }
+  .stat .lbl { font-size: 10pt; color: #6b7486; margin-top: 3pt; line-height: 1.35; }
+
+  .cols { display: flex; gap: 36pt; margin-top: 18pt; }
+  .col { flex: 1; min-width: 0; }
+
+  ul.list { margin: 12pt 0 0 16pt; }
+  ul.list li { font-size: 12pt; line-height: 1.65; color: #3a4356; }
+
+  .card {
+    background: #f4f6f9; border-radius: 6pt; padding: 16pt 18pt; margin-top: 14pt;
+  }
+  .card .name { font-size: 14pt; font-weight: 700; }
+  .card .role { font-size: 10pt; color: #0e7c7b; font-weight: 600; margin-top: 2pt; }
+  .card p { font-size: 10pt; margin-top: 5pt; line-height: 1.45; }
+
+  .avatar {
+    width: 44pt; height: 44pt; border-radius: 50%;
+    background: #14213d; color: #fff;
+    font-size: 15pt; font-weight: 700;
+    text-align: center; line-height: 44pt;
+    margin-bottom: 8pt;
+  }
+
+  /* fake product UI (slide 3) */
+  .mock {
+    border: 1pt solid #d7dce4; border-radius: 8pt; overflow: hidden;
+    box-shadow: 0 4pt 14pt rgba(20,33,61,0.10); margin-top: 14pt;
+    font-size: 8.5pt;
+  }
+  .mock .bar {
+    background: #14213d; color: #cbd5e1; padding: 6pt 12pt;
+    display: flex; gap: 6pt; align-items: center;
+  }
+  .mock .dot { width: 6pt; height: 6pt; border-radius: 50%; background: #46506a; }
+  .mock table { width: 100%; border-collapse: collapse; }
+  .mock th {
+    text-align: left; font-size: 7.5pt; letter-spacing: 1pt; text-transform: uppercase;
+    color: #6b7486; padding: 7pt 12pt; border-bottom: 1pt solid #e7ebf0; background: #fafbfc;
+  }
+  .mock td { padding: 6pt 12pt; border-bottom: 1pt solid #f0f2f6; color: #3a4356; }
+  .pill { border-radius: 8pt; padding: 1.5pt 7pt; font-size: 7.5pt; font-weight: 700; }
+  .pill.ok  { background: #d9f2ee; color: #0b5f5e; }
+  .pill.brk { background: #fde8e8; color: #b23b3b; }
+
+  /* traction bar chart (slide 7) — must stay ABOVE y=380pt, bbox strip is at 388 */
+  .chart { display: flex; align-items: flex-end; gap: 26pt; height: 170pt; margin-top: 18pt; }
+  .chart .bwrap { flex: 1; text-align: center; }
+  .chart .bar7 { background: #0e7c7b; border-radius: 3pt 3pt 0 0; margin: 0 auto; width: 46pt; }
+  .chart .val { font-size: 10.5pt; font-weight: 700; color: #14213d; margin-bottom: 4pt; }
+  .chart .mon { font-size: 9pt; color: #6b7486; margin-top: 5pt; }
+
+  .usebar { display: flex; height: 26pt; border-radius: 5pt; overflow: hidden; margin-top: 16pt; }
+  .usebar div {
+    color: #fff; font-size: 9.5pt; font-weight: 600; line-height: 26pt; text-align: center;
+  }
+
+  /* -------- planted regions (coordinates are contractual) ---------- */
+  .bbox-slide2 {
+    position: absolute; left: 70pt; top: 156pt; width: 428pt; height: 48pt;
+    line-height: 48pt; white-space: nowrap; overflow: hidden;
+    font-size: 16pt; font-weight: 600; color: #0e7c7b;
+  }
+  .bbox-slide7 {
+    position: absolute; left: 64pt; top: 388pt; width: 448pt; height: 64pt;
+    line-height: 64pt; white-space: nowrap; overflow: hidden;
+    background: #14213d; color: #ffffff; border-radius: 6pt;
+    padding: 0 18pt; font-size: 14.5pt; font-weight: 600; letter-spacing: 0.2pt;
+  }
+  .bbox-slide7 .sep { color: #4dd4ac; margin: 0 8pt; }
+</style>
+</head>
+<body>
+
+<!-- ============ SLIDE 1 — cover (incorporation in footer) ============ -->
+<div class="slide" style="background: linear-gradient(160deg, #ffffff 62%, #eef6f5 62%);">
+  <div style="margin-top: 118pt;">
+    <div class="kicker">Seed round · July 2026</div>
+    <h1><span class="logo"></span>Ledgerline</h1>
+    <p style="font-size: 19pt; margin-top: 12pt; max-width: 600pt; color: #14213d; font-weight: 600;">
+      Automated settlement reconciliation for B2B payments.
+    </p>
+    <p style="margin-top: 16pt; max-width: 540pt;">
+      We match processor settlement files against merchant ledgers automatically —
+      per settlement run, in minutes, with every break explained.
+    </p>
+  </div>
+  <div style="position: absolute; left: 64pt; bottom: 64pt; display: flex; gap: 34pt; font-size: 10.5pt; color: #6b7486;">
+    <span><strong style="color:#14213d;">€41K</strong> MRR</span>
+    <span><strong style="color:#14213d;">14</strong> design partners</span>
+    <span><strong style="color:#14213d;">3</strong> public pricing tiers</span>
+  </div>
+  <div class="footer">
+    <span>Ledgerline GmbH · Berlin · HRB 284119 · incorporated and in good standing</span>
+    <span>Confidential — 1</span>
+  </div>
+</div>
+
+<!-- ============ SLIDE 2 — problem + founding (bbox [70,156,498,204]) ============ -->
+<div class="slide">
+  <div class="kicker">The problem</div>
+  <h2>Reconciliation is where finance teams go to die</h2>
+  <!-- contractual crop region: [70, 156, 498, 204] -->
+  <div class="bbox-slide2">Founded January 2025&nbsp;&nbsp;·&nbsp;&nbsp;18 months of engineering</div>
+  <div class="cols" style="margin-top: 120pt;">
+    <div class="col">
+      <p>
+        Every settlement cycle, processor payout files and the merchant's own
+        ledger disagree — partial captures, refunds landing in the wrong period,
+        FX rounding, fee drift. Mid-market finance teams reconcile this
+        <strong>by hand, in spreadsheets, every single week.</strong>
+      </p>
+      <p style="margin-top: 10pt;">
+        We lived this problem before we founded the company to kill it.
+      </p>
+    </div>
+    <div class="col">
+      <div class="statgrid" style="margin-top: 0;">
+        <div class="stat"><div class="num">2–4 days</div><div class="lbl">per month lost to manual matching at a typical mid-market merchant</div></div>
+        <div class="stat"><div class="num">0.4–1.1%</div><div class="lbl">of settlement volume stuck in unexplained breaks at any time</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <span>Ledgerline GmbH · Seed 2026</span>
+    <span>Confidential — 2</span>
+  </div>
+</div>
+
+<!-- ============ SLIDE 3 — solution & product proof, live and transacting ============ -->
+<div class="slide">
+  <div class="kicker">The product</div>
+  <h2>Live today. Billing today.</h2>
+  <div class="cols">
+    <div class="col" style="flex: 0.92;">
+      <p>
+        Ledgerline ingests settlement and payout records from payment processors,
+        matches them against the merchant's ledger deterministically, and surfaces
+        every break with its root cause attached.
+      </p>
+      <ul class="list">
+        <li>Billed per settlement run — usage-priced, no seats</li>
+        <li>Exception queues that shrink instead of scroll</li>
+        <li>Audit trail your accountants stop arguing with</li>
+        <li><strong>Self-serve Stripe checkout, live on ledgerline.dev right now</strong> — three public tiers at €89 / €229 / €640 per month</li>
+      </ul>
+    </div>
+    <div class="col" style="flex: 1.08;">
+      <div class="mock">
+        <div class="bar">
+          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          <span style="margin-left: 6pt;">ledgerline — run #482 · PSP: primary acquirer · 2026-07-02</span>
+        </div>
+        <table>
+          <tr><th>settlement line</th><th>ledger entry</th><th>Δ</th><th>status</th></tr>
+          <tr><td>payout 2026-07-01 · €12,410.20</td><td>batch 7741 · €12,410.20</td><td>0.00</td><td><span class="pill ok">matched</span></td></tr>
+          <tr><td>payout 2026-07-01 · €3,997.51</td><td>batch 7742 · €4,008.11</td><td>−10.60</td><td><span class="pill brk">fee drift</span></td></tr>
+          <tr><td>refund r-2231 · −€219.00</td><td>— not booked —</td><td>−219.00</td><td><span class="pill brk">period break</span></td></tr>
+          <tr><td>payout 2026-07-02 · €8,864.77</td><td>batch 7743 · €8,864.77</td><td>0.00</td><td><span class="pill ok">matched</span></td></tr>
+          <tr><td colspan="4" style="color:#6b7486;">98.6% auto-matched · 2 exceptions routed with root cause</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <span>Ledgerline GmbH · Seed 2026</span>
+    <span>Confidential — 3</span>
+  </div>
+</div>
+
+<!-- ============ SLIDE 4 — team, "12 employees" ============ -->
+<div class="slide">
+  <div class="kicker">Team</div>
+  <h2>12 employees. Zero tourists.</h2>
+  <p style="margin-top: 6pt; max-width: 640pt;">
+    Twelve people across Berlin and remote — engineering-heavy by design, because
+    reconciliation is won in the matching engine, not in the sales deck.
+  </p>
+  <div class="cols">
+    <div class="col">
+      <div class="card">
+        <div class="avatar">DR</div>
+        <div class="name">Daniel Rehmke</div>
+        <div class="role">Founder &amp; CEO</div>
+        <p>Second-time operator. Ran settlement ops tooling at a prior venture; built the first matching engine himself.</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <div class="avatar">MV</div>
+        <div class="name">Mara Vogel</div>
+        <div class="role">Founding Engineer</div>
+        <p>Matching engine, exception queues, and the audit trail underneath both. Previously payments infrastructure.</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <div class="avatar">JP</div>
+        <div class="name">Jonas Pfeiffer</div>
+        <div class="role">Solutions Lead</div>
+        <p>Owns onboarding and the design-partner program end to end. Ex-finance-ops at a mid-market merchant.</p>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <span>Ledgerline GmbH · Seed 2026</span>
+    <span>Confidential — 4</span>
+  </div>
+</div>
+
+<!-- ============ SLIDE 5 — moat + alternatives, trademark ============ -->
+<div class="slide">
+  <div class="kicker">Defensibility</div>
+  <h2>The mark is filed. The moat is the data.</h2>
+  <div class="cols">
+    <div class="col">
+      <p>
+        Every reconciliation run teaches the engine another processor quirk,
+        another format drift, another edge case no competitor has seen. The
+        matching corpus compounds — and it never resets.
+      </p>
+      <ul class="list">
+        <li>Ledgerline® application on file — serial 98/441,207, filed 2026-04-08, attorney of record</li>
+        <li>Proprietary break-classification taxonomy, built from live runs</li>
+        <li>Processor integrations hardened against real settlement traffic</li>
+      </ul>
+    </div>
+    <div class="col">
+      <div class="card" style="margin-top: 0;">
+        <div class="name">What we replace</div>
+        <p style="margin-top: 8pt;">
+          <strong>Spreadsheets + temp staff</strong> — the incumbent in 9 of 10 mid-market finance teams.<br><br>
+          <strong>Consultant-built scripts</strong> — break silently the day a processor changes a file format.<br><br>
+          <strong>Enterprise recon suites</strong> — built for banks, priced for banks, 9-month deployments.
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <span>Ledgerline GmbH · Seed 2026</span>
+    <span>Confidential — 5</span>
+  </div>
+</div>
+
+<!-- ============ SLIDE 6 — market bottom-up + comparable ============ -->
+<div class="slide">
+  <div class="kicker">Market</div>
+  <h2>A €2.4B problem hiding in the back office</h2>
+  <div class="cols">
+    <div class="col">
+      <p style="font-size: 13pt;"><strong>Bottom-up:</strong></p>
+      <div class="statgrid" style="margin-top: 10pt;">
+        <div class="stat"><div class="num">43K</div><div class="lbl">EU mid-market merchants processing enough volume to feel the pain</div></div>
+        <div class="stat"><div class="num">€4.6K</div><div class="lbl">achievable ACV at today's public pricing</div></div>
+        <div class="stat"><div class="num">€200M</div><div class="lbl">serviceable market, before processors and marketplaces</div></div>
+      </div>
+      <p style="margin-top: 14pt;">
+        Within a <strong>€2.4B addressable market</strong> across European
+        payment operations tooling.
+      </p>
+    </div>
+    <div class="col">
+      <div class="card" style="margin-top: 0;">
+        <div class="name">The category is being priced now</div>
+        <p style="margin-top: 8pt; font-size: 11pt;">
+          <strong>Tallystack raised at a €60M post in this exact wedge.</strong>
+          Capital is moving into settlement infrastructure — PSD3, instant
+          settlement rails and processor consolidation are multiplying
+          reconciliation complexity faster than finance teams can hire.
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <span>Ledgerline GmbH · Seed 2026</span>
+    <span>Confidential — 6</span>
+  </div>
+</div>
+
+<!-- ============ SLIDE 7 — traction chart (bbox [64,388,512,452]) ============ -->
+<div class="slide">
+  <div class="kicker">Traction</div>
+  <h2>Revenue is compounding monthly</h2>
+  <!-- chart sits fully above the contractual strip (ends before y=380pt) -->
+  <div class="chart" style="max-width: 620pt;">
+    <div class="bwrap"><div class="val">€6K</div><div class="bar7" style="height: 22pt;"></div><div class="mon">Jan 26</div></div>
+    <div class="bwrap"><div class="val">€11K</div><div class="bar7" style="height: 40pt;"></div><div class="mon">Feb 26</div></div>
+    <div class="bwrap"><div class="val">€17K</div><div class="bar7" style="height: 62pt;"></div><div class="mon">Mar 26</div></div>
+    <div class="bwrap"><div class="val">€24K</div><div class="bar7" style="height: 88pt;"></div><div class="mon">Apr 26</div></div>
+    <div class="bwrap"><div class="val">€32K</div><div class="bar7" style="height: 117pt;"></div><div class="mon">May 26</div></div>
+    <div class="bwrap"><div class="val">€41K</div><div class="bar7" style="height: 150pt;"></div><div class="mon">Jun 26</div></div>
+  </div>
+  <p style="margin-top: 12pt; max-width: 620pt; font-size: 11pt;">
+    Usage-based pricing means revenue tracks real reconciliation volume — up
+    <strong>+28% month-over-month average</strong> since first billing, driven by
+    expansion inside existing accounts and an inbound-heavy pipeline.
+  </p>
+  <!-- contractual crop region: [64, 388, 512, 452] — the demo's hero receipt reads THIS strip -->
+  <div class="bbox-slide7">
+    €41K MRR, June 2026<span class="sep">·</span>12 employees<span class="sep">·</span>founded January 2025
+  </div>
+  <div class="footer">
+    <span>Ledgerline GmbH · Seed 2026</span>
+    <span>Confidential — 7</span>
+  </div>
+</div>
+
+<!-- ============ SLIDE 8 — KPIs / unit economics ============ -->
+<div class="slide">
+  <div class="kicker">KPIs &amp; unit economics</div>
+  <h2>The numbers behind the curve</h2>
+  <div class="statgrid" style="margin-top: 30pt;">
+    <div class="stat"><div class="num">€180K</div><div class="lbl">qualified pipeline</div></div>
+    <div class="stat"><div class="num">14</div><div class="lbl">design partners</div></div>
+    <div class="stat"><div class="num">&lt;2%</div><div class="lbl">monthly logo churn</div></div>
+    <div class="stat"><div class="num">4.1x</div><div class="lbl">LTV : CAC</div></div>
+  </div>
+  <div class="cols" style="margin-top: 26pt;">
+    <div class="col">
+      <p>
+        <strong>Retention is the story.</strong> Once a finance team stops
+        reconciling by hand, they do not go back — churn is effectively limited
+        to companies that stop processing payments altogether.
+      </p>
+    </div>
+    <div class="col">
+      <p>
+        <strong>Expansion is built in.</strong> Usage-based pricing means every
+        new processor integration and every increase in settlement volume grows
+        the account without a sales touch.
+      </p>
+    </div>
+  </div>
+  <div class="footer">
+    <span>Ledgerline GmbH · Seed 2026</span>
+    <span>Confidential — 8</span>
+  </div>
+</div>
+
+<!-- ============ SLIDE 9 — the ask (round terms deliberately absent) ============ -->
+<div class="slide">
+  <div class="kicker">The ask</div>
+  <h2>Raising our seed round</h2>
+  <div class="cols">
+    <div class="col">
+      <p>
+        We are raising a seed round to own European mid-market settlement
+        reconciliation before the category consolidates around someone else.
+        The round funds 24 months of runway to three milestones:
+      </p>
+      <ul class="list">
+        <li><strong>150 paying accounts</strong> — convert the design-partner base and the inbound pipeline</li>
+        <li><strong>Processor coverage</strong> — the three integrations that unlock 70% of EU mid-market volume</li>
+        <li><strong>SOC 2</strong> — the certification mid-market buyers require to sign annual contracts</li>
+      </ul>
+      <p style="margin-top: 12pt; font-size: 10.5pt; color: #6b7486;">Use of funds:</p>
+      <div class="usebar" style="max-width: 520pt;">
+        <div style="flex: 55; background: #14213d;">55% engineering</div>
+        <div style="flex: 30; background: #0e7c7b;">30% GTM</div>
+        <div style="flex: 15; background: #6b7486;">15% SOC&nbsp;2</div>
+      </div>
+    </div>
+    <div class="col" style="flex: 0.7;">
+      <div class="card" style="margin-top: 0;">
+        <div class="name">Let's talk</div>
+        <p style="margin-top: 6pt;">
+          Daniel Rehmke · Founder &amp; CEO<br>
+          daniel@ledgerline.dev<br>
+          ledgerline.dev
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <span>Ledgerline GmbH · Berlin · HRB 284119</span>
+    <span>Confidential — 9</span>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Checkout — Ledgerline</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header><div class="shell"><nav>
+  <a class="brand" href="/"><span class="mark"></span>Ledgerline</a>
+  <a href="/pricing/">Pricing</a>
+  <a href="/customers/">Customers</a>
+  <a href="/changelog/">Changelog</a>
+  <a href="/team/">Team</a>
+</nav></div></header>
+
+<main><div class="shell">
+  <h1>Checkout</h1>
+  <p class="lead">Subscribe to Ledgerline. Payment is handled by Stripe.</p>
+
+  <!-- The domain-transacting probe classifies on this: a live Stripe checkout
+       session endpoint on the company domain. -->
+  <div class="legalblock" id="stripe-checkout">
+    <p><strong>Stripe checkout session</strong></p>
+    <p class="mono">POST /checkout → checkout.stripe.com session (live mode)</p>
+    <p style="margin-top: 10px;">
+      <a class="btn" href="https://checkout.stripe.com/c/pay/cs_live_ledgerline#fidkdWxOYHwnPyd1blpxYHZxWjA0"
+         rel="nofollow">Pay with Stripe</a>
+    </p>
+    <p style="margin-top: 12px; font-size: 13px; color: #6b7486;">
+      Cards, SEPA direct debit and Apple Pay via Stripe. You will be redirected to
+      checkout.stripe.com to complete payment.
+    </p>
+  </div>
+
+  <p style="font-size: 13.5px;">
+    Choose a tier on the <a href="/pricing/">pricing page</a> first — Starter €89/mo,
+    Team €229/mo or Scale €640/mo.
+  </p>
+</div></main>
+
+<footer><div class="shell">
+  <span>© 2026 Ledgerline GmbH · Berlin</span>
+  <span><a href="/imprint/">Imprint</a> · <a href="/legal/">Legal</a></span>
+</div></footer>
+</body>
+</html>
