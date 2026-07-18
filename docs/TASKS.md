@@ -198,7 +198,9 @@ apply." It quotes the exact triggering observation with its date and URL, and as
 counter-evidence to one specific claim. Two short paragraphs, in `demo-assets/outreach/`.
 
 ### C5 · Submission checklist — own this end to end (target: ongoing)
-Nobody else will remember this and it is worth more than any feature. In `demo-assets/SUBMISSION.md`:
+Nobody else will remember this and it is worth more than any feature. Work in **`docs/SUBMISSION.md`**
+— it's already written and includes a scorecard mapping our features to the four judging criteria,
+so you can see exactly where we're strong and where we're bluffing. Don't start a second file.
 - The submission portal is https://projects.hack-nation.ai/ — find the form early, list every
   field it wants, and tell us what we're missing **while there's still time to build it**.
 - A shot list for the 3-minute demo video, following section H of `docs/IDEA.md` beat by beat.

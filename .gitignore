@@ -14,7 +14,9 @@ __pycache__/
 dist/
 build/
 .next/
+out/
 *.egg-info/
+*.tsbuildinfo
 
 # IDE / OS
 .vscode/
@@ -25,11 +27,34 @@ Thumbs.db
 # Logs & temp
 *.log
 tmp/
+logs/
+# ...except the batch log the honesty panel's latency tile reads. That tile renders only if a
+# real log exists (contract: "reads from the real batch log or it does not appear"), so if we
+# want it on camera the log has to be committed alongside the demo.json generated from it.
+!logs/batch_*.jsonl
 
-# Local data store & downloaded bulk data
+# Local SQLite ledger — rebuilt by `uv run python -m worker.init_db && uv run python -m worker.seed`.
+# Never commit it: the ledger is append-only, so a committed .db makes merge conflicts unresolvable.
 db/*.db
 db/*.db-journal
+db/*.db-wal
+db/*.db-shm
 db/*.sqlite
 db/*.sqlite3
-data/raw/
+
+# Collector response cache (content-hashed). Regenerated on demand; a second pipeline run
+# should hit this rather than the network, but it must not enter the repo.
+.cache/
+cache/
+worker/.cache/
+worker/cache/
 *.cache/
+
+# Downloaded bulk data — raw, undated, unreviewed downloads only.
+#
+# NOTE: the dated USPTO bulk XML fixture is DELIBERATELY COMMITTED (docs/TASKS.md A1:
+# "the fixture *is the plan*, not the fallback"). Keep committed fixtures out of these paths —
+# put them under worker/fixtures/ or demo-assets/, which stay tracked.
+data/raw/
+data/bulk/
+data/downloads/
