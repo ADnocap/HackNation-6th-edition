@@ -1,6 +1,6 @@
 {
  "_note": "Dated snapshot of TSDR status-view records read live from tsdr.uspto.gov. Replayed by `--offline`, which badges the rows 'fixture', never 'live'.",
- "captured_at": "2026-07-18T21:39:16Z",
+ "captured_at": "2026-07-18T23:41:23Z",
  "serial_band": [
   "99150000",
   "99150259"
