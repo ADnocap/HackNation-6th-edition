@@ -613,10 +613,12 @@ def _items_for(
 ) -> dict[str, list[Item]]:
     """Collapse ledger rows into independent evidence streams in [0, 1].
 
-    Credibility streams are keyed by SOURCE CLASS: two fetches of the same
-    registry tell you one thing about a person, and the second one is not
-    corroboration. Build-capability streams are keyed by ARTIFACT KIND, because
-    a changelog and a pricing page are two different things having been built.
+    Credibility is the claim-verification posterior where resolved claims exist.
+    Where none do — which is the cold-start case, and 843 of the 845 collected
+    people — it falls back to a proxy keyed by SOURCE CLASS: two fetches of the
+    same registry tell you one thing about a person, and the second is not
+    corroboration. Build-capability streams are keyed by ARTIFACT KIND, because a
+    changelog and a pricing page are two different things having been built.
     """
     out: dict[str, list[Item]] = {c: [] for c in COMPONENTS}
 
@@ -675,6 +677,7 @@ def _items_for(
             )
         )
 
+    resolved: list[Item] = []
     for cl in claims:
         state = cl.get("state")
         prob = cl.get("posterior_prob")
@@ -683,7 +686,7 @@ def _items_for(
             # 'absent_but_expected' may NEVER move the point. Both are excluded
             # from the mean by construction; absence is handled as widening.
             continue
-        out["credibility"].append(
+        resolved.append(
             Item(
                 key=f"clm:{cl['claim_id']}",
                 kind="claim",
@@ -695,6 +698,15 @@ def _items_for(
                 claim_id=cl["claim_id"],
             )
         )
+
+    if resolved:
+        # A resolved claim SUPERSEDES the source-class proxy rather than adding to
+        # it. The verification of "domain is live" was performed against the same
+        # domain probe that produced the third-party-observable stream, so
+        # counting both would let one fetch raise n twice and buy confidence we
+        # did not earn. Credibility is the claim-verification posterior when
+        # there are claims, and the proxy only when there are none.
+        out["credibility"] = resolved
 
     for comp in COMPONENTS:
         out[comp].sort(key=lambda i: (i.observed_at, i.key))
@@ -913,8 +925,12 @@ _LABELS = {
     "build_capability": "Build Capability — artifact-derived, resource-adjusted",
 }
 
-#: Above this prior weight the person is cold-start and the bench renders.
-COLD_START_PRIOR_WEIGHT = 0.35
+#: The bench renders when the reference class carries at least a quarter of the
+#: number. That is the stated rule rather than a headcount of observations,
+#: because "cold start" is a statement about how much of the estimate is not
+#: about this person — which is exactly what the prior weight measures. At the
+#: fitted k this is n <= 4 independent streams.
+COLD_START_PRIOR_WEIGHT = 0.25
 
 
 def founder_score_block(
@@ -953,6 +969,42 @@ def founder_score_block(
             "the investor needs, which is the same reason we never average the axes."
         )
     return block
+
+
+def _narrowing(
+    pid: str,
+    scored: dict[str, Any],
+    component: str,
+    asof: str,
+    *,
+    connection: sqlite3.Connection | None = None,
+) -> dict[str, Any]:
+    """``narrowed_to`` / ``narrowed_by``, computed against the appended history.
+
+    Emitted only when the interval has ACTUALLY narrowed since this person was
+    first scored — the evidence bought certainty rather than a higher number.
+    With no prior version there is nothing to compare and the keys are absent
+    rather than filled with a zero.
+    """
+    history = founder_score_history_block(
+        pid, asof, component=component, connection=connection
+    )
+    if not history:
+        return {}
+    first = history[0]
+    was = float(first["interval"][1]) - float(first["interval"][0])
+    now = float(scored["interval_width"])
+    if was <= now:
+        return {}
+    return {
+        "narrowed_to": scored["interval"],
+        "narrowed_by": {
+            "value": round(was - now, 1),
+            "n": scored["n"],
+            "basis": f"width {was:.1f} -> {now:.1f} since version {first['version']} "
+                     f"on {first['observed_at']}",
+        },
+    }
 
 
 def cold_start_bench_block(
@@ -1049,6 +1101,7 @@ def cold_start_bench_block(
         "n_ledger_rows": q(s["n_rows"], n),
         "point": q(s["point"], n),
         "interval": s["interval"],
+        **_narrowing(pid, s, component, pop.asof, connection=connection),
         "interval_note": (
             f"Width {s['interval_width']:.1f} points, of which "
             f"{s['absence_widen_points']:.1f} comes from {s['n_absent_expected']} "
@@ -1146,10 +1199,16 @@ def person_blocks(
     asof: str,
     *,
     pop: Population | None = None,
-    with_trend: bool = False,
+    with_trend: bool = True,
     connection: sqlite3.Connection | None = None,
 ) -> dict[str, Any]:
-    """Everything this module owns for one person, keyed as demo.json keys it."""
+    """Everything this module owns for one person, keyed as demo.json keys it.
+
+    ``with_trend`` is on by default because the contract carries ``trend`` on each
+    component. It costs three extra population refits (one per historical asof),
+    shared across both components — about 150ms per person. Pass ``False`` when
+    scoring the whole board and only the point estimates are wanted.
+    """
     pop = pop or fit_population(asof, connection=connection)
     bench = cold_start_bench_block(pid, asof, pop=pop)
     out: dict[str, Any] = {
@@ -1341,6 +1400,25 @@ def _print_person(pid: str, pop: Population, *, heading: str) -> None:
     print()
 
 
+def _print_zero_evidence(pid: str, pop: Population) -> None:
+    """The degrade-gracefully path: a person we know nothing about at this asof."""
+    print("-" * 78)
+    print(f"ZERO-EVIDENCE PATH (scored with every stream removed, using {pid}'s class)")
+    print("-" * 78)
+    for comp in COMPONENTS:
+        s = score_component(pid, comp, pop, items=[])
+        print(
+            f"  {comp:<18} point={s['point']:5.1f} (n=0)   "
+            f"interval=[{s['interval'][0]:.1f}, {s['interval'][1]:.1f}] "
+            f"width={s['interval_width']:.1f}   prior_weight={s['prior_weight']:.3f}"
+        )
+    print(
+        "  Not blank, not zero, and not an error: it is the reference-class mean on an "
+        "interval wide enough to say we know nothing about this person yet."
+    )
+    print()
+
+
 def pick_demo_people(pop: Population) -> dict[str, str]:
     """A cold-start person and an evidence-rich one, chosen from the real data."""
     ranked = sorted(pop.people, key=lambda pid: len(pop.items[pid]["credibility"]))
@@ -1415,6 +1493,10 @@ def main(argv: list[str] | None = None) -> int:
                     f"slope={t.get('trend_slope')} band={t.get('trend_band')}"
                 )
             print()
+
+    if not args.person and people:
+        zero = [p for p in pop.people if not pop.items[p]["credibility"]]
+        _print_zero_evidence(zero[0] if zero else people[0], pop)
     return 0
 
 

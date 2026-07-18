@@ -229,7 +229,25 @@ def derive_from_ledger(demo: dict, asof: str) -> list[str]:
         if opp_id.startswith("_") or not isinstance(opp, dict):
             continue
         try:
-            claims = ledger.read_claims(asof, opportunity_id=opp_id)
+            # Prefer the trust engine's rendered claims over raw ledger rows.
+            # ledger.read_claims returns flat rows — log_odds_sum is a column,
+            # but the per-term breakdown, the receipt panes and the evidence
+            # list are nested structures a single row cannot hold. The trust
+            # engine recomputes the posterior from the evidence and emits that
+            # nested shape, which is what makes the Receipt modal — the best
+            # thirty seconds of the demo — genuinely computed rather than typed
+            # out by hand.
+            claims = None
+            try:
+                from worker.scoring import trust  # noqa: PLC0415
+
+                claims = trust.render_claims(asof, opportunity_id=opp_id)
+            except Exception as exc:  # noqa: BLE001
+                print(f"  {opp_id}.claims: trust engine unavailable ({exc})")
+
+            if not _claims_are_renderable(claims or []):
+                claims = ledger.read_claims(asof, opportunity_id=opp_id)
+
             if _claims_are_renderable(claims):
                 opp["claims"] = claims
                 derived.append(f"opportunities.{opp_id}.claims")
