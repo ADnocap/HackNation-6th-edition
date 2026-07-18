@@ -6,12 +6,14 @@ Our team's project for the **Hack-Nation 6th Global AI Hackathon & Venture Incub
 
 **Hard deadline: Sunday, July 19, 9:00 AM ET (3:00 PM Paris time).**
 
-## Challenge (fill in after the 12:05 PM ET reveal)
+## Challenge
 
-- **Challenge chosen:** TBD
+The 6 challenges are revealed and documented in `docs/CHALLENGES.md` (full briefs in `docs/assets/challenges/`). Fill in once we commit to one:
+
+- **Challenge chosen:** TBD (of: 01 Negotiator, 02 VC Brain, 03 RealDoor, 04 Data Legend, 05 Women's Hormonal Health, 06 Genome Firewall)
 - **Sponsor:** TBD
 - **One-line pitch:** TBD
-- **Challenge brief link:** TBD
+- **Chosen track/vertical (if applicable):** TBD
 
 ## Stack (fill in once decided)
 

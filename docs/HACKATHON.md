@@ -26,13 +26,18 @@ Net build time: ~21 hours (12:15 PM ET Sat → 9:00 AM ET Sun).
 - Each challenge is sponsored by a partner company (past sponsors of challenges: ElevenLabs, AkashX, and "VC Big Bet" open tracks).
 - 1st, 2nd and 3rd place **of each challenge** advance to the finalist pitches on July 25 (3-minute pitch, public event).
 
-## Sample challenges from the deck (what the flavor looks like)
+## The 6 challenges (revealed — see `docs/CHALLENGES.md` for full briefs)
 
-- **AI Sports Coach** (ElevenLabs): conversational performance insights for athletes using real-time data and voice interaction.
-- **FinDocGPT** (AkashX.ai): parse, analyze and summarize complex financial documents to inform investment strategy.
-- **From Sketch to Sky** (VC Big Bet): natural-language prompt → production-ready 3D CAD aircraft design.
+1. **The Negotiator** (ElevenLabs) — voice agents that call, compare, and haggle.
+2. **The VC Brain** (Maschmeyer Group) — AI that sources founders and deploys $100K checks in 24h.
+3. **RealDoor** (RealPage) — renter-side affordable-housing application-readiness copilot.
+4. **Data Legend** (Databricks) — trust layer over 10k messy Indian healthcare records; live Databricks App.
+5. **Women's Hormonal Health** (Hack-Nation/OpenAI) — open reusable dataset/benchmark/model/app.
+6. **Genome Firewall** (OpenAI) — predict antibiotic resistance from a bacterial genome, calibrated + defensive.
 
-Past winning projects: generative 3D jewelry design, anomaly detection on thermal drone footage, multilingual WhatsApp scam-detection agent, financial document analysis, protein structure prediction from small datasets.
+Each challenge is judged and prized separately; 1st/2nd/3rd per challenge advance to the July 25 finalist pitches.
+
+Past winning projects (for flavor): generative 3D jewelry design, anomaly detection on thermal drone footage, multilingual WhatsApp scam-detection agent, financial document analysis, protein structure prediction from small datasets.
 
 ## What winning looks like (inferred from past winners & format)
 
@@ -61,9 +66,10 @@ OpenAI, Databricks, Lovable, Cursor, Vercel, Supabase, Tavily, ElevenLabs, TeamV
 - Instagram: https://www.instagram.com/hacknation.globalai/
 - LinkedIn: https://www.linkedin.com/company/hack-nation
 
-## To fill in when announced
+## Status
 
-- [ ] List of 6th-edition challenges + briefs (revealed 12:05 PM ET Jul 18)
-- [ ] Official judging criteria per challenge
-- [ ] Submission portal link + exact required deliverables
-- [ ] API credit codes / sponsor tool access
+- [x] List of 6th-edition challenges + briefs — see `docs/CHALLENGES.md` and `docs/assets/challenges/`
+- [x] Official judging criteria per challenge — in each brief / `CHALLENGES.md`
+- [x] Submission portal — https://projects.hack-nation.ai/
+- [ ] Our team's chosen challenge — TBD (update `CLAUDE.md`)
+- [ ] API credit codes / sponsor tool access (some challenges give $50 OpenAI credits/team, first-come)
