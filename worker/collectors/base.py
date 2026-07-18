@@ -231,6 +231,7 @@ class CollectorRun:
     channel_id: str
     emitted: int = 0
     skipped: int = 0
+    deduped: int = 0
     errors: list[str] = field(default_factory=list)
     people: set[str] = field(default_factory=set)
 
@@ -238,7 +239,7 @@ class CollectorRun:
         cache = cache_stats()
         return (
             f"{self.channel_id}: emitted={self.emitted} people={len(self.people)} "
-            f"skipped={self.skipped} errors={len(self.errors)} "
+            f"deduped={self.deduped} skipped={self.skipped} errors={len(self.errors)} "
             f"cache_entries={cache['entries']}"
         )
 
@@ -279,8 +280,16 @@ def emit(
             run.people.add(person_id)
         return observation_id
     except Exception as exc:  # noqa: BLE001
-        run.skipped += 1
-        run.errors.append(f"{type(exc).__name__}: {exc}")
+        # A re-run legitimately re-offers every row it already wrote, and the unique index
+        # rejects them. That is the ledger working, not a failure — counting it as an error
+        # would print "errors=773" on a clean second run and put an untrue number on the
+        # honesty panel, which is the one place we cannot afford one.
+        message = str(exc)
+        if "UNIQUE constraint" in message or "uq_obs_dedup" in message:
+            run.deduped += 1
+        else:
+            run.skipped += 1
+            run.errors.append(f"{type(exc).__name__}: {exc}")
         return None
 
 
