@@ -20,6 +20,13 @@ import {
   normalizeAxes,
 } from "@/components/person";
 import {
+  EntityResolution,
+  FounderMarketFit,
+  FounderScorePanel,
+  Milestones,
+  ScoreDefinitionStrip,
+} from "@/components/personDetail";
+import {
   at,
   getOpportunities,
   getPerson,
@@ -90,6 +97,13 @@ export default async function PersonPage({
       "score_history",
       "founder_score_versions"
     ) ?? null;
+
+  const founderScore = pick(person, "founder_score") ?? null;
+  const defStrip = pick(person, "score_definition_strip") ?? null;
+  const fmf = pick(person, "founder_market_fit") ?? null;
+  const entityRes = pick(person, "entity_resolution") ?? null;
+  const milestones = pick(person, "milestones") ?? null;
+  const benchBlocked = pick(person, "cold_start_bench_blocked_reason") ?? null;
 
   const contactStatus = pick(person, "contact_status");
   const channels = arr(pick(person, "channels", "discovery_channels"));
@@ -162,9 +176,34 @@ export default async function PersonPage({
         </div>
       </div>
 
+      {/* Which "founder score" is which — stated before any number is shown. */}
+      {defStrip ? <ScoreDefinitionStrip strip={defStrip} /> : null}
+
+      {/* Founder Score — persistent, per person, never resets */}
+      {founderScore ? (
+        <PanelBoundary label="founder score">
+          <Panel
+            title="Founder Score — belongs to the person, not the company"
+            plain="This is not the three-axis score. It lives in Memory, it persists across applications and companies, and there is no code path that resets it. Its two components are kept apart on purpose: a lie about revenue must not erase a real build record."
+          >
+            <FounderScorePanel
+              score={founderScore}
+              threshold={convictionThreshold}
+            />
+          </Panel>
+        </PanelBoundary>
+      ) : null}
+
       {/* Axes disagree */}
       {person.axes_disagree && disagreeHeadline ? (
         <AxesDisagreeHeadline headline={disagreeHeadline} axes={axes} />
+      ) : null}
+
+      {/* The detail behind the disagreement, when the author supplied it. */}
+      {person.axes_disagree && person.axes_disagree_detail ? (
+        <p className="px-1 text-[12.5px] leading-relaxed text-zinc-400">
+          {person.axes_disagree_detail}
+        </p>
       ) : null}
 
       {/* Three axes */}
@@ -197,7 +236,7 @@ export default async function PersonPage({
             title="Cold-Start Bench"
             plain="This founder has no track record to score. So we say what we are actually scoring on, how much of the estimate is a prior rather than evidence, and exactly what would narrow the range."
           >
-            <ColdStartBench bench={bench} />
+            <ColdStartBench bench={bench} blockedReason={benchBlocked} />
           </Panel>
         </PanelBoundary>
 
@@ -226,6 +265,47 @@ export default async function PersonPage({
         </Panel>
       </PanelBoundary>
 
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        {/* Founder–market fit */}
+        {fmf ? (
+          <PanelBoundary label="founder-market fit">
+            <Panel
+              title="Founder–market fit"
+              plain="The brief asks for a soft-skill assessment that carries a prediction interval. This one is scored off lived-domain-exposure atoms in written answers, so it can be pointed at its evidence rather than asserted."
+            >
+              <FounderMarketFit fmf={fmf} />
+            </Panel>
+          </PanelBoundary>
+        ) : null}
+
+        {/* Entity resolution */}
+        {entityRes ? (
+          <PanelBoundary label="entity resolution">
+            <Panel
+              title="Two ventures, one person"
+              plain="How we established that these are the same human across two companies — and what we deliberately refused to match on."
+            >
+              <EntityResolution er={entityRes} />
+            </Panel>
+          </PanelBoundary>
+        ) : null}
+      </div>
+
+      {/* Milestones */}
+      {milestones ? (
+        <PanelBoundary label="milestones">
+          <Panel
+            title="Milestones"
+            plain="Milestones are not a separate table. They are observations in the one append-only ledger, flagged as milestones, so they stay on the same clock as everything else."
+          >
+            <Milestones
+              milestones={milestones}
+              note={pick(person, "milestones_note")}
+            />
+          </Panel>
+        </PanelBoundary>
+      ) : null}
+
       {/* Anything else the integrator shipped that we did not model */}
       {isObj(person) ? (
         <details className="rounded-md border border-zinc-800 bg-zinc-950/70">
@@ -248,6 +328,14 @@ export default async function PersonPage({
                 "founder_score_history",
                 "score_history",
                 "founder_score_versions",
+                "founder_score",
+                "score_definition_strip",
+                "founder_market_fit",
+                "entity_resolution",
+                "milestones",
+                "milestones_note",
+                "cold_start_bench_blocked_reason",
+                "axes_disagree_detail",
               ]}
             />
           </div>

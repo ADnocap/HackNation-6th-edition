@@ -56,7 +56,7 @@ export function normalizeAxes(person: Json): { key: string; axis: Json }[] {
   });
 }
 
-function TrendChip({ axis }: { axis: Json }) {
+export function TrendChip({ axis }: { axis: Json }) {
   const label = String(axis?.trend ?? axis?.trend_label ?? "");
   if (!label) return null;
   const t = TREND[label] ?? { arrow: "·", cls: "text-zinc-500" };
@@ -203,8 +203,19 @@ export function AxesDisagreeHeadline({
  * names what would narrow the interval — because a wide interval is a request
  * for evidence, not a verdict.
  */
-export function ColdStartBench({ bench }: { bench: Json }) {
+export function ColdStartBench({
+  bench,
+  blockedReason,
+}: {
+  bench: Json;
+  blockedReason?: Json;
+}) {
   if (!isObj(bench)) {
+    // ui_rules.refusal_render_rule — a null with a sibling *_blocked_reason MUST
+    // render the reason string. Rendering the refusal is the feature.
+    if (typeof blockedReason === "string" && blockedReason) {
+      return <Refusal>{blockedReason}</Refusal>;
+    }
     return (
       <EmptyState text="No cold-start bench block for this person at this asof." />
     );
@@ -223,6 +234,9 @@ export function ColdStartBench({ bench }: { bench: Json }) {
     bench.next_evidence ??
     null;
   const statement = bench.statement ?? bench.plain_line ?? bench.summary ?? null;
+  const notNarrow = bench.what_would_not_narrow_it ?? null;
+  const narrowedTo = bench.narrowed_to ?? null;
+  const narrowedBy = bench.narrowed_by ?? null;
 
   const pw = qval(priorWeight);
 
@@ -285,7 +299,40 @@ export function ColdStartBench({ bench }: { bench: Json }) {
             <span>direct evidence {((1 - pw) * 100).toFixed(0)}%</span>
             <span>reference-class prior {(pw * 100).toFixed(0)}%</span>
           </div>
+          {bench.prior_weight_formula ? (
+            <p className="mt-1.5 font-mono text-[10.5px] leading-relaxed text-zinc-500">
+              {bench.prior_weight_formula}
+            </p>
+          ) : null}
         </div>
+      ) : null}
+
+      {/* Evidence bought certainty, not a higher score. */}
+      {Array.isArray(narrowedTo) ? (
+        <div className="rounded border border-emerald-500/30 bg-emerald-500/[0.06] p-3">
+          <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+            <span className="text-[10px] uppercase tracking-wider text-emerald-400">
+              Interval narrowed
+            </span>
+            <span className="font-mono text-[12px] tabular-nums text-zinc-200">
+              [{fmtNum(narrowedTo[0])}, {fmtNum(narrowedTo[1])}]
+            </span>
+            {narrowedBy ? (
+              <span className="font-mono text-[11px] text-zinc-400">
+                by <N q={narrowedBy} />
+              </span>
+            ) : null}
+          </div>
+          {bench.interval_note ? (
+            <p className="mt-1.5 text-[11.5px] leading-relaxed text-zinc-400">
+              {bench.interval_note}
+            </p>
+          ) : null}
+        </div>
+      ) : bench.interval_note ? (
+        <p className="text-[11.5px] leading-relaxed text-zinc-500">
+          {bench.interval_note}
+        </p>
       ) : null}
 
       {isObj(refClass) ? (
@@ -307,6 +354,17 @@ export function ColdStartBench({ bench }: { bench: Json }) {
             Here is what would narrow it
           </div>
           <Bullets items={narrow} />
+        </div>
+      ) : null}
+
+      {notNarrow ? (
+        <div>
+          <div className="mb-1.5 text-[10px] uppercase tracking-wider text-zinc-500">
+            And what would not
+          </div>
+          <div className="opacity-60">
+            <Bullets items={notNarrow} />
+          </div>
         </div>
       ) : null}
     </div>

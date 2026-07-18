@@ -89,7 +89,8 @@ export default function RootLayout({
             Renderer reads a committed <code className="text-zinc-500">demo.json</code>{" "}
             only — no database, no API, no client env vars. Real people are
             pseudonymized. Outbound messages are drafted and rendered; none was
-            sent. There is no composite score anywhere in this system.
+            sent. The three axes are never averaged into a single number,
+            anywhere in this system.
           </p>
         </footer>
       </body>

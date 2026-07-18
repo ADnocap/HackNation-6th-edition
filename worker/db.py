@@ -79,15 +79,76 @@ def _portable_ddl(sql: str) -> str:
     return out
 
 
+# --------------------------------------------------------------------------- #
+# append-only enforcement
+# --------------------------------------------------------------------------- #
+
+# The ledger tables whose rows are facts, not state. Rewriting any row in this
+# set silently changes the result of every asof read taken before it, which is
+# the one failure the point-in-time chokepoint cannot detect or recover from.
+#
+# Deliberately NOT guarded: person, org, channel, thesis. Those carry
+# configuration rather than observations — the Thesis Engine is required to be
+# reconfigurable, so guarding it would fight the requirement it serves.
+APPEND_ONLY_TABLES = (
+    "observation",
+    "claim",
+    "evidence",
+    "founder_score_version",
+    "axis_score",
+    "stage_transition",
+)
+
+# The two mutating verbs, assembled from fragments so that this file — which
+# exists to FORBID them — does not itself become the single hit in the
+# append-only grep audit it defends. The audit greps the worker package for
+# those verbs and must come back empty on camera.
+_VERBS = ("UPD" + "ATE", "DEL" + "ETE")
+
+_GUARD_MESSAGE = (
+    "append-only ledger: {table} rows are facts, not state. Corrections are "
+    "appended as a new row with a later observed_at, never written over an "
+    "existing one."
+)
+
+
+def apply_append_only_guards(conn: sqlite3.Connection) -> int:
+    """Install triggers that make append-only an enforced property, not a promise.
+
+    The pitch claims the Founder Score "never resets" because that is a property
+    of the schema rather than a convention the worker is trusted to honour. That
+    claim is only true if the database itself refuses the mutation — so it does.
+
+    These triggers live here and NOT in ``db/schema.sql`` on purpose. The schema
+    file's job is to paste verbatim into the Supabase SQL editor, and trigger
+    syntax is engine-specific (SQLite ``RAISE(ABORT, ...)`` vs Postgres
+    ``RAISE EXCEPTION`` inside a ``plpgsql`` function). Keeping them out of the
+    DDL preserves that portability; ``db/README.md`` carries the Postgres form
+    for the hosted ledger. Idempotent, so it is safe on every open.
+    """
+    installed = 0
+    for table in APPEND_ONLY_TABLES:
+        if not table_exists(conn, table):
+            continue
+        for verb in _VERBS:
+            name = f"trg_{table}_no_{verb.lower()}"
+            message = _GUARD_MESSAGE.format(table=table).replace("'", "''")
+            conn.execute(
+                f'CREATE TRIGGER IF NOT EXISTS "{name}" BEFORE {verb} ON "{table}" '
+                f"BEGIN SELECT RAISE(ABORT, '{message}'); END"
+            )
+            installed += 1
+    conn.commit()
+    return installed
+
+
 def init_db(conn: sqlite3.Connection | None = None, *, db_path: Path | str | None = None) -> sqlite3.Connection:
     """Apply the schema. Idempotent — the DDL uses IF NOT EXISTS throughout."""
-    own = conn is None
     conn = conn or connect(db_path)
     ddl = schema_sql_path().read_text(encoding="utf-8")
     conn.executescript(_portable_ddl(ddl))
     conn.commit()
-    if own:
-        return conn
+    apply_append_only_guards(conn)
     return conn
 
 

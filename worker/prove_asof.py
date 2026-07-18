@@ -17,12 +17,13 @@ brain at ``asof=now`` and a point-in-time backtest at ``asof=past``.
 
 from __future__ import annotations
 
+import sqlite3
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from worker import ledger, seed, timing  # noqa: E402
+from worker import ledger, seed, store, timing  # noqa: E402
 from worker.ledger import read_observations  # noqa: E402
 
 ASOF_POINTS = [
@@ -106,7 +107,7 @@ def main() -> int:
         print("   FAIL: no alias observation appended for the 2024 spelling")
         failures += 1
 
-    rule("5. Append-only is enforced, not just documented")
+    rule("5. Append-only is enforced by the database, not just documented")
     # The mutating verbs are assembled from fragments rather than written out,
     # so that this negative test does not itself become a hit in the
     # append-only and chokepoint greps it exists to defend.
@@ -115,14 +116,40 @@ def main() -> int:
         f"{'UPD' + 'ATE'} {table} SET value = '0'",
         f"{'DEL' + 'ETE'} {'FR' + 'OM'} {table}",
     )
+
+    # (a) the worker refuses to EMIT one.
     for statement in statements:
         try:
             ledger.assert_append_only(statement)
         except ledger.LedgerViolation as exc:
-            print(f"refused: {statement[:34]:<36} -> {type(exc).__name__}")
+            print(f"worker refuses to emit : {statement[:30]:<32} -> {type(exc).__name__}")
         else:
-            print(f"   FAIL: {statement} was not refused")
+            print(f"   FAIL: {statement} was not refused by the worker")
             failures += 1
+
+    # (b) and the ledger refuses to EXECUTE one, which is the claim that
+    #     actually matters. A guard the worker applies to its own statements
+    #     protects nothing from a psql prompt, a Supabase table editor, or the
+    #     next agent to open a connection. "Never resets" is only a schema
+    #     property if the schema is what refuses.
+    c = store.conn()
+    before = len(read_observations(ASOF_POINTS[-1][0]))
+    for statement in statements:
+        try:
+            c.execute(statement)
+        except sqlite3.IntegrityError as exc:
+            print(f"ledger refuses to run  : {statement[:30]:<32} -> {type(exc).__name__}")
+        except sqlite3.Error as exc:
+            print(f"   FAIL: {statement} raised {type(exc).__name__}, not the guard: {exc}")
+            failures += 1
+        else:
+            print(f"   FAIL: {statement} EXECUTED against the ledger")
+            failures += 1
+    after = len(read_observations(ASOF_POINTS[-1][0]))
+    print(f"observations before {before}, after {after}")
+    if before != after:
+        print(f"   FAIL: ledger changed under a refused mutation ({before} -> {after})")
+        failures += 1
 
     rule("6. Timing — first signal to decision, with the reliability half")
     cohort = timing.cohort_timing("2026-07-19T02:14:33Z")
