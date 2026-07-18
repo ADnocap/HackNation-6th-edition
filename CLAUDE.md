@@ -10,10 +10,20 @@ Our team's project for the **Hack-Nation 6th Global AI Hackathon & Venture Incub
 
 The 6 challenges are revealed and documented in `docs/CHALLENGES.md` (full briefs in `docs/assets/challenges/`). Fill in once we commit to one:
 
-- **Challenge chosen:** TBD (of: 01 Negotiator, 02 VC Brain, 03 RealDoor, 04 Data Legend, 05 Women's Hormonal Health, 06 Genome Firewall)
-- **Sponsor:** TBD
+- **Challenge chosen:** 02 — The VC Brain
+- **Sponsor:** Maschmeyer Group
 - **One-line pitch:** TBD
-- **Chosen track/vertical (if applicable):** TBD
+- **Chosen track/vertical (if applicable):** n/a — scope is Sourcing → Screening → Diligence → Decision
+
+Key constraints from the brief (`docs/assets/challenges/02-maschmeyer-vc-brain.pdf`):
+- **Sourcing is the priority** and the **cold-start founder** (no GitHub / funding / network) must be handled explicitly — generic ingestion scores poorly.
+- 3-axis screening (Founder / Market / Idea-vs-Market) is **never averaged**; each carries its own trend.
+- **Founder Score** ≠ 3-axis score: it lives in Memory, persists across applications, never resets.
+- **Trust Score is per claim**, not per company — every claim cites evidence + confidence, contradictions flagged.
+- Memo required sections: Company snapshot, Investment hypotheses, SWOT, Problem & product, Traction & KPIs. Missing data must be **flagged, never fabricated**.
+- Thesis Engine must be **configurable**, not hardcoded to one fund.
+- Downstream (portfolio monitoring, follow-on, fund ops, exit) is **out of scope** — don't build UI for it.
+- Weights: Data Architecture 30% · Analysis & Trust 25% · Investment Utility 30% · UX 15%.
 
 ## Stack (fill in once decided)
 
