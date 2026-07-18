@@ -52,7 +52,7 @@ the committed `uv.lock`. Don't use pip or a manual venv.
 uv sync                             # create the env from uv.lock
 uv run python -m worker.init_db     # create db/counterproof.db from db/schema.sql
 uv run python -m worker.seed        # load the hero dataset into the ledger
-uv run python -m worker.prove_asof  # prove the point-in-time chokepoint holds
+uv run python -m worker.prove_asof  # prove the point-in-time chokepoint holds (uses a scratch db)
 uv run python -m worker.timing      # first-signal-to-decision instrumentation
 uv run python -m worker.export_demo # regenerate web/public/demo.json from the ledger
 ```
@@ -60,6 +60,9 @@ uv run python -m worker.export_demo # regenerate web/public/demo.json from the l
 Every step is safe to re-run. `init_db` is `CREATE TABLE IF NOT EXISTS`, `seed` is idempotent
 (re-running it leaves row counts unchanged), and `export_demo` is deterministic — regenerating
 `demo.json` changes only its `meta.generated_at` stamp.
+
+Or just `uv run python -m worker.run_all`, which does the whole sequence in the one order that
+works — `seed` drops every table, so running it *after* the collectors would destroy the crawl.
 
 `prove_asof` is the one to run if you want to see the core architectural idea in ten seconds: it
 re-reads the identical code path at four different `asof` dates and shows strictly fewer

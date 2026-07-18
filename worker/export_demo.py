@@ -422,9 +422,10 @@ def build(asof: str | None = None, from_ledger: bool = False) -> tuple[dict, str
         derived = derive_from_ledger(demo, asof)
     else:
         derived = []
-        print("  ledger: not consulted (pass --from-ledger to enable)")
-        print("          The hand-authored contract is authoritative until the")
-        print("          worker's rows are as complete as the renderer needs.")
+        print("  ledger: NOT consulted (--overrides-only)")
+        print("          Emitting hand-authored overrides verbatim. Every derived")
+        print("          block is discarded, including the computed claims and the")
+        print("          honesty panel. This is almost never what you want.")
 
     meta = demo.setdefault("meta", {})
     meta["generated_at"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -450,9 +451,17 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--from-ledger",
         action="store_true",
+        default=True,
+        help=argparse.SUPPRESS,  # now the default; kept so old commands still work
+    )
+    parser.add_argument(
+        "--overrides-only",
+        dest="from_ledger",
+        action="store_false",
         help=(
-            "consult the ledger and replace override blocks with derived ones "
-            "where the derived block is at least as complete"
+            "do NOT consult the ledger; emit the hand-authored overrides verbatim. "
+            "Rarely what you want: it discards every derived block, so the receipt "
+            "modal falls back to authored claims and demo.json shrinks by ~30KB."
         ),
     )
     parser.add_argument(
