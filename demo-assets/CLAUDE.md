@@ -4,8 +4,8 @@ Your brief is `docs/TASKS.md`, section **WACIL**. The demo script is `docs/IDEA.
 
 ## Scope
 
-You own `demo-assets/` — and **only** `demo-assets/`. This is deliberate: nothing you do can
-break the build, so you never have to worry about that. Everything here is content, not code.
+You own `demo-assets/` — and **only** `demo-assets/`. It's the most self-contained block on the
+project: no dependencies on anyone else's code, so it moves at its own pace and never waits on a merge.
 
 **You may read any file in the repo. Do not edit anything outside `demo-assets/`.**
 If you spot a problem elsewhere (a wrong name in `web/public/demo.json`, a broken README step),

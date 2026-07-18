@@ -144,10 +144,13 @@ the next most valuable thing is the findability priors computed from your crawl.
 
 # WACIL — Demo assets & submission
 
-Your work is not code, and it is not filler: **the single best moment in our demo is a lie
-caught on camera with the receipt, and that moment is made entirely of your files.** If the
-deck and the fixture sites aren't right, our peak doesn't exist. Everything you own lives in
-`demo-assets/` and touches no code, so you can work without ever worrying about breaking a build.
+**You own the moment the whole demo is built around.** The peak of our three minutes is a lie
+caught on camera *with the receipt* — the deck claims €41K MRR, and a live page fetch shows three
+employees and a silent changelog. Both halves of that are your files. Judges remember one thing
+from a pitch, and this is the thing.
+
+It's also the most self-contained block on the project: `demo-assets/` has no dependencies on
+anyone else's code, so you can move at your own pace without waiting on a merge.
 
 ### C1 · The hero pitch deck — do this first (target: 1.5h)
 A 9-slide deck for a fictional **B2B fintech infrastructure** startup. Google Slides or
@@ -202,9 +205,10 @@ Nobody else will remember this and it is worth more than any feature. In `demo-a
 - At **07:00 ET / 13:00 Paris** we freeze. Your job is to verify the repo runs from a clean
   clone at that point — actually delete a copy, re-clone it, and follow the README.
 
-### Hard checkpoint
-**C1 and C2 must be done by 20:00 ET / 02:00 Paris.** If they aren't, say so — no shame in it,
-but tell us, because Alexandre takes them over at that point and we need the runway.
+### Checkpoint — 20:00 ET / 02:00 Paris
+C1 and C2 gate the demo recording, so we need them by then. If anything is going to slip, flag it
+early and we'll move people onto it — same rule applies to all three of us, since everything on
+this project has a downstream dependency and late surprises are what actually cost us.
 
 ---
 

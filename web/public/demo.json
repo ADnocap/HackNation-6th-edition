@@ -11,7 +11,7 @@
     "chokepoint": "worker/ledger.py :: read_observations(asof) — the only function in the codebase that reads the observation table, and it always filters WHERE observed_at <= :asof.",
     "no_averaged_axes": "There is no averaged axis anywhere in this system. Not in the schema, not in this file, not on screen.",
     "views": ["signal_feed", "person", "claims_and_receipt", "memo_and_decision", "honesty"],
-    "generated_at": "2026-07-18T19:04:38Z",
+    "generated_at": "2026-07-18T19:19:23Z",
     "generated_by": "worker/export_demo.py",
     "provenance_of_this_file": {
       "hand_authored_source": "worker/demo_overrides.json",
