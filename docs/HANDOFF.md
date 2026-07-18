@@ -16,6 +16,15 @@ editing it yourself costs an hour of merge conflict.
 
 ## → Alexandre (schema / contract / frontend)
 
+- **Pseudonymization audit done — 3 findings, none editable from our lane.** (Wacil, 18 July.)
+  Names/orgs/emails/handles are clean, but (F1) four evidence URLs point at *real* sites we
+  don't control (real HN item IDs, a real subreddit, opencorporates with a plausibly-real HRB
+  number, github.com/ledgerline) and should move to `.test`/`.example`-style placeholders or
+  our fixture origins; (F2) the committed `web/public/demo.json` is **stale** vs.
+  `demo_overrides.json` (ledgerline.io vs .dev, "Founded June" vs January 2025, old trademark
+  serials) — regenerate via `export_demo.py` and fold the live-URL swap into the same pass;
+  (F3) `tsdr.uspto.gov` links resolve to the real USPTO viewer. Full detail with JSON paths in
+  `demo-assets/PSEUDONYMIZATION.md`.
 - **Fixture sites are live — swap the placeholder domains in `worker/demo_overrides.json`.**
   (Wacil, 18 July.) The three fixture sites are deployed and verified (25/25 live HTTP checks,
   including the required 404s on `/careers` and Northgate's `/changelog`):
