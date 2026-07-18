@@ -72,4 +72,23 @@ OpenAI, Databricks, Lovable, Cursor, Vercel, Supabase, Tavily, ElevenLabs, TeamV
 - [x] Official judging criteria per challenge — in each brief / `CHALLENGES.md`
 - [x] Submission portal — https://projects.hack-nation.ai/
 - [ ] Our team's chosen challenge — TBD (update `CLAUDE.md`)
-- [ ] API credit codes / sponsor tool access (some challenges give $50 OpenAI credits/team, first-come)
+- [x] API credit codes / sponsor tool access — decided, see below
+
+## Credits & accounts — decision
+
+Only two things on the sponsor credits page are worth touching for Challenge 02:
+
+| Offer | Verdict | Why |
+|---|---|---|
+| **Tavily** (shared code, instant) | **Claim now** | On the critical path — the Validator's external claim checks. Use it *only* for entities already indexed on the public web (market comparables, prior rounds). **Not** for the demo's receipt pane: our fixture sites are hours old and Tavily will never have crawled them. That pane is a direct `httpx.get()` with the response body, final URL and fetch timestamp. See pre-mortem #5 in `IDEA.md`. |
+| **Woz** (shared code, instant) | Claim the code, **don't install today** | Free option value for later. Installing new tooling mid-sprint is how you lose hour 3. |
+| Lovable | Skip | Approval latency; not the Challenge 02 sponsor so there is no scoring bonus; and our frontend is a pure renderer over a committed `demo.json` with no client-side DB — Lovable's generated Supabase wiring fights that architecture (pre-mortem #10: 95 min lost to RLS + anon key). |
+| ElevenLabs | Skip | Challenge 01's sponsor. No voice anywhere in our plan. A synthetic voiceover on a pitch whose whole thesis is honesty reads slightly off; use a human voice. |
+| Emdash | Skip | Unfamiliar agent orchestrator, adopted mid-sprint. Violates "no exotic dependencies." |
+| OpenAI | Not needed | Using our own key. Extraction is plain structured output; provider-agnostic. |
+
+Tavily's hacker guide is committed at `docs/assets/tavily-hacker-guide.pdf`.
+
+**Free tiers, no credits needed** — create accounts if not already done: **Supabase** (63 rows of Postgres), **Vercel** (one app deploy **plus a second static project for the contradiction fixtures — these must live at real public URLs**).
+
+**Highest-urgency credential:** the **USPTO** account/API key is plan risk #1 (identity verification can take hours). Register immediately and start the daily bulk-XML download in the background now — that download is the committed fallback regardless of whether the key lands.
