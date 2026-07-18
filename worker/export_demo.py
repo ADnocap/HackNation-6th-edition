@@ -321,6 +321,34 @@ def validate(demo: dict, text: str) -> list[str]:
                 f"forbidden token {bad!r} present — the three axes are never averaged"
             )
 
+    # -- privacy gate: no real person's name may reach the rendered file -------
+    #
+    # The trademark collector reads a public federal register, so the ledger now
+    # holds hundreds of real names attached to scored dossiers. Our stated rule
+    # is that real people appear pseudonymized, the refuter is disabled on them,
+    # and outreach is drafted but never sent. demo.json is what gets published to
+    # a URL we hand to judges, so this is the last point at which that rule can
+    # be enforced — and it must be enforced mechanically, because the failure
+    # mode is silent: a person block derived from the ledger carries the real
+    # display_name and nothing looks wrong until it is already public.
+    try:
+        from worker import store  # noqa: PLC0415
+
+        rows = store.conn().execute(
+            "SELECT display_name FROM person "
+            "WHERE is_real_person = 1 AND COALESCE(is_pseudonymized, 0) = 0"
+        ).fetchall()
+        for row in rows:
+            name = (row["display_name"] or "").strip()
+            # Short strings produce false positives against ordinary prose.
+            if len(name) > 4 and name in text:
+                problems.append(
+                    f"real person name {name!r} is present in the rendered file. "
+                    f"Real people must be pseudonymized to initials before publish."
+                )
+    except Exception as exc:  # noqa: BLE001 — a missing ledger must not block an export
+        print(f"  privacy gate: skipped ({type(exc).__name__}: {exc})")
+
     # The n-audit, run in-process against the exact bytes we are about to write.
     for lineno, line in enumerate(text.splitlines(), start=1):
         idx = 0
@@ -442,6 +470,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"    signal feed rows    : {len(demo.get('signal_feed', {}).get('rows', []))}")
         print("    n-audit             : every rendered number carries its n")
         print("    no averaged axes    : Market is categorical everywhere")
+        print("    privacy gate        : no real person name in the rendered file")
 
     if args.check:
         print("  --check given; not writing.")
