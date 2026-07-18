@@ -27,7 +27,7 @@ Thumbs.db
 # Logs & temp
 *.log
 tmp/
-logs/
+logs/*
 # ...except the batch log the honesty panel's latency tile reads. That tile renders only if a
 # real log exists (contract: "reads from the real batch log or it does not appear"), so if we
 # want it on camera the log has to be committed alongside the demo.json generated from it.

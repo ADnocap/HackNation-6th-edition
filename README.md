@@ -39,6 +39,10 @@ domain payment endpoints, and arXiv preprints.
 
 Requires **Python 3.11+**, [**uv**](https://docs.astral.sh/uv/), and **Node 20+**.
 
+**If you only have two minutes, skip to step 2.** `web/public/demo.json` is committed, so the
+web app renders all five views with no API keys, no database and no worker run. Step 1 is how you
+check that the data is real rather than drawn.
+
 ### 1. The worker (ledger, scoring, collectors)
 
 `uv` is the only supported path — it gives every teammate a byte-identical environment from
@@ -53,9 +57,18 @@ uv run python -m worker.timing      # first-signal-to-decision instrumentation
 uv run python -m worker.export_demo # regenerate web/public/demo.json from the ledger
 ```
 
+Every step is safe to re-run. `init_db` is `CREATE TABLE IF NOT EXISTS`, `seed` is idempotent
+(re-running it leaves row counts unchanged), and `export_demo` is deterministic — regenerating
+`demo.json` changes only its `meta.generated_at` stamp.
+
 `prove_asof` is the one to run if you want to see the core architectural idea in ten seconds: it
 re-reads the identical code path at four different `asof` dates and shows strictly fewer
 observations visible at each earlier one. That is what makes trend *computed* rather than asserted.
+
+The ledger is append-only, and that is enforced by the database rather than by convention:
+`UPDATE` and `DELETE` against `observation`, `claim`, `evidence`, `founder_score_version`,
+`axis_score` and `stage_transition` are rejected by triggers. Try it — the founder score
+*cannot* be reset, which is the property the whole Memory design rests on.
 
 ### 2. The web app
 
@@ -71,14 +84,19 @@ break the demo.
 
 ### 3. Environment
 
-Copy `.env.example` to `.env` and fill in your keys. `.env` is gitignored and must stay that way.
+Only needed if you want to run the live collectors — **not** to view the demo. Copy
+`.env.example` to `.env` and fill in your keys. `.env` is gitignored and must stay that way.
+The web app reads no environment variables at all.
 
-### The five views
+### What you'll see
+
+Five views, at these routes:
 
 | Route | What it shows |
 |---|---|
-| `/` | Signal Feed — ranked board, the raw ↔ pedigree-neutralized toggle, funnel counters, SLA clocks |
+| `/` | Signal Feed — ranked board, the raw ↔ access-neutralized toggle, funnel counters, SLA clocks |
 | `/person/per_mo` | Cold-Start Bench — prior weight, interval, expected-evidence manifest, founder score across two ventures |
+| `/person/per_dr` | The same page where the bench *refuses to apply* — not a cold-start founder, so the tool says so instead of scoring anyway |
 | `/opportunity/opp_ledgerline` | Claims with per-claim trust states, and the receipt modal behind the contradiction |
 | `/opportunity/opp_ledgerline/memo` | Investment memo — five required sections plus an explicit gaps block |
 | `/honesty` | Days-of-edge per channel with honest `n`, the not-collected ledger, the recognition probe |
@@ -98,6 +116,25 @@ everywhere in the codebase:
 - **Missing data is flagged, never fabricated.** The memo says "Cap table: not disclosed" because
   the renderer physically cannot invent it.
 - **Every number carries its `n`.** If we can't state the sample size, the number doesn't ship.
+
+### Check them yourself
+
+Each commitment above is mechanically checkable, which is the point of stating them. From the
+repo root — every one of these should print nothing:
+
+```bash
+grep -rniE "composite|overall_score|blended" db/schema.sql web/public/demo.json   # no blended score
+grep -rniE "supabase|process\.env|NEXT_PUBLIC" web/app web/components web/lib     # no client-side DB
+grep -rniE "UPDATE |DELETE FROM" worker/ --include=*.py                           # append-only
+grep -o '"value":[^}]*}' web/public/demo.json | grep -v '"n"'                     # every number has its n
+```
+
+And this one should print exactly one hit, `worker/store.py` — the single point-in-time
+chokepoint every read path funnels through:
+
+```bash
+grep -rn "FROM observation" worker/ --include=*.py
+```
 
 ## Docs
 
