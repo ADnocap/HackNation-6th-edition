@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Changelog — Ledgerline</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header><div class="shell"><nav>
+  <a class="brand" href="/"><span class="mark"></span>Ledgerline</a>
+  <a href="/pricing/">Pricing</a>
+  <a href="/customers/">Customers</a>
+  <a href="/changelog/">Changelog</a>
+  <a href="/team/">Team</a>
+</nav></div></header>
+
+<main><div class="shell">
+  <h1>Changelog</h1>
+  <p class="lead">Every release, dated and tagged.</p>
+
+  <!-- Exactly two releases. The silence after 2026-06-02 is part of the fixture:
+       the demo's validator reads this cadence against the deck's revenue claim. -->
+  <div class="entry">
+    <div class="ver"><span class="date">2026-06-02</span> · v0.4.1 — retry backoff</div>
+    <p>Exponential backoff on processor export retries. Fixes duplicate ingestion
+    when an SFTP drop is re-delivered mid-run.</p>
+  </div>
+
+  <div class="entry">
+    <div class="ver"><span class="date">2026-04-30</span> · v0.4.0 — first public release</div>
+    <p>Ledgerline is live. Deterministic settlement matching, exception queue with
+    root-cause tags, per-run billing through Stripe, and a public pricing page.
+    Thanks to our design partners for a year of patience.</p>
+  </div>
+</div></main>
+
+<footer><div class="shell">
+  <span>© 2026 Ledgerline GmbH · Berlin</span>
+  <span><a href="/imprint/">Imprint</a> · <a href="/legal/">Legal</a></span>
+</div></footer>
+</body>
+</html>

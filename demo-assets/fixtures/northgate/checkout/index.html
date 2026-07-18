@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Subscribe — Northgate Settle</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: Georgia, "Times New Roman", serif; color: #1f2a20; background: #fbfaf7; line-height: 1.65; }
+  .shell { max-width: 720px; margin: 0 auto; padding: 0 22px; }
+  header { padding: 26px 0 0; }
+  .brand { font-size: 20px; font-weight: 700; color: #1f4d2e; text-decoration: none; }
+  main { padding: 42px 0 70px; }
+  h1 { font-size: 30px; margin-bottom: 12px; color: #16321f; }
+  p { font-size: 16px; color: #33402f; }
+  .box { border: 1px solid #d9d5c8; border-radius: 6px; background: #fff; padding: 20px 22px; margin-top: 18px; }
+  .mono { font-family: Consolas, monospace; font-size: 14px; color: #4a5446; }
+  .btn {
+    display: inline-block; background: #635bff; color: #fff; font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 15px; font-weight: 600; padding: 11px 24px; border-radius: 5px;
+    text-decoration: none; margin-top: 14px;
+  }
+  footer { border-top: 1px solid #d9d5c8; padding: 18px 0 30px; font-size: 13px; color: #6d7466; }
+  a { color: #1f4d2e; }
+</style>
+</head>
+<body>
+<header><div class="shell"><a class="brand" href="/">Northgate Settle</a></div></header>
+
+<main><div class="shell">
+  <h1>Subscribe</h1>
+  <p>Payment is handled by Stripe. Pick a plan and you'll be redirected to a
+  secure Stripe checkout session.</p>
+
+  <!-- The domain probe classifies this domain as TRANSACTING on this endpoint. -->
+  <div class="box" id="stripe-checkout">
+    <p><strong>Stripe checkout session</strong></p>
+    <p class="mono">POST /checkout → checkout.stripe.com session (live mode)</p>
+    <a class="btn" href="https://checkout.stripe.com/c/pay/cs_live_northgate#fidkdWxOYHwnPydOZ3J0aFNldHRsZTAx"
+       rel="nofollow">Pay with Stripe — $29/mo</a>
+    <p class="mono" style="margin-top: 12px;">Cards · Apple Pay · US bank debit, via Stripe.</p>
+  </div>
+</div></main>
+
+<footer><div class="shell">© 2026 Northgate Settle</div></footer>
+</body>
+</html>
