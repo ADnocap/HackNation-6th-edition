@@ -12,6 +12,31 @@ second one in `demo-assets/`.
 
 ---
 
+## C5 status log
+
+**Portal fields (18–19 July):** https://projects.hack-nation.ai/ is a JS-rendered app — the
+form is not visible without logging in with the event account. **Manual action, do this at the
+next break:** log in, open the submission form, and screenshot every field. Based on the
+deliverables list, expect at minimum: project name · challenge selection (02) · description /
+one-pager text · public repo URL · demo video URL · team members. Anything beyond that
+(staging URL, tech-stack fields, sponsor-tool usage) we need to know **before** the freeze.
+
+**Clean-clone dry run (night of 18→19 July, done early instead of waiting for 07:00 ET):**
+fresh `git clone` of `main` into a scratch directory —
+- `web/public/demo.json` present ✓
+- `cd web && npm install` ✓ (53 packages, 19s)
+- `npm run build` ✓ — compiles, types check, all 5 routes build
+- **Worker path not testable on this machine: `uv` is not installed here.** The README's
+  worker steps (`uv sync`, `init_db`, `seed`, `prove_asof`, `export_demo`) still need a run
+  from a machine with uv before freeze — flag to whoever has one, or install uv locally
+  before the 07:00 ET check.
+
+**Demo video shot list:** written, beat-by-beat with routes, spoken lines, per-beat visibility
+requirements, the 2:30 backup cut, and fallbacks — `demo-assets/SHOTLIST.md`. Record the first
+full take EARLY; it is the submission until a better one exists.
+
+---
+
 ## Deliverables
 
 - [ ] **Public GitHub repo** — README states what it does, the challenge, how to run it, the team.
