@@ -53,7 +53,7 @@ from worker.collectors import base
 
 API_URL = "http://export.arxiv.org/api/query"
 
-CHANNEL_ID = "ch_arxiv"
+CHANNEL_ID = "arxiv"   # must match the id the frontend renders (see demo.json honesty.days_of_edge)
 CHANNEL_NAME = "arXiv preprints — small-team authors, no company required"
 SOURCE = "arxiv_api"
 

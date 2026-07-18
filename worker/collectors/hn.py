@@ -4,7 +4,7 @@ WHY THIS CHANNEL EXISTS
 -----------------------
 Hacker News is the one large, free, keyless corpus where a person with no GitHub, no funding
 and no network still leaves a dated, quotable, first-person artifact. That is the whole
-definition of a *discovery* channel in this project, so ``ch_hn`` registers as
+definition of a *discovery* channel in this project, so ``hn_algolia`` registers as
 ``cold_start_native=True`` and means it: nothing here requires the author to already be
 someone. The Algolia endpoint gives second-resolution unix timestamps over complete history,
 which is what makes days-of-edge arithmetic possible at all.
@@ -66,7 +66,7 @@ from worker.collectors import base
 
 # --------------------------------------------------------------------------- constants
 
-CHANNEL_ID = "ch_hn"
+CHANNEL_ID = "hn_algolia"   # must match the id the frontend renders (see demo.json honesty.days_of_edge)
 SOURCE = "hn_algolia"
 API = "https://hn.algolia.com/api/v1/search_by_date"
 ITEM_URL = "https://news.ycombinator.com/item?id={}"
@@ -419,7 +419,7 @@ def search(budget: Budget, params: dict[str, Any]) -> tuple[list[dict[str, Any]]
 # --------------------------------------------------------------------------- channel
 
 def ensure_channel() -> bool:
-    """Register ``ch_hn`` once. Returns True if this run created the row.
+    """Register the channel once. Returns True if this run created the row.
 
     The channel table is keyed by ``channel_id``, so re-registering on a second run would
     raise. We check first rather than catching, because a swallowed IntegrityError here would

@@ -61,7 +61,7 @@ from worker.collectors import base
 
 # --------------------------------------------------------------------------- config
 
-CHANNEL_ID = "ch_domain"
+CHANNEL_ID = "domain_probe"   # must match the id the frontend renders (see demo.json honesty.days_of_edge)
 CHANNEL_NAME = "Domain page read — transacting vs parked"
 SOURCE = "domain_probe"
 
