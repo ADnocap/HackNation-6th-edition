@@ -25,3 +25,11 @@ Thumbs.db
 # Logs & temp
 *.log
 tmp/
+
+# Local data store & downloaded bulk data
+db/*.db
+db/*.db-journal
+db/*.sqlite
+db/*.sqlite3
+data/raw/
+*.cache/

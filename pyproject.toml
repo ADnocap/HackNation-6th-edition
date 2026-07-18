@@ -1,0 +1,15 @@
+[project]
+name = "counterproof"
+version = "0.1.0"
+description = "Counterproof — append-only VC ledger with an asof chokepoint (Hack-Nation 6th, Challenge 02)"
+requires-python = ">=3.11"
+dependencies = [
+    "httpx>=0.27",
+    "selectolax>=0.3.21",
+    "python-dotenv>=1.0",
+]
+
+[tool.uv]
+# The worker is run as a script package from the repo root (`uv run python -m worker.seed`).
+# Nothing here is published, so no build backend is required.
+package = false

@@ -1,0 +1,447 @@
+{
+  "_smoke": "TEMPORARY frontend smoke fixture. Not the contract demo.json. Owned by the frontend agent, deleted after the render check.",
+  "meta": { "asof": "2026-07-19T02:14:33Z" },
+  "thesis": { "risk_appetite": "medium", "conviction_threshold": 55.0, "max_interval_width": 30.0 },
+  "funnel": {
+    "discovered": { "value": 63, "n": 63 },
+    "contactable": { "value": 21, "n": 63 },
+    "activated": { "value": 9, "n": 21 }
+  },
+  "people": {
+    "per_dr": {
+      "person_id": "per_dr",
+      "display_name": "D. R.",
+      "axes": {
+        "founder": { "value": 44.1, "interval": [29.8, 58.4], "n": 23, "trend": "declining", "trend_band": [-2.91, -0.77] },
+        "market": { "value": null, "interval": null, "categorical": "bear", "n": 8, "trend": "declining" },
+        "idea_vs_market": { "value": 51.2, "interval": [40.0, 62.0], "n": 14, "trend": "stable", "trend_band": [-0.44, 0.22] }
+      },
+      "founder_score_history": [
+        { "asof": "2024-03-01T00:00:00Z", "point": 58.0, "interval": [40.0, 76.0], "n": 3, "venture": "prior" },
+        { "asof": "2026-07-19T00:00:00Z", "point": 44.1, "interval": [29.8, 58.4], "n": 23, "venture": "current" }
+      ]
+    },
+    "per_mo": {
+      "person_id": "per_mo",
+      "display_name": "M. O.",
+      "cold_start_bench": {
+        "prior_weight": { "value": 0.714, "n": 4 },
+        "interval": [48.0, 74.0],
+        "plain_line": "No track record found. Scoring on 4 proxy signals.",
+        "what_would_narrow_it": [
+          { "text": "A dated changelog on the product domain.", "expected_width_reduction": 3.2 }
+        ]
+      },
+      "expected_evidence_manifest": [
+        { "artifact_type": "changelog", "expected": true, "found": false, "penalised": true, "findability_prior": { "value": 0.38, "n": 21 } },
+        { "artifact_type": "github_repo", "expected": false, "found": false, "penalised": false, "note": "not expected for this founder profile — not penalised" }
+      ],
+      "axes": {
+        "founder": { "value": 61.0, "interval": [48.0, 74.0], "n": 4, "trend": "improving", "trend_band": [0.09, 0.75] },
+        "market": { "value": null, "interval": null, "categorical": "neutral", "n": 3 },
+        "idea_vs_market": { "value": 55.0, "interval": [38.0, 72.0], "n": 2, "trend": "insufficient_data", "n_trend_points": 2 }
+      },
+      "founder_score_history": [
+        { "asof": "2026-07-18T17:00:00Z", "point": 61.0, "interval": [42.0, 79.0], "n": 4 },
+        { "asof": "2026-07-18T18:33:00Z", "point": 61.0, "interval": [48.0, 74.0], "n": 4 }
+      ]
+    }
+  },
+  "opportunities": {
+    "opp_ledgerline": {
+      "opportunity_id": "opp_ledgerline",
+      "org_name": "Ledgerline",
+      "person_id": "per_dr",
+      "person_display_name": "D. R.",
+      "sector": "b2b_fintech_infra",
+      "track": "inbound",
+      "provenance_class": "synthetic",
+      "first_signal_at": "2026-07-18T13:25:00Z",
+      "deck": { "filename": "ledgerline_seed.pdf", "n_slides": 9, "received_at": "2026-07-18T13:25:00Z", "provenance_class": "synthetic" },
+      "sla": {
+        "due_at": "2026-07-19T13:25:00Z",
+        "hours_elapsed": { "value": 12.8, "n": null, "basis": "wall clock from first_signal_at" },
+        "hours_remaining": { "value": 11.2, "n": null, "basis": "positive = within SLA" },
+        "state": "within",
+        "badge": "First signal 12.8h ago · 11.2h remaining."
+      },
+      "stage_timeline": [
+        { "stage": "sourcing", "entered_at": "2026-07-18T13:25:00Z", "entered_by": "system", "duration_minutes": 2, "exited_reason": "advanced", "wait_is_human": false },
+        { "stage": "screening", "entered_at": "2026-07-18T13:27:00Z", "entered_by": "system", "duration_minutes": 6, "exited_reason": "advanced", "wait_is_human": false, "screen_result": "pass" },
+        { "stage": "diligence", "entered_at": "2026-07-18T13:33:00Z", "entered_by": "system", "duration_minutes": 68, "exited_reason": "advanced", "wait_is_human": false },
+        { "stage": "decision", "entered_at": "2026-07-18T14:41:00Z", "entered_by": "analyst", "duration_minutes": null, "exited_reason": null, "wait_is_human": false, "is_terminal": true }
+      ],
+      "claim_distribution": { "verified": 6, "unverified": 5, "contradicted": 3, "absent_but_expected": 2, "n": 16 },
+      "claims": [
+        {
+          "claim_id": "clm_dr_mrr",
+          "claim_type": "mrr",
+          "claim_text": "€41K MRR as of June 2026.",
+          "stated_value": "41000",
+          "stated_unit": "EUR_per_month",
+          "state": "contradicted",
+          "confidence_band": "high",
+          "posterior_prob": 0.009,
+          "is_material": true,
+          "is_manifest_predicted": false,
+          "memo_blocked": false,
+          "asserted_at": "2026-07-18T13:25:00Z",
+          "evaluated_at": "2026-07-18T14:03:00Z",
+          "asof": "2026-07-19T02:14:33Z",
+          "n_evidence": { "value": 4, "n": 4 },
+          "log_odds": {
+            "terms": [
+              { "label": "Prior — founder self-report", "source_class": "self_report", "value": -1.2, "running_total": -1.2, "evidence_id": null, "n": null },
+              { "label": "Deck slide 7 states the figure", "source_class": "self_report", "value": 0.6, "running_total": -0.6, "evidence_id": "evd_mrr_0", "n": 1 },
+              { "label": "Public changelog cadence implies under 200 users", "source_class": "third_party_observable", "value": -2.8, "running_total": -3.4, "evidence_id": "evd_mrr_1", "n": 1 },
+              { "label": "Review volume inconsistent with stated revenue", "source_class": "third_party_observable", "value": -1.3, "running_total": -4.7, "evidence_id": "evd_mrr_2", "n": 1 }
+            ],
+            "sum": -4.7,
+            "posterior_prob": 0.009,
+            "arithmetic_string": "−1.2 + 0.6 − 2.8 − 1.3 = −4.7",
+            "threshold_verified": 2.0,
+            "threshold_contradicted": -2.0,
+            "verdict_sentence": "Contradicted. Revenue is overstated by roughly an order of magnitude relative to observable usage."
+          },
+          "receipt": {
+            "title": "Claim — €41K MRR",
+            "left": {
+              "kind": "slide_crop",
+              "source_class": "self_report",
+              "label": "Deck slide 7",
+              "observed_at": "2026-07-18T13:25:00Z",
+              "excerpt": "€41K MRR, growing 22% month over month.",
+              "provenance_class": "synthetic",
+              "provenance_badge": "AUTHORED — this deck was written by us, not received from a founder.",
+              "slide_no": 7,
+              "caption": "Extracted with page coordinates so the crop points back at the exact region.",
+              "atoms": [
+                { "text": "€41K MRR", "type": "MONEY", "verified": false, "note": "self-report, contradicted externally" },
+                { "text": "22% MoM", "type": "PERCENT", "verified": false }
+              ]
+            },
+            "right": [
+              { "kind": "fetched_page", "label": "Public changelog", "verifier": "httpx_direct", "fetch_method": "httpx_get", "source_url": "https://ledgerline.example/changelog", "final_url": "https://ledgerline.example/changelog", "http_status": 200, "fetched_at": "2026-07-18T14:02:11Z", "excerpt": "3 releases since March 2026", "finding": "Release cadence implies under 200 users, an order of magnitude below the stated revenue.", "provenance_class": "fixture" },
+              { "kind": "fetched_page", "label": "Review volume", "verifier": "tavily", "fetch_method": "tavily_search", "source_url": "https://reviews.example/ledgerline", "final_url": "https://reviews.example/ledgerline", "http_status": 404, "fetched_at": "2026-07-18T14:02:40Z", "excerpt": null, "finding": "No review footprint found at the stated scale.", "provenance_class": "live" }
+            ],
+            "person_consequence": { "person_id": "per_dr", "headline": "Founder credibility interval moved down and widened.", "founder_score_before": { "point": 58.0, "interval": [40.0, 76.0], "n": 22 }, "founder_score_after": { "point": 44.1, "interval": [29.8, 58.4], "n": 23 }, "history_link": "people.per_dr.founder_score_history" }
+          },
+          "loo_waterfall": [
+            { "dropped": "Changelog cadence", "evidence_id": "evd_mrr_1", "log_odds_without": -1.9, "delta": -2.8, "state_without": "unverified", "n": 1 },
+            { "dropped": "Review volume", "evidence_id": "evd_mrr_2", "log_odds_without": -3.4, "delta": -1.3, "state_without": "contradicted", "n": 1 }
+          ],
+          "loo_caption": "Measured deltas from an exact closed-form recompute with each item removed.",
+          "evidence": [
+            { "evidence_id": "evd_mrr_1", "kind": "contradicting", "artifact_type": "changelog", "found": true, "expected": true, "penalised": false, "source_url": "https://ledgerline.example/changelog", "http_status": 200, "fetched_at": "2026-07-18T14:02:11Z", "fetch_method": "httpx_get", "excerpt": "3 releases since March 2026", "log_odds_delta": -2.8, "interval_widen": 0.0, "reliability": 1.1, "findability_prior": { "value": 0.62, "n": 21 }, "provenance_class": "fixture" },
+            { "evidence_id": "evd_mrr_3", "kind": "expected_absent", "artifact_type": "job_board_listing", "found": false, "expected": true, "penalised": true, "source_url": "https://ledgerline.example/careers", "http_status": 404, "fetched_at": "2026-07-18T14:02:55Z", "fetch_method": "httpx_get", "excerpt": null, "log_odds_delta": 0.0, "interval_widen": 2.4, "reliability": null, "findability_prior": { "value": 0.58, "n": 21 }, "provenance_class": "live" }
+          ]
+        },
+        {
+          "claim_id": "clm_dr_headcount",
+          "claim_type": "headcount",
+          "claim_text": "12 employees.",
+          "state": "contradicted",
+          "confidence_band": "high",
+          "is_material": true,
+          "memo_blocked": false,
+          "n_evidence": { "value": 1, "n": 1 },
+          "log_odds": { "terms": [{ "label": "Prior — founder self-report", "source_class": "self_report", "value": -1.2, "running_total": -1.2, "n": null }, { "label": "Team page lists 3", "source_class": "third_party_observable", "value": -2.2, "running_total": -3.4, "evidence_id": "evd_hc_1", "n": 1 }], "sum": -3.4, "posterior_prob": 0.032, "arithmetic_string": "−1.2 − 2.2 = −3.4", "threshold_verified": 2.0, "threshold_contradicted": -2.0, "verdict_sentence": "Team is overstated 12 against 3 traceable." },
+          "evidence": [{ "evidence_id": "evd_hc_1", "kind": "contradicting", "artifact_type": "team_page", "found": true, "expected": true, "penalised": false, "source_url": "https://ledgerline.example/team", "http_status": 200, "log_odds_delta": -2.2, "interval_widen": 0.0, "provenance_class": "fixture" }]
+        },
+        {
+          "claim_id": "clm_dr_captable",
+          "claim_type": "cap_table",
+          "claim_text": "Cap table is clean.",
+          "state": "absent_but_expected",
+          "confidence_band": "low",
+          "is_manifest_predicted": true,
+          "memo_blocked": true,
+          "n_evidence": { "value": 0, "n": 0 }
+        }
+      ],
+      "memo": {
+        "sections": [
+          { "key": "company_snapshot", "title": "Company snapshot", "bullets": [{ "text": "B2B fintech infrastructure, pre-seed, Berlin.", "claim_ids": ["clm_dr_sector"], "evidence_ids": ["evd_sec_1"], "n": 1 }] },
+          { "key": "investment_hypotheses", "title": "Investment hypotheses", "bullets": [
+            { "text": "Reconciliation tooling is underserved below the enterprise tier.", "claim_ids": [], "evidence_ids": ["evd_cmp_1"], "n": 2 },
+            { "text": "Path to a €50M outcome", "reason": "no evidence_id — bullet blocked from rendering", "evidence_ids": [], "n": 0, "render": "blocked" }
+          ] },
+          { "key": "swot", "title": "SWOT", "strengths": [{ "text": "Ships fast on a thin team.", "evidence_ids": ["evd_hc_1"], "n": 1 }], "weaknesses": [{ "text": "Revenue claim does not survive external check.", "evidence_ids": ["evd_mrr_1"], "n": 1 }], "opportunities": [], "threats": [{ "text": "Comparables raised at later stages.", "evidence_ids": ["evd_cmp_1"], "n": 1 }] },
+          { "key": "problem_product", "title": "Problem & product", "bullets": [{ "text": "Settlement reconciliation for mid-market PSPs.", "claim_ids": ["clm_dr_product"], "evidence_ids": ["evd_prod_1"], "n": 1 }] }
+        ],
+        "gaps_block": {
+          "title": "What we could not establish",
+          "plain_line": "The renderer physically cannot make these up.",
+          "rows": [
+            { "label": "Cap table", "value": "not disclosed", "claim_id": "clm_dr_captable", "brief_quoted": true },
+            { "label": "Post-money valuation", "value": "not disclosed — ownership cannot be computed against the 8–12% thesis target", "claim_id": "clm_dr_round_terms", "brief_quoted": false },
+            { "label": "Market size", "value": "no citable source found — bottom-up from n=2 comparables, low confidence", "claim_id": null, "brief_quoted": false }
+          ],
+          "n": { "value": 3, "n": 3 }
+        },
+        "bear_case": {
+          "title": "Bear case (adversarial view)",
+          "generated_from": ["contradicted_claims", "absent_but_expected_claims", "dissenting_axis"],
+          "computation": "deterministic — no new LLM call",
+          "bullets": [
+            { "text": "Revenue is overstated by roughly an order of magnitude relative to observable usage.", "claim_ids": ["clm_dr_mrr"], "evidence_ids": ["evd_mrr_1", "evd_mrr_2"], "n": 2 },
+            { "text": "Dissenting axis: Market is bear at n=8 and declining.", "claim_ids": [], "evidence_ids": ["evd_cmp_1"], "axis": "market", "n": 8 }
+          ],
+          "n": { "value": 2, "n": 2 }
+        },
+        "portfolio_conflict_check": { "checked": true, "conflict": false, "n_positions": { "value": 4, "n": 4 }, "text": "No conflicting position in thesis sector (checked against 4 seeded positions)." }
+      },
+      "decision": {
+        "asof": "2026-07-19T02:14:33Z",
+        "decided_at": "2026-07-18T14:41:00Z",
+        "verdict": "conditional",
+        "verdict_label": "CONDITIONAL $100K",
+        "amount_usd": 100000,
+        "implied_ownership": null,
+        "ownership_blocked_reason": "Cannot compute — post-money not disclosed (thesis target 8–12%).",
+        "ownership_render": "Ownership: cannot compute — post-money not disclosed (thesis target 8–12%).",
+        "binding_axis": "founder",
+        "binding_axis_reason": "Founder axis 44.1 [29.8, 58.4], declining, n=23. Three claims contradicted in four hours.",
+        "dissenting_axis": "market",
+        "dissenting_axis_reason": "Market is BEAR at n=8. Nothing in the founder read offsets a bear market read, because we do not offset axes.",
+        "axes_disagree": true,
+        "axes_disagree_headline": "AXES DISAGREE — Founder bear, Market bear, Idea-vs-Market neutral. This is a pivot bet on the person.",
+        "interval_low": 29.8,
+        "interval_width": { "value": 28.6, "n": 23 },
+        "max_interval_width": 30.0,
+        "conviction_threshold": 55.0,
+        "gate_passed": true,
+        "gate_rule_applied": "ladder step 3 — width inside appetite, founder LCB below threshold, build-capability LCB clears it",
+        "gate_sentence": "Width 28.6 is inside the appetite of 30 at risk_appetite=medium. At risk_appetite=low this becomes probe_further.",
+        "n_claims": { "value": 16, "n": 16 },
+        "conditions_to_close": [
+          { "text": "Stripe payout export covering the three months claimed.", "resolves_claim_id": "clm_dr_mrr", "owner": "founder", "due_at": "2026-07-25" }
+        ],
+        "falsification_conditions_before_wire": [
+          { "text": "Stripe export shows under €8K MRR — this is a pass, not a renegotiation.", "resolves_claim_id": "clm_dr_mrr", "n": 1 }
+        ],
+        "falsification_naming_note": "Named 'falsification conditions before wire', not 'kill criteria'.",
+        "next_action": { "text": "Send the three-condition list and hold the position.", "owner": "analyst", "due_at": "2026-07-19T14:03:00Z" },
+        "portfolio_conflict": "No conflicting position in thesis sector.",
+        "elapsed_first_signal_to_decision_minutes": { "value": 38, "n": 1 }
+      }
+    },
+    "opp_northgate": {
+      "opportunity_id": "opp_northgate",
+      "org_name": "Northgate Settle",
+      "person_id": "per_mo",
+      "person_display_name": "M. O.",
+      "sector": "b2b_fintech_infra",
+      "track": "outbound",
+      "provenance_class": "fixture",
+      "deck": null,
+      "apply_form": null,
+      "sla": {
+        "due_at": "2026-07-08T00:00:00Z",
+        "hours_elapsed": { "value": 290.2, "n": null, "basis": "wall clock from first_signal_at" },
+        "hours_remaining": { "value": -266.2, "n": null, "basis": "negative = breached" },
+        "state": "breached",
+        "blocked_on": "elicitation_response",
+        "badge": "First signal 290h ago · SLA breached by 266h · blocked on: elicitation response (human wait)"
+      },
+      "stage_timeline": [
+        { "stage": "sourcing", "entered_at": "2026-07-07T00:00:00Z", "entered_by": "system", "duration_minutes": 16912, "exited_reason": "advanced", "wait_is_human": false, "note": "The signal existed for 11 days before the conviction threshold was crossed. That lag is the channel's days-of-edge, not our latency." },
+        { "stage": "diligence", "entered_at": "2026-07-18T17:56:00Z", "entered_by": "system", "duration_minutes": null, "exited_reason": null, "wait_is_human": true, "blocked_on": "elicitation_response", "is_terminal": false }
+      ],
+      "claim_distribution": { "verified": 3, "unverified": 2, "contradicted": 0, "absent_but_expected": 4, "n": 9 },
+      "claims": [
+        {
+          "claim_id": "clm_mo_users",
+          "claim_type": "paying_users",
+          "claim_text": "40 paying users.",
+          "state": "unverified",
+          "confidence_band": "medium",
+          "posterior_prob": 0.668,
+          "is_material": true,
+          "memo_blocked": false,
+          "n_evidence": { "value": 3, "n": 3 },
+          "log_odds": {
+            "terms": [
+              { "label": "Prior — founder self-report", "source_class": "self_report", "value": -1.2, "running_total": -1.2, "n": null },
+              { "label": "Interview excerpt — 2 of 3 offered pointers verified", "source_class": "interview", "value": 1.4, "running_total": 0.2, "evidence_id": "evd_mo_int", "n": 3 },
+              { "label": "Reddit thread named as acquisition channel, found and dated", "source_class": "third_party_observable", "value": 0.9, "running_total": 1.1, "evidence_id": "evd_mo_reddit", "n": 1 },
+              { "label": "Expected and absent — dated changelog (P=0.38, n=21)", "source_class": null, "value": -0.4, "running_total": 0.7, "evidence_id": "evd_mo_chlog", "n": 21 }
+            ],
+            "sum": 0.7,
+            "posterior_prob": 0.668,
+            "arithmetic_string": "−1.2 + 1.4 + 0.9 − 0.4 = +0.7",
+            "threshold_verified": 2.0,
+            "threshold_contradicted": -2.0,
+            "verdict_sentence": "Still unverified, not verified. She volunteered that 40 is signups and 11 are paying."
+          },
+          "receipt": {
+            "title": "Claim — 40 paying users",
+            "left": {
+              "kind": "interview_excerpt",
+              "source_class": "interview",
+              "label": "Interview excerpt — elicitation response",
+              "observed_at": "2026-07-18T18:31:00Z",
+              "excerpt": "First ten came from the r/smallbusiness weekly thread on 2026-06-28, not from ads. Stripe payout 2026-07-16, po_1PxK…, $412. I'll be straight with you: 40 is signups, 11 are paying.",
+              "provenance_class": "synthetic",
+              "provenance_badge": "AUTHORED — this response was written by us, not received from a founder.",
+              "caption": "Typed as an interview excerpt in the ledger.",
+              "atoms": [
+                { "text": "r/smallbusiness weekly thread, 2026-06-28", "type": "ORG+DATE", "verified": true },
+                { "text": "Stripe payout 2026-07-16, $412", "type": "DATE+MONEY", "verified": true },
+                { "text": "40 signups / 11 paying", "type": "CARDINAL", "verified": false, "note": "self-report — logged as a concession, not as traction" }
+              ]
+            },
+            "right": [
+              { "kind": "fetched_page", "label": "Named acquisition channel", "verifier": "tavily", "fetch_method": "tavily_search", "source_url": "https://reddit.com/r/smallbusiness/", "http_status": 200, "fetched_at": "2026-07-18T18:33:12Z", "excerpt": "Weekly promo thread — 2026-06-28", "finding": "The named thread exists on the stated date.", "provenance_class": "live" }
+            ],
+            "person_consequence": { "person_id": "per_mo", "headline": "Interval narrowed from 37 points to 26.", "founder_score_before": { "point": 61.0, "interval": [42.0, 79.0], "n": 4 }, "founder_score_after": { "point": 61.0, "interval": [48.0, 74.0], "n": 4 } }
+          },
+          "loo_waterfall": [
+            { "dropped": "Interview excerpt", "evidence_id": "evd_mo_int", "log_odds_without": -0.7, "delta": 1.4, "state_without": "unverified", "n": 3 },
+            { "dropped": "Absent changelog", "evidence_id": "evd_mo_chlog", "log_odds_without": 1.1, "delta": -0.4, "state_without": "unverified", "n": 21 }
+          ],
+          "loo_caption": "Measured deltas from an exact closed-form recompute with each item removed.",
+          "evidence": [
+            { "evidence_id": "evd_mo_int", "kind": "corroborating", "artifact_type": "interview_excerpt", "found": true, "expected": false, "penalised": false, "fetch_method": "none", "excerpt": "40 is signups, 11 are paying.", "log_odds_delta": 1.4, "interval_widen": 0.0, "provenance_class": "synthetic" },
+            { "evidence_id": "evd_mo_chlog", "kind": "expected_absent", "artifact_type": "changelog", "found": false, "expected": true, "penalised": true, "source_url": "https://northgatesettle.example/changelog", "http_status": 404, "fetched_at": "2026-07-18T17:49:07Z", "fetch_method": "httpx_get", "log_odds_delta": -0.4, "interval_widen": 3.2, "findability_prior": { "value": 0.38, "n": 21 }, "provenance_class": "live" }
+          ]
+        }
+      ],
+      "claims_note": "Outbound: no deck. Claims are derived from observations and from the elicitation response.",
+      "memo": null,
+      "memo_blocked_reason": "Not yet at decision stage. Blocked on elicitation follow-up. The memo route renders the empty state, not a placeholder memo.",
+      "decision": {
+        "asof": "2026-07-19T02:14:33Z",
+        "decided_at": null,
+        "verdict": "probe_further",
+        "verdict_label": "PROBE FURTHER",
+        "amount_usd": null,
+        "implied_ownership": null,
+        "ownership_blocked_reason": "No round in market — pre-fundraise by construction.",
+        "ownership_render": "Ownership: not applicable — no round in market.",
+        "binding_axis": "founder",
+        "binding_axis_reason": "Founder axis 61.0 [48.0, 74.0], improving, n=4.",
+        "dissenting_axis": null,
+        "axes_disagree": false,
+        "interval_low": 48.0,
+        "interval_width": { "value": 26.0, "n": 4 },
+        "max_interval_width": 30.0,
+        "conviction_threshold": 55.0,
+        "gate_passed": false,
+        "gate_rule_applied": "ladder step 4 — width passes, LCB below threshold, n=4 < 8",
+        "gate_sentence": "After the elicitation response the interval narrowed from 37 to 26. The lower bound of 48 is still 7 points under the 55 gate.",
+        "n_claims": { "value": 9, "n": 9 },
+        "conditions_to_close": [],
+        "falsification_conditions_before_wire": [],
+        "next_action": { "text": "Second elicitation round on domain experience.", "owner": "analyst", "due_at": "2026-07-19T12:00:00Z" },
+        "portfolio_conflict": "No conflicting position in thesis sector.",
+        "elapsed_first_signal_to_decision_minutes": null
+      }
+    }
+  },
+  "honesty": {
+    "plain_line": "Everything on this page is a limitation we found in our own system and chose to show you.",
+    "closing_line": "Here is what we could not validate in twenty-one hours, and here is the experiment that would.",
+    "days_of_edge": {
+      "title": "Days of Edge — median lag from channel signal to consensus visibility",
+      "plain_language": "How many days earlier this channel finds someone than the market does.",
+      "method": "One GROUP BY over observation.observed_at. Pure date arithmetic — no outcome labels, nothing to leak.",
+      "design_rule": "A channel qualifies only if it can fire for a person with no GitHub, no funding and no network.",
+      "asof": "2026-07-19T02:14:33Z",
+      "rows": [
+        { "channel_id": "arxiv", "channel": "arXiv preprints — first-time sole authors", "kind": "discovery", "status": "active", "median_days": { "value": 58, "n": 9, "ci": [17, 88] }, "volume_30d": { "value": 12, "n": 63 }, "thin_cell": true, "cold_start_native": true, "recommendation": "UNDEREXPLORED — high edge, low volume, n too thin to be confident. The error bar says so." },
+        { "channel_id": "uspto_tm_1b", "channel": "Self-filed trademark — 1(b), no attorney", "kind": "discovery", "status": "active", "median_days": { "value": 47, "n": 18, "ci": [29, 66] }, "volume_30d": { "value": 41, "n": 63 }, "thin_cell": false, "cold_start_native": true, "limitation": "Foreign-domiciled applicants have been required to appoint US counsel since 2019, so the empty-attorney marker selects for US-domiciled founders." },
+        { "channel_id": "hn_algolia", "channel": "Hacker News — first Show HN, account <90d", "kind": "discovery", "status": "active", "median_days": { "value": 23, "n": 31, "ci": [14, 35] }, "volume_30d": { "value": 156, "n": 63 }, "thin_cell": false, "cold_start_native": true, "note": "Our best-sampled channel. We score the comment text for lived domain exposure, never the karma." },
+        { "channel_id": "apply_form", "channel": "Inbound Apply", "kind": "discovery", "status": "active", "median_days": { "value": 0, "n": 17, "ci": [0, 0] }, "volume_30d": { "value": 17, "n": 63 }, "cold_start_native": true, "note": "Zero by construction. Inbound is not an edge, it is a queue." },
+        { "channel_id": "github_trending", "channel": "GitHub Trending — by stars", "kind": "declined", "status": "defunded", "median_days": { "value": 0, "n": 41, "ci": [0, 1] }, "volume_30d": { "value": 0, "n": 63 }, "cold_start_native": false, "rationale": "Zero days of edge. It is beta. Everyone reads it. We defunded it — on our own metric, not on principle." }
+      ]
+    },
+    "channel_outcomes": { "title": "Channel quality by funded outcome", "rows": [], "n_funded_outcomes": { "value": 0, "n": 0 }, "display": "0 funded outcomes. This is why we do not rank channels on quality yet — here is the schema that would.", "schema_columns": ["channel_id", "opportunity_id", "outcome", "outcome_at", "check_size_usd"] },
+    "not_collected": {
+      "title": "Not collected, and why",
+      "n": { "value": 3, "n": 3 },
+      "rows": [
+        { "source_name": "LinkedIn headlines and connection counts", "brief_named": false, "reason_class": "pedigree_proxy", "reason_text": "Encodes access, not capability. Ranking on it rebuilds the network gate this product exists to replace. Also ToS." },
+        { "source_name": "GitHub stars and follower counts", "brief_named": true, "reason_class": "measures_already_visible", "reason_text": "Measures who is already visible. Zero days of edge on our own metric." },
+        { "source_name": "Devpost / Luma / MLH rosters", "brief_named": true, "reason_class": "js_rendering", "reason_text": "The brief names hackathons. Declined: Cloudflare, JS-rendered, partly non-public." }
+      ]
+    },
+    "recognition_probe": {
+      "title": "Recognition probe — model leakage on pre-fame artifacts",
+      "plain_language": "Before claiming a hit rate, we tested whether the model already knows the answer. It does.",
+      "run_at": "2026-07-19T00:52:00Z",
+      "n_artifacts": { "value": 15, "n": 15 },
+      "n_identified": { "value": 9, "n": 15 },
+      "leak_rate": { "value": 0.6, "n": 15, "ci": [0.35, 0.81], "basis": "Wilson score interval" },
+      "method": "Fifteen real 2021 pre-fame artifacts, redacted and paraphrased, shown to the model with one question: name the company.",
+      "statement": "We wanted to backtest against real outcomes. We ran the leakage probe first; the model identified nine of fifteen redacted artifacts. So we are not reporting a hit rate, because it would be memory, not skill.",
+      "examples": [
+        { "artifact_id": "rp_03", "redacted_excerpt": "a two-sided marketplace for short-term room rental in one city", "identified": true, "model_answer": "Airbnb" },
+        { "artifact_id": "rp_07", "redacted_excerpt": "a batch-processing library for columnar data on a single node", "identified": false, "model_answer": "unknown" }
+      ]
+    },
+    "reliability_table": {
+      "title": "Source reliability — published in advance, defended line by line",
+      "plain_line": "These weights are ours. We set them by hand, we print them, and we will argue any row.",
+      "rows": [
+        { "source_class": "self_report", "log_odds": -1.2, "rationale": "A founder asserting their own metric is the weakest evidence in the system. Negative, not zero." },
+        { "source_class": "interview", "log_odds": 0.0, "rationale": "Neutral prior. Scored on atom density and verified-pointer yield, never on the fact that it was said." },
+        { "source_class": "press", "log_odds": 0.2, "rationale": "Barely positive. Most early-stage press is a rewritten founder self-report." },
+        { "source_class": "third_party_observable", "log_odds": 1.1, "rationale": "A live endpoint, a dated changelog, a team page. Costly to fake, cheap to check." },
+        { "source_class": "registry_filing", "log_odds": 2.4, "rationale": "USPTO and incorporation records. Perjury risk attaches. Strongest row in the table." }
+      ],
+      "n_rows": { "value": 5, "n": 5 },
+      "thresholds": { "verified": 2.0, "contradicted": -2.0 },
+      "confidence_mapping": { "high": "|log-odds| >= 2.0", "medium": "0.5 <= |log-odds| < 2.0", "low": "|log-odds| < 0.5", "note": "High/Medium/Low is the default render for a non-technical reader. The log-odds number is one click down." }
+    },
+    "research_area_3_design": {
+      "title": "How we would test whether public footprints predict founder success",
+      "note": "Design only. Not run.",
+      "outcome_variable": "Reaching a priced institutional round within 24 months of first observable artifact.",
+      "cohort_construction": "Matched contemporaneous cohort built from artifact registries rather than funding databases, because sampling on funding conditions on the outcome.",
+      "selection_diagnosis": "Failure leaves no public trace, so the negative class is systematically under-observed. This is a Heckman-type selection problem. We diagnose it; we did not code it.",
+      "leakage_control": "The recognition probe above. A leak rate of 0.60 (n=15) on 2021 artifacts means any LLM-derived feature over a pre-2023 cohort is contaminated.",
+      "power_sketch": "Detecting an odds ratio of 2.0 at 80% power needs roughly 380 positives and 1,140 matched controls. We have 63 people and zero outcomes.",
+      "n_words": { "value": 178, "n": null, "basis": "word count of the five component fields" }
+    },
+    "latency": {
+      "title": "Compute latency — unattended batch run",
+      "source": "logs/batch_7f3a91.jsonl",
+      "run_id": "run_7f3a91",
+      "shown_only_if_real": true,
+      "note": "This tile reads from the real batch log or it does not appear. It measures COMPUTE, not time-to-decision.",
+      "rows": [
+        { "step": "extract_claims", "median_ms": 2140, "p90_ms": 3810, "n": 12 },
+        { "step": "verify_claim_httpx", "median_ms": 340, "p90_ms": 910, "n": 47 },
+        { "step": "score_axes", "median_ms": 18, "p90_ms": 31, "n": 63 }
+      ],
+      "cache_hit_rate": { "value": 0.94, "n": 197, "basis": "content-hash disk cache over 197 external calls" },
+      "n_entities_processed": { "value": 63, "n": 63 }
+    },
+    "constraints_on_screen": [
+      "Real people are pseudonymized: initials + channel + signals only.",
+      "The Refuter is disabled on every real-person entity.",
+      "Outbound messages are drafted and rendered. None was sent.",
+      "There is no composite score anywhere in this system."
+    ],
+    "what_we_could_not_validate": {
+      "title": "What we could not validate in twenty-one hours, and the experiment that would",
+      "n": { "value": 2, "n": 2 },
+      "rows": [
+        { "item": "Whether findability priors generalize beyond our 63-person crawl", "why": "Several cells are under n=8 and are shrunk to the margin.", "experiment": "Expand the crawl to 5,000 people across four sectors; report per-cell coverage." },
+        { "item": "Whether Days of Edge predicts anything about outcome quality", "why": "Zero funded outcomes. channel_outcome is empty by design.", "experiment": "The empty table is the experiment. It fills over 18 months." }
+      ]
+    }
+  },
+  "asof_slices": {
+    "default": "2026-07-19T02:14:33Z",
+    "available": [
+      { "asof": "2026-04-20T00:00:00Z", "label": "−90d", "n_observations_visible": { "value": 1102, "n": 1847 } },
+      { "asof": "2026-07-19T02:14:33Z", "label": "now", "n_observations_visible": { "value": 1847, "n": 1847 } }
+    ]
+  },
+  "ui_rules": {
+    "empty_state_text": "No data at this asof. Move the point-in-time control forward.",
+    "provenance_badges": { "live": "LIVE", "fixture": "FIXTURE", "synthetic": "AUTHORED" }
+  }
+}
