@@ -85,6 +85,10 @@ THIN_CELL_N = 8
 #: coverage gap, not a measured zero. We publish the count and no prior.
 MIN_FAMILY_SUPPORT = 8
 
+#: Below this many people in the crawl, priors are computed and printed but
+#: NEVER written to the append-only table. See :func:`persist_findability_priors`.
+MIN_POPULATION_TO_PERSIST = 50
+
 #: An artifact is "expected" when the class predicts it at least this strongly.
 EXPECT_P = 0.35
 
@@ -555,6 +559,22 @@ def persist_findability_priors(
     """
     written: list[str] = []
     asof = priors.get("asof")
+
+    # A prior computed over a handful of people is not a prior, it is a rumour —
+    # and because this table is append-only, a junk row written into it cannot be
+    # taken back out. During this build the working ledger was briefly reduced to
+    # a 2-person seed fixture; had this function run in that window it would have
+    # permanently appended "P(artifact | class), n=2" rows that look exactly like
+    # the real ones in a SELECT. So it refuses instead.
+    if priors.get("n_people", 0) < MIN_POPULATION_TO_PERSIST:
+        raise ValueError(
+            f"Refusing to persist findability priors computed over "
+            f"{priors.get('n_people')} people (floor is {MIN_POPULATION_TO_PERSIST}). "
+            "The ledger looks reduced or unseeded. findability_prior is append-only, "
+            "so a row written from a degraded crawl is permanent and indistinguishable "
+            "from a real one. Restore the ledger and recompute."
+        )
+
     existing = {
         r["prior_id"]
         for r in (connection or store.conn()).execute(
@@ -1044,9 +1064,17 @@ def main(argv: list[str] | None = None) -> int:
     priors = compute_findability_priors(asof, population=people)
     print_findability_priors(priors)
 
-    written = persist_findability_priors(priors)
     print()
-    print(f"persisted {len(written)} findability_prior rows (append-only, computed_from='own_crawl')")
+    try:
+        written = persist_findability_priors(priors)
+        print(
+            f"persisted {len(written)} findability_prior rows "
+            "(append-only, computed_from='own_crawl')"
+        )
+    except ValueError as exc:
+        # Not a crash. Refusing to write is the correct outcome on a reduced
+        # ledger, and the manifests below still render from whatever is there.
+        print(f"NOT PERSISTED — {exc}")
 
     # Show one operator and one technical founder so both sides of the asymmetry
     # are on screen at once.
