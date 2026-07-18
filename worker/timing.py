@@ -268,7 +268,15 @@ def to_demo_block(asof: str, *, opportunity_ids: Iterable[str] | None = None) ->
 
 if __name__ == "__main__":  # pragma: no cover
     import json
+    import sys
+
+    # Default to the canonical demo asof, NOT the wall clock. The seeded ledger is dated
+    # against ASOF_NOW; using the real current time reads the ledger short and prints
+    # numbers that disagree with everything on screen — which is exactly the kind of thing
+    # that would get run by hand in front of a judge. Pass an ISO asof to override.
+    from worker.seed import ASOF_NOW
+
+    stamp = sys.argv[1] if len(sys.argv) > 1 else ASOF_NOW
 
     ledger.open_ledger()
-    stamp = ledger.now_iso()
     print(json.dumps(to_demo_block(stamp), indent=2))
