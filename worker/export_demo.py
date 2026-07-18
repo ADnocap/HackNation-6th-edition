@@ -261,6 +261,44 @@ def derive_from_ledger(demo: dict, asof: str) -> list[str]:
         except Exception as exc:
             print(f"  {opp_id}.claims: kept override ({exc})")
 
+    # -- three axes, recomputed at this asof ---------------------------------
+    #
+    # Trend is the reason this is worth deriving rather than authoring: the axes
+    # module re-scores at asof-90/-60/-30/0 through the same chokepoint, so the
+    # arrows are measured rather than asserted. On the current ledger the Founder
+    # axis falls 4.4 points and the label still refuses to say "declining"
+    # because the OLS band includes zero — which is a claim we can only make
+    # honestly if the number really was computed.
+    #
+    # writeback=False: exporting must never mutate the ledger. The sector-prior
+    # writeback (MVP element 6) belongs to the scoring run, not to rendering.
+    try:
+        from worker.scoring import axes as axes_mod  # noqa: PLC0415
+
+        computed = axes_mod.render(asof, writeback=False)
+        for person_id, block in (computed.get("people") or {}).items():
+            target = demo.get("people", {}).get(person_id)
+            if not isinstance(target, dict) or not isinstance(block, dict):
+                continue
+            new_axes = block.get("axes")
+            if not isinstance(new_axes, dict) or set(new_axes) != {
+                "founder",
+                "market",
+                "idea_vs_market",
+            }:
+                continue
+            # Market must stay categorical, or it becomes averageable.
+            if new_axes.get("market", {}).get("value") is not None:
+                print(f"  {person_id}.axes: kept override — market carried a numeric value")
+                continue
+            target["axes"] = new_axes
+            for extra in ("axes_disagree", "axes_disagree_headline", "axes_disagree_detail"):
+                if extra in block:
+                    target[extra] = block[extra]
+            derived.append(f"people.{person_id}.axes")
+    except Exception as exc:  # noqa: BLE001
+        print(f"  axes: kept override ({type(exc).__name__}: {exc})")
+
     for person_id, person in demo.get("people", {}).items():
         if person_id.startswith("_") or not isinstance(person, dict):
             continue
