@@ -17,8 +17,8 @@ export function OpportunityHeader({
 }) {
   const id = opp?.opportunity_id ?? "";
   const tabs = [
-    { key: "claims", href: `/opportunity/${id}`, label: "Claims & receipts" },
-    { key: "memo", href: `/opportunity/${id}/memo`, label: "Memo & decision" },
+    { key: "claims", href: `/opportunity/${id}`, label: "Evidence check" },
+    { key: "memo", href: `/opportunity/${id}/memo`, label: "Decision" },
   ];
 
   return (
@@ -27,7 +27,7 @@ export function OpportunityHeader({
         href="/"
         className="text-[11.5px] text-zinc-400 transition-colors hover:text-zinc-200"
       >
-        ← Signal feed
+        ← Discovery
       </Link>
 
       <div className="mt-2 flex flex-wrap items-start justify-between gap-x-6 gap-y-3">
@@ -58,7 +58,7 @@ export function OpportunityHeader({
             href={`/person/${opp.person_id}`}
             className="shrink-0 rounded border border-zinc-700 bg-zinc-900 px-2.5 py-1.5 text-[12px] text-sky-300 transition-colors hover:border-sky-500/50 hover:text-sky-200"
           >
-            {opp?.person_display_name ?? opp.person_id} — founder score →
+            {opp?.person_display_name ?? opp.person_id} — understand the founder →
           </Link>
         ) : null}
       </div>

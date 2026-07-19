@@ -2,6 +2,7 @@ import "server-only";
 import fs from "node:fs";
 import path from "node:path";
 import type { Demo, Json } from "./types";
+import { withShowcaseData } from "./showcase";
 
 /**
  * THE ONLY DATA SOURCE IN THE FRONTEND.
@@ -39,7 +40,7 @@ export function loadDemo(): LoadResult {
     if (!parsed || typeof parsed !== "object") {
       return { demo: {}, ok: false, error: "demo.json did not parse to an object." };
     }
-    return { demo: parsed as Demo, ok: true, error: null };
+    return { demo: withShowcaseData(parsed as Demo), ok: true, error: null };
   } catch (e) {
     return {
       demo: {},

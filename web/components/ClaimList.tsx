@@ -608,14 +608,23 @@ function ReceiptModal({ claim, onClose }: { claim: Json; onClose: () => void }) 
             </div>
           </div>
 
-          <LogOddsLedger lo={claim?.log_odds} />
-          <LooWaterfall rows={claim?.loo_waterfall} caption={claim?.loo_caption} />
-
           {receipt?.person_consequence ? (
             <PersonConsequence pc={receipt.person_consequence} />
           ) : null}
 
-          <EvidenceTable rows={claim?.evidence} />
+          <details className="receipt-technical">
+            <summary>
+              <span>
+                <strong>Show technical scoring details</strong>
+                <small>Log-odds arithmetic, evidence sensitivity and raw evidence rows</small>
+              </span>
+            </summary>
+            <div className="space-y-4 border-t border-zinc-800 p-3">
+              <LogOddsLedger lo={claim?.log_odds} />
+              <LooWaterfall rows={claim?.loo_waterfall} caption={claim?.loo_caption} />
+              <EvidenceTable rows={claim?.evidence} />
+            </div>
+          </details>
         </div>
       </div>
     </div>
@@ -874,13 +883,14 @@ export default function ClaimList({
   const list = arr(claims);
   const [openId, setOpenId] = React.useState<string | null>(null);
   const [filter, setFilter] = React.useState<string | null>(null);
+  const [showAll, setShowAll] = React.useState(false);
 
   const open = React.useMemo(
     () => list.find((c: Json) => c?.claim_id === openId) ?? null,
     [list, openId]
   );
 
-  const shown = React.useMemo(() => {
+  const sorted = React.useMemo(() => {
     const f = filter ? list.filter((c: Json) => c?.state === filter) : list;
     return [...f].sort((a: Json, b: Json) => {
       const ai = STATE_ORDER.indexOf(String(a?.state));
@@ -888,6 +898,8 @@ export default function ClaimList({
       return (ai < 0 ? 99 : ai) - (bi < 0 ? 99 : bi);
     });
   }, [list, filter]);
+
+  const shown = filter || showAll ? sorted : sorted.slice(0, 5);
 
   const states = React.useMemo(
     () =>
@@ -898,34 +910,12 @@ export default function ClaimList({
   return (
     <>
       <Panel
-        title="Trust is per claim, not per company"
-        plain="We never average these into a company trust score. Six verified claims and three contradicted ones are not a 67% company — they are six verified claims and three contradicted ones."
-        right={
-          openClaimId && list.some((c: Json) => c?.claim_id === openClaimId) ? (
-            <button
-              type="button"
-              onClick={() => setOpenId(openClaimId)}
-              className="cp-pulse rounded border border-rose-500/50 bg-rose-500/10 px-2.5 py-1 text-[11.5px] text-rose-200 transition-colors hover:bg-rose-500/20"
-            >
-              Open the contradiction receipt →
-            </button>
-          ) : null
-        }
+        title={`Claims to review — ${filter ? sorted.length : list.length}`}
+        plain="Start with red contradictions and purple missing evidence. Click a row only when you want the receipt."
+        dense
       >
-        <ClaimDistributionBar dist={distribution} />
-
-        {/* The arithmetic, printed so it can be checked on camera. */}
-        {isObj(distribution) && distribution.reconciliation ? (
-          <p className="mt-2 font-mono text-[11px] leading-relaxed text-zinc-500">
-            {String(distribution.reconciliation)}
-          </p>
-        ) : null}
-        {isObj(distribution) && distribution.plain_line ? (
-          <p className="mt-1.5 text-[12px] leading-relaxed text-zinc-400">
-            {String(distribution.plain_line)}
-          </p>
-        ) : null}
-
+        <div className="claim-overview-compact">
+          <ClaimDistributionBar dist={distribution} />
         {states.length ? (
           <div className="mt-3 flex flex-wrap items-center gap-1.5">
             <span className="t-eyebrow">
@@ -949,7 +939,7 @@ export default function ClaimList({
                 <button
                   key={s}
                   type="button"
-                  onClick={() => setFilter(filter === s ? null : s)}
+                  onClick={() => { setFilter(filter === s ? null : s); setShowAll(false); }}
                   className={`rounded border px-2 py-0.5 font-mono text-[10px] uppercase tracking-wide transition-colors ${
                     filter === s
                       ? `${st.bg} ${st.text} ${st.border}`
@@ -962,14 +952,7 @@ export default function ClaimList({
             })}
           </div>
         ) : null}
-      </Panel>
-
-      <Panel
-        className="mt-4"
-        title={`Claims — ${shown.length} shown`}
-        plain="Click any row for its receipt: what was claimed, what we fetched, and the arithmetic between them."
-        dense
-      >
+        </div>
         {shown.length ? (
           <div>
             {shown.map((c: Json, i: number) => (
@@ -986,10 +969,21 @@ export default function ClaimList({
           </div>
         )}
 
-        {note ? (
-          <p className="border-t border-zinc-900 px-3 py-2 text-[11.5px] italic leading-relaxed text-zinc-500">
-            {String(note)}
-          </p>
+        {!filter && sorted.length > 5 ? (
+          <button className="show-all-claims" type="button" onClick={() => setShowAll((v) => !v)}>
+            {showAll ? "Show only the 5 highest-priority claims" : `Show all ${sorted.length} claims`}
+          </button>
+        ) : null}
+
+        {(note || (isObj(distribution) && (distribution.reconciliation || distribution.plain_line))) ? (
+          <details className="claim-method-note">
+            <summary>Why claims are kept separate</summary>
+            <div>
+              {isObj(distribution) && distribution.plain_line ? <p>{String(distribution.plain_line)}</p> : null}
+              {isObj(distribution) && distribution.reconciliation ? <code>{String(distribution.reconciliation)}</code> : null}
+              {note ? <p>{String(note)}</p> : null}
+            </div>
+          </details>
         ) : null}
       </Panel>
 

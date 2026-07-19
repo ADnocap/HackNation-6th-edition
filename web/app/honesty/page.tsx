@@ -40,10 +40,10 @@ export default function HonestyPage() {
     <div className="space-y-4">
       <PageHead
         eyebrow="Limitations · stated by us, about us"
-        title="Honesty"
+        title="Methods & limits"
         lede={
           h?.plain_line ??
-          "Everything on this page is a limitation we found in our own system and chose to show you. Every number carries the sample size it was computed from, and the error bars are real — where they cross zero, we say the result is not yet a result."
+          "How Counterproof searches, what it refuses to collect, how reliable each source is, and where the current evidence is too thin to support a conclusion."
         }
       />
 
@@ -60,37 +60,29 @@ export default function HonestyPage() {
             <DaysOfEdge block={h.days_of_edge} />
           </PanelBoundary>
 
-          <PanelBoundary label="channel outcomes">
-            <ChannelOutcomes block={h.channel_outcomes} />
-          </PanelBoundary>
-
-          <PanelBoundary label="not collected">
-            <NotCollected block={h.not_collected} />
-          </PanelBoundary>
-
-          <PanelBoundary label="recognition probe">
-            <RecognitionProbe block={h.recognition_probe} />
-          </PanelBoundary>
-
           <PanelBoundary label="reliability table">
             <ReliabilityTable block={h.reliability_table} />
           </PanelBoundary>
 
-          <PanelBoundary label="research design">
-            <ResearchDesign block={h.research_area_3_design} />
-          </PanelBoundary>
+          <details className="route-disclosure" open>
+            <summary><span><strong>Coverage and deliberate exclusions</strong><small>Channel outcomes, blind spots and data we chose not to collect</small></span></summary>
+            <div className="disclosure-body space-y-4">
+              <PanelBoundary label="channel outcomes"><ChannelOutcomes block={h.channel_outcomes} /></PanelBoundary>
+              <PanelBoundary label="not collected"><NotCollected block={h.not_collected} /></PanelBoundary>
+              <PanelBoundary label="recognition probe"><RecognitionProbe block={h.recognition_probe} /></PanelBoundary>
+            </div>
+          </details>
 
-          <PanelBoundary label="latency">
-            <LatencyTable block={h.latency} />
-          </PanelBoundary>
+          <details className="route-disclosure">
+            <summary><span><strong>Validation design and system performance</strong><small>Research protocol, latency and visible constraints</small></span></summary>
+            <div className="disclosure-body space-y-4">
+              <PanelBoundary label="research design"><ResearchDesign block={h.research_area_3_design} /></PanelBoundary>
+              <PanelBoundary label="latency"><LatencyTable block={h.latency} /></PanelBoundary>
+              <PanelBoundary label="constraints"><ConstraintsOnScreen items={h.constraints_on_screen} /></PanelBoundary>
+            </div>
+          </details>
 
-          <PanelBoundary label="constraints">
-            <ConstraintsOnScreen items={h.constraints_on_screen} />
-          </PanelBoundary>
-
-          <PanelBoundary label="could not validate">
-            <CouldNotValidate block={h.what_we_could_not_validate} />
-          </PanelBoundary>
+          <PanelBoundary label="could not validate"><CouldNotValidate block={h.what_we_could_not_validate} /></PanelBoundary>
         </>
       )}
 
