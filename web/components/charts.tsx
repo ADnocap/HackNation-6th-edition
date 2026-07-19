@@ -407,6 +407,27 @@ export function ErrorBarChart({
 
         const pct = (x: number) => clamp((x / max) * 100, 0, 100);
 
+        // A whisker of zero width draws nothing, which would read as "we
+        // forgot the error bars" when the truth is "at this n there is no
+        // interval to draw". The row says which, using the kind the ledger
+        // already recorded.
+        const hasWidth =
+          !!ci &&
+          typeof ci[0] === "number" &&
+          typeof ci[1] === "number" &&
+          ci[1] - ci[0] > 0;
+
+        const kindLabel: Record<string, string> = {
+          single_observation: "single observation — no interval at n=1",
+          by_construction: "zero by construction",
+          insufficient_data: "not measurable at this n",
+        };
+        const noIntervalNote =
+          !hasWidth && r?.interval_kind
+            ? kindLabel[String(r.interval_kind)] ??
+              String(r.interval_kind).replace(/_/g, " ")
+            : null;
+
         return (
           <div
             key={r?.channel_id ?? i}
@@ -438,52 +459,84 @@ export function ErrorBarChart({
               ) : null}
             </div>
 
+            {/* Dot-and-whisker, not a bar filled from zero. A filled bar makes
+                the point estimate the loud thing and the uncertainty a
+                detail — the exact inversion of what this panel is for. Here
+                the interval is the widest mark on the row and the median is a
+                dot sitting inside it. */}
             <div className="flex items-center gap-3">
-              <div className="relative h-5 flex-1 rounded bg-zinc-900">
-                {ci && typeof ci[0] === "number" && typeof ci[1] === "number" ? (
-                  <div
-                    className="absolute top-1/2 h-[1.5px] -translate-y-1/2 bg-zinc-600"
-                    style={{
-                      left: `${pct(ci[0])}%`,
-                      width: `${Math.max(pct(ci[1]) - pct(ci[0]), 0.4)}%`,
-                    }}
-                    title={`95% interval [${ci[0]}, ${ci[1]}]`}
-                  />
-                ) : null}
-                {ci
-                  ? [ci[0], ci[1]].map((c, k) =>
+              <div className="relative h-5 flex-1">
+                <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-zinc-900" />
+
+                {hasWidth && ci ? (
+                  <>
+                    <div
+                      className={`absolute top-1/2 h-[2px] -translate-y-1/2 ${
+                        declined ? "bg-zinc-700" : "bg-sky-500/50"
+                      }`}
+                      style={{
+                        left: `${pct(ci[0] as number)}%`,
+                        width: `${Math.max(
+                          pct(ci[1] as number) - pct(ci[0] as number),
+                          0.4
+                        )}%`,
+                      }}
+                      title={`interval [${ci[0]}, ${ci[1]}]`}
+                    />
+                    {[ci[0], ci[1]].map((c, k) =>
                       typeof c === "number" ? (
                         <div
                           key={k}
-                          className="absolute top-1/2 h-2.5 w-[1.5px] -translate-y-1/2 bg-zinc-600"
+                          className={`absolute top-1/2 h-3 w-[2px] -translate-y-1/2 ${
+                            declined ? "bg-zinc-700" : "bg-sky-500/70"
+                          }`}
                           style={{ left: `${pct(c)}%` }}
                         />
                       ) : null
-                    )
-                  : null}
+                    )}
+                  </>
+                ) : null}
+
+                {noIntervalNote && v !== null ? (
+                  // Sits to the right of the dot, and flips to its left once
+                  // the dot is far enough along to push the label into the
+                  // value column.
+                  <span
+                    className="absolute top-1/2 -translate-y-1/2 whitespace-nowrap font-mono text-[9.5px] text-zinc-500"
+                    style={
+                      pct(v) > 55
+                        ? { right: `calc(${100 - pct(v)}% + 0.85rem)` }
+                        : { left: `calc(${pct(v)}% + 0.85rem)` }
+                    }
+                  >
+                    {noIntervalNote}
+                  </span>
+                ) : null}
+
                 {v !== null ? (
                   <div
-                    className={`absolute top-1/2 h-3.5 -translate-y-1/2 rounded-sm ${
-                      declined ? "bg-zinc-600" : "bg-sky-500"
+                    className={`absolute top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full ring-2 ring-zinc-950 ${
+                      declined ? "bg-zinc-500" : "bg-sky-300"
                     }`}
-                    style={{ left: 0, width: `${Math.max(pct(v), 0.6)}%` }}
+                    style={{ left: `${pct(v)}%` }}
+                    title={`median ${fmtNum(v, 0)}d`}
                   />
                 ) : null}
-                {/* n printed inside every bar */}
-                <span className="absolute left-1.5 top-1/2 -translate-y-1/2 font-mono text-[9.5px] text-zinc-950/90 mix-blend-normal">
-                  {n !== null && n !== undefined ? `n=${n}` : ""}
-                </span>
               </div>
-              <span className="w-16 shrink-0 text-right font-mono text-[12px] tabular-nums text-zinc-200">
-                {v === null ? "—" : `${fmtNum(v, 0)}d`}
+
+              {/* The n travels with the number, never separated from it. */}
+              <span className="flex w-24 shrink-0 items-baseline justify-end gap-1.5">
+                <span className="font-mono text-[12.5px] tabular-nums text-zinc-100">
+                  {v === null ? "—" : `${fmtNum(v, 0)}d`}
+                </span>
+                <span className="rounded-[2px] border border-zinc-700 bg-zinc-900 px-1 font-mono text-[9.5px] leading-[15px] text-zinc-400">
+                  {n === null || n === undefined ? "n/a" : `n=${n}`}
+                </span>
               </span>
             </div>
 
-            {(r?.note || r?.rationale || r?.limitation || r?.recommendation) && (
-              <p className="text-[11.5px] leading-relaxed text-zinc-500 sm:col-start-2">
-                {r.recommendation ?? r.rationale ?? r.limitation ?? r.note}
-              </p>
-            )}
+            {/* The per-row prose is rendered in full by the caller's cards
+                below; repeating it inside the chart doubled every sentence. */}
           </div>
         );
       })}

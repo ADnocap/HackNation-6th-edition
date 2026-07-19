@@ -170,69 +170,41 @@ function FunnelStrip({ funnel }: { funnel: Json }) {
     return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
   });
 
-  // Show the shape of the drop-off, not just the counts. The gap between
-  // "discovered" and "contactable" is the structural weakness we print on
-  // purpose, and a reader should be able to see it without doing arithmetic.
+  // Bars sized against the largest count, so the shape of the funnel is
+  // visible at a glance.
+  //
+  // Deliberately NO between-stage subtraction: these counters are not one
+  // sequential chain — outbound and inbound are separate intakes that merge
+  // at screening, and `screened_out` counts removals rather than survivors.
+  // Differencing adjacent rows would print arithmetic the data never claimed,
+  // which is the one thing this product is not allowed to do.
   const vals = entries.map(([k, v]) => ({
     k,
     v: typeof v === "number" ? v : Number(qval(v) ?? 0),
   }));
   const max = Math.max(1, ...vals.map((e) => e.v));
 
-  let biggestDropAt = -1;
-  let biggestDrop = 0;
-  for (let i = 1; i < vals.length; i++) {
-    const d = vals[i - 1].v - vals[i].v;
-    if (d > biggestDrop) {
-      biggestDrop = d;
-      biggestDropAt = i;
-    }
-  }
-
   return (
     <div className="space-y-1">
-      {vals.map((e, i) => {
-        const prev = i > 0 ? vals[i - 1].v : null;
-        const drop = prev !== null ? prev - e.v : null;
-        const isWorst = i === biggestDropAt && biggestDrop > 0;
-        return (
-          <div
-            key={e.k}
-            className="grid grid-cols-[minmax(0,6.5rem)_1fr_auto] items-center gap-3 sm:grid-cols-[minmax(0,11rem)_1fr_auto]"
-          >
-            <span className="truncate text-[11.5px] text-zinc-300">
-              {humanize(e.k)}
-            </span>
-            <div className="relative h-4 rounded-sm bg-zinc-900">
-              <div
-                className={`h-4 rounded-sm ${
-                  isWorst ? "bg-amber-500/70" : "bg-zinc-700"
-                }`}
-                style={{ width: `${Math.max((e.v / max) * 100, 1)}%` }}
-              />
-            </div>
-            <span className="flex w-[6rem] shrink-0 items-baseline justify-end gap-2 sm:w-[9.5rem]">
-              {drop !== null && drop > 0 ? (
-                <span
-                  className={`font-mono text-[10px] tabular-nums ${
-                    isWorst ? "text-amber-300" : "text-zinc-500"
-                  }`}
-                  title={
-                    isWorst
-                      ? "The largest drop in the funnel — this is where we lose the most people."
-                      : "Lost at this step"
-                  }
-                >
-                  −{drop}
-                </span>
-              ) : null}
-              <span className="font-mono text-[15px] tabular-nums text-zinc-100">
-                {e.v}
-              </span>
-            </span>
+      {vals.map((e) => (
+        <div
+          key={e.k}
+          className="grid grid-cols-[minmax(0,6.5rem)_1fr_auto] items-center gap-3 sm:grid-cols-[minmax(0,11rem)_1fr_auto]"
+        >
+          <span className="truncate text-[11.5px] text-zinc-300">
+            {humanize(e.k)}
+          </span>
+          <div className="relative h-4 rounded-sm bg-zinc-900">
+            <div
+              className="h-4 rounded-sm bg-zinc-700"
+              style={{ width: `${Math.max((e.v / max) * 100, 1)}%` }}
+            />
           </div>
-        );
-      })}
+          <span className="w-[3.5rem] shrink-0 text-right font-mono text-[15px] tabular-nums text-zinc-100">
+            {e.v}
+          </span>
+        </div>
+      ))}
     </div>
   );
 }
@@ -559,7 +531,7 @@ export default function SignalFeed({
       <Panel
         eyebrow="Discovery → contact"
         title="Sourcing funnel"
-        plain="How many people we found, how many we could actually reach, and how many we contacted. The widest drop is highlighted: that step is our largest structural weakness, so we print it rather than reporting only the number that flatters us."
+        plain="How many people we found, how many we could actually reach, and how many moved through each step. Discovered and contactable are not the same number, and the distance between those two bars is our largest structural weakness — we show it rather than reporting only the count that flatters us."
       >
         {isObj(funnel) && Object.keys(funnel).length ? (
           <FunnelStrip funnel={funnel} />

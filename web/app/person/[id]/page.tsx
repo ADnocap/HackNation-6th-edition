@@ -117,14 +117,18 @@ export default async function PersonPage({
     <div className="space-y-4">
       {/* Header */}
       <PageHead
-        eyebrow="Founder record · cold-start bench"
+        // The eyebrow and lede must be true of THIS person: one of these two
+        // founders has a two-venture history and describing him as
+        // track-record-less would be exactly the kind of unearned sentence
+        // this product exists to refuse.
+        eyebrow={bench ? "Founder record · cold-start bench" : "Founder record"}
         title={
           person.display_name ??
           person.person_display_name ??
           person.name ??
           id
         }
-        lede="A founder with little or no public track record. Rather than score them low for it, we say exactly what we are scoring on, how much of the estimate is a prior rather than evidence, and what would narrow the range."
+        lede="Everything we can say about this person, and how much of it is evidence rather than a prior. The Founder Score here belongs to the human rather than the company: it persists across ventures, and nothing resets it."
         meta={
           <>
             <span className="text-zinc-400">{id}</span>

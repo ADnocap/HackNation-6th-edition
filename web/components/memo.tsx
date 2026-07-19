@@ -135,16 +135,18 @@ export function MemoBullet({ b, oppId }: { b: Json; oppId?: string }) {
     return (
       <li className="flex gap-2">
         <span className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-zinc-700" />
-        <div className="min-w-0 flex-1 rounded border border-dashed border-zinc-700 bg-zinc-900/50 px-2.5 py-1.5">
+        {/* A sentence that could not be written is an absence, and wears the
+            same material as every other absence in the product. */}
+        <div className="lacuna min-w-0 flex-1 rounded border border-dashed border-zinc-700 px-2.5 py-1.5">
           <div className="flex flex-wrap items-center gap-2">
-            <Badge className="border-zinc-600 bg-zinc-900 text-zinc-400">
+            <Badge className="border-zinc-600 bg-zinc-900 text-zinc-300">
               blocked
             </Badge>
-            <span className="text-[12.5px] italic text-zinc-500 line-through decoration-zinc-700">
+            <span className="text-[12.5px] text-zinc-400 line-through decoration-zinc-600">
               {b.text ?? "—"}
             </span>
           </div>
-          <p className="mt-1 text-[11.5px] leading-relaxed text-zinc-500">
+          <p className="mt-1 text-[11.5px] leading-relaxed text-zinc-400">
             {b.reason ??
               "Zero evidence ids. A claim with no evidence physically cannot render as prose — it renders as this."}
           </p>

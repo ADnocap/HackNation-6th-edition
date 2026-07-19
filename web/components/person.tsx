@@ -532,7 +532,7 @@ export function ManifestChecklist({ manifest }: { manifest: Json }) {
                       </span>
                     </div>
                     {r?.note ? (
-                      <div className="mt-1 max-w-[42ch] pl-[19px] text-[11px] leading-relaxed text-zinc-400">
+                      <div className="mt-1 max-w-[56ch] pl-[19px] text-[11px] leading-relaxed text-zinc-400">
                         {r.note}
                       </div>
                     ) : null}
