@@ -144,6 +144,7 @@ grep -rn "FROM observation" worker/ --include=*.py
 - [The concept, architecture and build plan](docs/IDEA.md)
 - [Task assignments & ownership](docs/TASKS.md)
 - [Challenge briefs](docs/CHALLENGES.md) · [Competition schedule](docs/HACKATHON.md)
+- [One-pager](docs/ONEPAGER.md)
 - [Area of Research 3 — test design](docs/RESEARCH.md)
 - [Submission checklist](docs/SUBMISSION.md)
 
