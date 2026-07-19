@@ -280,27 +280,49 @@ export function ColdStartBench({
         </Stat>
       </div>
 
-      {/* Weight split bar */}
+      {/* Weight split bar — the load-bearing admission on this page.
+          The prior half wears the lacuna hatch, because a prior is what we
+          reach for exactly where direct evidence is absent. Saying that in
+          the material is more honest than saying it in a footnote. */}
       {pw !== null && pw <= 1 ? (
-        <div>
-          <div className="flex h-2.5 overflow-hidden rounded-sm bg-zinc-900">
+        <div className="rounded border border-zinc-800 bg-zinc-950/70 p-3">
+          <div className="t-eyebrow mb-2">What this estimate is made of</div>
+          <div
+            className="flex h-5 overflow-hidden rounded-sm border border-zinc-800"
+            role="img"
+            aria-label={`Direct evidence ${((1 - pw) * 100).toFixed(
+              0
+            )} percent, reference-class prior ${(pw * 100).toFixed(0)} percent`}
+          >
             <div
-              className="bg-sky-500"
+              className="bg-sky-500/80"
               style={{ width: `${(1 - pw) * 100}%` }}
-              title="Direct evidence"
+              title="Direct evidence about this founder"
             />
             <div
-              className="bg-zinc-600"
+              className="lacuna"
               style={{ width: `${pw * 100}%` }}
-              title="Reference-class prior"
+              title="Reference-class prior — used where direct evidence is absent"
             />
           </div>
-          <div className="mt-1 flex justify-between text-[10.5px] text-zinc-500">
-            <span>direct evidence {((1 - pw) * 100).toFixed(0)}%</span>
-            <span>reference-class prior {(pw * 100).toFixed(0)}%</span>
+          <div className="mt-2 flex flex-wrap justify-between gap-x-4 gap-y-1 text-[11.5px]">
+            <span className="flex items-center gap-1.5 text-zinc-300">
+              <span className="h-2 w-2 rounded-sm bg-sky-500/80" />
+              direct evidence{" "}
+              <span className="font-mono tabular-nums text-zinc-100">
+                {((1 - pw) * 100).toFixed(0)}%
+              </span>
+            </span>
+            <span className="flex items-center gap-1.5 text-zinc-300">
+              <span className="lacuna-chip lacuna h-2 w-4" />
+              reference-class prior{" "}
+              <span className="font-mono tabular-nums text-zinc-100">
+                {(pw * 100).toFixed(0)}%
+              </span>
+            </span>
           </div>
           {bench.prior_weight_formula ? (
-            <p className="mt-1.5 font-mono text-[10.5px] leading-relaxed text-zinc-500">
+            <p className="mt-2 border-t border-zinc-900 pt-2 font-mono text-[10.5px] leading-relaxed text-zinc-400">
               {bench.prior_weight_formula}
             </p>
           ) : null}
@@ -390,104 +412,231 @@ export function ManifestChecklist({ manifest }: { manifest: Json }) {
     return <EmptyState text="No expected-evidence manifest at this asof." />;
   }
 
-  return (
-    <div className="overflow-x-auto">
-      <table className="w-full min-w-[640px] text-left">
-        <thead>
-          <tr className="border-b border-zinc-800 text-[10px] uppercase tracking-wider text-zinc-500">
-            <th className="py-1.5 pr-3 font-medium">Artifact</th>
-            <th className="py-1.5 pr-3 font-medium">Found</th>
-            <th className="py-1.5 pr-3 font-medium">Expected</th>
-            <th className="py-1.5 pr-3 font-medium">Findability prior</th>
-            <th className="py-1.5 font-medium">Effect on the estimate</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((r: Json, i: number) => {
-            const found = r?.found === true;
-            const expected = r?.expected === true;
-            const penalised = r?.penalised === true;
-            const notExpected = !expected;
+  // Three kinds of row, and only one of them costs anything.
+  const kindOf = (r: Json): "found" | "priced" | "unpriced" => {
+    if (r?.found === true) return "found";
+    return r?.expected === true && r?.penalised === true ? "priced" : "unpriced";
+  };
 
-            return (
-              <tr
-                key={r?.evidence_id ?? r?.artifact_type ?? i}
-                className={`border-b border-zinc-900 align-top ${
-                  notExpected ? "opacity-50" : ""
-                }`}
-              >
-                <td className="py-2 pr-3">
-                  <div className="text-[12.5px] text-zinc-200">
-                    {humanize(r?.artifact_type ?? r?.label ?? r?.name)}
-                  </div>
-                  {r?.note ? (
-                    <div className="mt-0.5 text-[11px] leading-snug text-zinc-500">
-                      {r.note}
+  const nFound = rows.filter((r: Json) => kindOf(r) === "found").length;
+  const nPriced = rows.filter((r: Json) => kindOf(r) === "priced").length;
+  const nUnpriced = rows.filter((r: Json) => kindOf(r) === "unpriced").length;
+
+  // Total width bought by absence — the honest price of the gaps.
+  const totalWiden = rows.reduce((s: number, r: Json) => {
+    const w = qval(r?.interval_widen);
+    return s + (w ?? 0);
+  }, 0);
+
+  const maxWiden = Math.max(
+    0.1,
+    ...rows.map((r: Json) => Math.abs(qval(r?.interval_widen) ?? 0))
+  );
+
+  return (
+    <div>
+      {/* The ledger of the manifest itself, before the rows. */}
+      <div className="mb-3 flex flex-wrap items-center gap-x-6 gap-y-2 border-b border-zinc-800 pb-3">
+        <span className="flex items-baseline gap-1.5">
+          <span className="font-mono text-[17px] tabular-nums text-emerald-300">
+            {nFound}
+          </span>
+          <span className="text-[11.5px] text-zinc-400">found</span>
+        </span>
+        <span className="flex items-baseline gap-1.5">
+          <span className="font-mono text-[17px] tabular-nums text-violet-300">
+            {nPriced}
+          </span>
+          <span className="text-[11.5px] text-zinc-400">
+            expected, not found
+          </span>
+        </span>
+        <span className="flex items-baseline gap-1.5">
+          <span className="font-mono text-[17px] tabular-nums text-zinc-400">
+            {nUnpriced}
+          </span>
+          <span className="text-[11.5px] text-zinc-400">not expected</span>
+        </span>
+        {totalWiden > 0 ? (
+          <span className="ml-auto font-mono text-[11px] text-zinc-400">
+            absence bought{" "}
+            <span className="text-violet-300">+{fmtNum(totalWiden, 1)}</span> of
+            interval width — and nothing off the score
+          </span>
+        ) : null}
+      </div>
+
+      <div className="overflow-x-auto">
+        <table className="w-full min-w-[680px] text-left">
+          <caption className="sr-only">
+            Expected-evidence manifest: what we looked for, what we found, and
+            how each absence was priced.
+          </caption>
+          <thead>
+            <tr className="border-b border-zinc-800">
+              <th scope="col" className="t-eyebrow py-2 pr-3 text-left">
+                Artifact
+              </th>
+              <th scope="col" className="t-eyebrow py-2 pr-3 text-left">
+                Status
+              </th>
+              <th scope="col" className="t-eyebrow py-2 pr-3 text-left">
+                P(findable) if it existed
+              </th>
+              <th scope="col" className="t-eyebrow py-2 text-left">
+                Effect on the estimate
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r: Json, i: number) => {
+              const kind = kindOf(r);
+              const widen = qval(r?.interval_widen);
+              const prior = qval(
+                isObj(r?.findability_prior)
+                  ? r.findability_prior.value
+                  : r?.findability_prior
+              );
+
+              // Absence is hatched, never faded. A row you can barely read is
+              // not a row the investor can act on — and acting on the gaps is
+              // the entire proposition.
+              const rowCls =
+                kind === "priced"
+                  ? "lacuna-priced"
+                  : kind === "unpriced"
+                  ? "lacuna"
+                  : "";
+
+              return (
+                <tr
+                  key={r?.evidence_id ?? r?.artifact_type ?? i}
+                  className={`border-b border-zinc-900 align-top ${rowCls}`}
+                >
+                  <td className="py-2.5 pr-3">
+                    <div className="flex items-baseline gap-2">
+                      <span
+                        aria-hidden
+                        className={`font-mono text-[11px] ${
+                          kind === "found"
+                            ? "text-emerald-400"
+                            : kind === "priced"
+                            ? "text-violet-400"
+                            : "text-zinc-500"
+                        }`}
+                      >
+                        {kind === "found" ? "✓" : "▨"}
+                      </span>
+                      <span className="text-[12.5px] text-zinc-100">
+                        {humanize(r?.artifact_type ?? r?.label ?? r?.name)}
+                      </span>
                     </div>
-                  ) : null}
-                </td>
-                <td className="py-2 pr-3">
-                  {found ? (
-                    <Badge className="border-emerald-500/40 bg-emerald-500/10 text-emerald-300">
-                      found
-                    </Badge>
-                  ) : (
-                    <Badge className="border-zinc-700 bg-zinc-900 text-zinc-400">
-                      absent
-                    </Badge>
-                  )}
-                </td>
-                <td className="py-2 pr-3">
-                  {expected ? (
-                    <span className="text-[12px] text-zinc-300">expected</span>
-                  ) : (
-                    <span
-                      className="text-[11.5px] italic text-zinc-500"
-                      title="Absence the findability prior predicted for this resource class."
-                    >
-                      not expected for this founder profile
-                    </span>
-                  )}
-                </td>
-                <td className="py-2 pr-3">
-                  {r?.findability_prior ? (
-                    <N q={r.findability_prior} digits={2} />
-                  ) : (
-                    <span className="text-zinc-600">—</span>
-                  )}
-                </td>
-                <td className="py-2">
-                  {found ? (
-                    <span className="text-[11.5px] text-emerald-300">
-                      informs the estimate
-                    </span>
-                  ) : penalised ? (
-                    <span
-                      className="text-[11.5px] text-amber-300"
-                      title="Missing expected evidence widens the interval. It never lowers the score."
-                    >
-                      widens the interval
-                      {qval(r?.interval_widen) !== null
-                        ? ` by ${fmtNum(qval(r?.interval_widen))}`
-                        : ""}{" "}
-                      — score unchanged
-                    </span>
-                  ) : (
-                    <span className="text-[11.5px] text-zinc-500">
-                      not penalised
-                    </span>
-                  )}
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-      <p className="mt-2.5 text-[11.5px] leading-relaxed text-zinc-500">
-        Missing evidence widens the interval and never lowers the score. Grey rows
-        are absences our findability prior already predicted for this resource
-        class, so they cost nothing. That asymmetry is what keeps this from
-        re-encoding the network gate.
+                    {r?.note ? (
+                      <div className="mt-1 max-w-[42ch] pl-[19px] text-[11px] leading-relaxed text-zinc-400">
+                        {r.note}
+                      </div>
+                    ) : null}
+                  </td>
+
+                  <td className="py-2.5 pr-3">
+                    {kind === "found" ? (
+                      <Badge className="border-emerald-500/40 bg-emerald-500/10 text-emerald-300">
+                        found
+                      </Badge>
+                    ) : kind === "priced" ? (
+                      <Badge
+                        className="border-violet-500/40 bg-violet-500/10 text-violet-200"
+                        title="We expected this for a founder with this profile and did not find it. It is priced as width."
+                      >
+                        expected · absent
+                      </Badge>
+                    ) : (
+                      <span
+                        className="text-[11.5px] leading-snug text-zinc-300"
+                        title="Absence the findability prior already predicted for this resource class."
+                      >
+                        not expected for
+                        <br />
+                        this founder profile
+                      </span>
+                    )}
+                  </td>
+
+                  <td className="py-2.5 pr-3">
+                    {r?.findability_prior ? (
+                      <div className="w-[7.5rem]">
+                        <N q={r.findability_prior} digits={2} />
+                        {prior !== null && prior >= 0 && prior <= 1 ? (
+                          <div
+                            className="mt-1.5 h-1 w-full rounded-full bg-zinc-800"
+                            aria-hidden
+                          >
+                            <div
+                              className="h-1 rounded-full bg-zinc-500"
+                              style={{ width: `${prior * 100}%` }}
+                            />
+                          </div>
+                        ) : null}
+                      </div>
+                    ) : (
+                      <span className="text-zinc-600">—</span>
+                    )}
+                  </td>
+
+                  <td className="py-2.5">
+                    {kind === "found" ? (
+                      <span className="text-[11.5px] text-emerald-300">
+                        informs the estimate
+                      </span>
+                    ) : kind === "priced" ? (
+                      <div>
+                        <span className="text-[11.5px] text-violet-200">
+                          widens the interval
+                          {widen !== null ? (
+                            <span className="font-mono tabular-nums">
+                              {" "}
+                              +{fmtNum(widen, 1)}
+                            </span>
+                          ) : null}{" "}
+                          — score unchanged
+                        </span>
+                        {widen !== null && widen > 0 ? (
+                          <div
+                            className="mt-1.5 h-1 w-full max-w-[9rem] rounded-full bg-zinc-800"
+                            aria-hidden
+                          >
+                            <div
+                              className="h-1 rounded-full bg-violet-400"
+                              style={{
+                                width: `${Math.max(
+                                  (Math.abs(widen) / maxWiden) * 100,
+                                  4
+                                )}%`,
+                              }}
+                            />
+                          </div>
+                        ) : null}
+                      </div>
+                    ) : (
+                      <span className="text-[11.5px] text-zinc-300">
+                        not penalised — costs nothing
+                      </span>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      <p className="mt-3 max-w-[74ch] border-t border-zinc-800 pt-3 text-[12px] leading-[1.65] text-zinc-300">
+        Missing evidence widens the interval and never lowers the score. Hatched
+        rows are absences — the graphite ones our findability prior already
+        predicted for this resource class, so they cost nothing. That asymmetry
+        is what keeps this from re-encoding the network gate: a founder is never
+        marked down for lacking artifacts that someone in their position would
+        not be expected to have.
       </p>
     </div>
   );

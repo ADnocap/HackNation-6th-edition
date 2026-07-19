@@ -1,17 +1,91 @@
 @import "tailwindcss";
 
-/*
-  Counterproof — dark, dense, data-first.
-  Bloomberg density, Notion approachability. Numbers are tabular everywhere so
-  columns of figures line up; prose is comfortable so a non-technical reader
-  can follow the plain-language line above every quant panel.
-*/
+/* ==================================================================
+   Counterproof — "The Register"
+
+   Design direction: this product is an archival finding aid for
+   evidence. An archivist's catalogue records the holdings AND the
+   lacunae — the gaps in the record — because a gap you have named is
+   not the same as a gap you have missed. Everything below is built to
+   make absence as legible as presence.
+
+   COLOR is the palette of manuscript conservation, not of dashboards:
+   a microfilm-blue ground, warm paper for type, and pigments that
+   have names — verdigris, ochre, minium, indigo, prussian. These are
+   installed by REDEFINING Tailwind's scales, so every existing
+   `text-zinc-400` / `border-emerald-500` in the app re-skins at once
+   without a single JSX edit.
+
+   TYPE has three voices and never mixes them:
+     serif frames  — page and panel titles (the catalogue)
+     sans explains — the plain-language line for a non-technical reader
+     mono measures — every number, every n, every id
+
+   SIGNATURE is the lacuna hatch (see `.lacuna` below).
+   ================================================================== */
 
 @theme {
+  /* --- Type ------------------------------------------------------ */
+  /* Old-style serif: bookish and sturdy, the face of a catalogue —
+     deliberately not a high-contrast Didone. Held to titles only. */
+  --font-display: "Iowan Old Style", "Palatino Linotype", Palatino,
+    "Book Antiqua", Georgia, ui-serif, serif;
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, sans-serif;
   --font-mono: ui-monospace, "SFMono-Regular", "Cascadia Mono", "Segoe UI Mono",
     Menlo, Consolas, monospace;
+
+  /* --- Ink: the ground ------------------------------------------ */
+  /* A microfilm base — cool, faintly blue-green. Not neutral #09090b,
+     which is where every dark dashboard lands by default. */
+  --color-zinc-50: #f1efe9;
+  --color-zinc-100: #e5e3dc;
+  --color-zinc-200: #d2d2cb;
+  --color-zinc-300: #b4bbbd;
+  --color-zinc-400: #909ba1;
+  --color-zinc-500: #7c8a93;
+  --color-zinc-600: #62707a;
+  --color-zinc-700: #3d4a51;
+  --color-zinc-800: #27323a;
+  --color-zinc-900: #182027;
+  --color-zinc-950: #101619;
+
+  /* --- Verdigris: found, verified, clears the gate --------------- */
+  --color-emerald-200: #bde5d5;
+  --color-emerald-300: #93d5bd;
+  --color-emerald-400: #63c1a3;
+  --color-emerald-500: #3fa98a;
+  --color-emerald-600: #2f8a6f;
+
+  /* --- Ochre: unverified, at risk, human wait -------------------- */
+  --color-amber-100: #f7e6c3;
+  --color-amber-200: #efd7a4;
+  --color-amber-300: #e5c37c;
+  --color-amber-400: #d5a955;
+  --color-amber-500: #c18f3c;
+  --color-amber-600: #9e7229;
+
+  /* --- Minium: contradicted, breached, contract violation --------
+     Red lead — the pigment used for rubrication and for a
+     conservator's correction mark. */
+  --color-rose-100: #f9dcd5;
+  --color-rose-200: #f3bcb0;
+  --color-rose-300: #ec9d8e;
+  --color-rose-400: #e07c68;
+  --color-rose-500: #d25d46;
+  --color-rose-600: #b04430;
+
+  /* --- Indigo: absence that was expected, and priced ------------- */
+  --color-violet-200: #cdd2ef;
+  --color-violet-300: #aab1e1;
+  --color-violet-400: #8b94d3;
+  --color-violet-500: #717ac5;
+
+  /* --- Prussian: live fetch, links, outward references ----------- */
+  --color-sky-200: #bcdaea;
+  --color-sky-300: #94c6e0;
+  --color-sky-400: #6dadce;
+  --color-sky-500: #4c91ba;
 }
 
 html {
@@ -19,37 +93,133 @@ html {
 }
 
 body {
-  background-color: #09090b;
-  color: #e4e4e7;
+  background-color: #0a0e11;
+  color: var(--color-zinc-100);
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-/* Numbers must never jitter when a value changes under the neutralization
-   toggle — the reorder is the message, not the digits reflowing. */
+/* Numbers must never jitter when a value changes under the
+   neutralization toggle — the reorder is the message, not the digits
+   reflowing. */
 .tabular-nums,
 table {
   font-variant-numeric: tabular-nums;
 }
+
+/* ==================================================================
+   THE SIGNATURE — the lacuna
+
+   Absence is a first-class object in this product, so it gets its own
+   material rather than a lower opacity. Fading a row out says "this
+   matters less". Hatching it says "this region is deliberately blank,
+   and we know it" — which is the actual claim.
+
+   Two variants, because the data distinguishes two absences:
+     .lacuna         graphite — absence the findability prior predicted.
+                     Costs nothing. Quiet, but fully legible.
+     .lacuna-priced  indigo — expected and not found. Widens the
+                     interval, so it is allowed to carry colour.
+   ================================================================== */
+
+.lacuna {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(144, 155, 161, 0.13) 0 1px,
+    transparent 1px 6px
+  );
+  background-color: rgba(24, 32, 39, 0.5);
+}
+
+.lacuna-priced {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(139, 148, 211, 0.22) 0 1px,
+    transparent 1px 6px
+  );
+  background-color: rgba(113, 122, 197, 0.05);
+}
+
+/* A swatch of the same material, for the key that teaches it once. */
+.lacuna-chip {
+  display: inline-block;
+  width: 1.5rem;
+  height: 0.8rem;
+  border-radius: 2px;
+  border: 1px solid var(--color-zinc-700);
+  vertical-align: -1px;
+}
+
+/* ==================================================================
+   Type roles
+   ================================================================== */
+
+/* The catalogue voice. Titles only — the restraint is the point. */
+.t-display {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.012em;
+}
+
+/* The filing label above a title: what kind of thing this is. */
+.t-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  line-height: 1.4;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--color-zinc-500);
+}
+
+/* The one sentence a non-technical investor reads. It gets its own
+   register — wider leading, warmer colour, and a rule down the left
+   so the eye learns to find it above every quantitative panel. */
+.t-plain {
+  font-size: 13px;
+  line-height: 1.62;
+  color: var(--color-zinc-300);
+  max-width: 68ch;
+  border-left: 2px solid var(--color-zinc-700);
+  padding-left: 0.7rem;
+}
+
+/* ==================================================================
+   Chrome
+   ================================================================== */
 
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: #09090b;
+  background: #0a0e11;
 }
 ::-webkit-scrollbar-thumb {
-  background: #27272a;
+  background: var(--color-zinc-800);
   border-radius: 6px;
-  border: 2px solid #09090b;
+  border: 2px solid #0a0e11;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #3f3f46;
+  background: var(--color-zinc-700);
 }
 
-/* The neutralization toggle reorders rows. The movement must be legible, so
-   rows animate to their new position rather than snapping. */
+/* Keyboard focus is visible everywhere, in ochre — the colour of a
+   pencil mark on the page you are currently reading. */
+:focus-visible {
+  outline: 2px solid var(--color-amber-400);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ==================================================================
+   Motion — one orchestrated moment, nothing scattered.
+
+   The only motion that earns its place is the board reordering under
+   the neutralization toggle, because there the movement IS the
+   argument. Everything else is a 200ms fade at most.
+   ================================================================== */
+
 @media (prefers-reduced-motion: no-preference) {
   .row-move {
     transition: transform 520ms cubic-bezier(0.22, 1, 0.36, 1),
@@ -73,15 +243,43 @@ table {
 
 @keyframes cp-pulse-ring {
   0% {
-    box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.35);
+    box-shadow: 0 0 0 0 rgba(210, 93, 70, 0.32);
   }
   70% {
-    box-shadow: 0 0 0 8px rgba(244, 63, 94, 0);
+    box-shadow: 0 0 0 8px rgba(210, 93, 70, 0);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(244, 63, 94, 0);
+    box-shadow: 0 0 0 0 rgba(210, 93, 70, 0);
   }
 }
 .cp-pulse {
   animation: cp-pulse-ring 2.2s ease-out infinite;
+}
+
+/* A row that changed position under neutralization gets a brief
+   ochre wash, so the eye can find the movers after they land. */
+@keyframes cp-settle {
+  0% {
+    background-color: rgba(213, 169, 85, 0.14);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+.cp-settle {
+  animation: cp-settle 1100ms ease-out 380ms both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cp-fade-in,
+  .cp-pulse,
+  .cp-settle {
+    animation: none !important;
+  }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

@@ -273,7 +273,7 @@ LEDGERLINE_CLAIMS = [
      "verified", 2.0, 0.881, "high", 0, 0, 0),
     ("clm_dr_stripe", "payments_live", "Payments are wired through a live PSP.", "stripe", "psp",
      "verified", 2.1, 0.891, "high", 0, 0, 0),
-    ("clm_dr_trademark", "trademark_filing", "Self-filed 1(b) trademark, no attorney of record.", "98220417", "serial",
+    ("clm_dr_trademark", "trademark_filing", "Trademark application on file, attorney of record present.", "98/441,207", "serial",
      "verified", 2.4, 0.917, "high", 0, 0, 0),
     # --- two added by the expected-evidence manifest, not by the deck -------
     ("clm_dr_captable", "cap_table", "Cap table — expected at diligence stage, not disclosed.", None, None,
@@ -314,8 +314,8 @@ EVIDENCE = [
     ("evd_mrr_0", "clm_dr_mrr", "corroborating", 1, 1, 0, "self_report", -1.2, 0.0,
      None, None, "Slide 7: €41K MRR.", "Founder self-report. Prior, not evidence.", "internal_consistency", None, None, 1),
     ("evd_mrr_1", "clm_dr_mrr", "corroborating", 1, 1, 0, "third_party_observable", 0.6, 0.0,
-     "https://ledgerline-sage.vercel.app/pricing/", 200, "Pricing $99 / $399 / custom.",
-     "Published pricing is consistent with the stated ARPU, so the price point is not the problem.", "httpx_direct", None, None, 2),
+     "https://ledgerline-sage.vercel.app/pricing/", 200, "Starter €89/mo · Team €229/mo · Scale €640/mo.",
+     "At a €229 mid-tier, €41K MRR implies roughly 180 paying accounts. The price point is not the problem — the customer count is.", "httpx_direct", None, None, 2),
     ("evd_mrr_2", "clm_dr_mrr", "contradicting", 1, 1, 0, "third_party_observable", -2.8, 0.0,
      "https://ledgerline-sage.vercel.app/changelog/", 200, "6 entries in 90 days, slowing to 3.",
      "Observable usage and ship cadence imply well under 200 users. €41K MRR at published pricing needs roughly an order of magnitude more.", "httpx_direct", None, None, 3),
@@ -332,8 +332,8 @@ EVIDENCE = [
     ("evd_fd_0", "clm_dr_founding", "corroborating", 1, 1, 0, "self_report", -1.2, 0.0,
      None, None, "Slide 2: founded June 2024.", "Founder self-report.", "internal_consistency", None, None, 1),
     ("evd_fd_1", "clm_dr_founding", "contradicting", 1, 1, 0, "third_party_observable", -1.6, 0.0,
-     "https://ledgerline-sage.vercel.app/", 200, "First observable artifact: waitlist page, 2025-08-19.",
-     "Stated founding predates the first observable artifact by 14 months. The claimed 18 months of work is not visible anywhere.", "httpx_direct", None, None, 2),
+     "https://ledgerline-sage.vercel.app/imprint/", 200, "HRB 284119 · registered 2026-03-22 · Amtsgericht Charlottenburg",
+     "Stated founding is June 2024, but the entity was not registered until March 2026 and the earliest public artifact is the April 2026 release. The claimed 18 months of work leaves no trace anywhere we can observe.", "httpx_direct", None, None, 2),
     # comparable: -1.2 + 0.4 = -0.8
     ("evd_cmp_0", "clm_dr_comparable", "corroborating", 1, 1, 0, "self_report", -1.2, 0.0,
      None, None, "Slide 6: comparable raised at €40M post.", "Founder self-report.", "internal_consistency", None, None, 1),
@@ -377,12 +377,12 @@ EVIDENCE = [
     # Each row below reconciles to the claim's stated log_odds_sum, so a judge
     # can add the column up by hand on camera.
     ("evd_inc_0", "clm_dr_incorporation", "corroborating", 1, 1, 0, "registry_filing", 2.4, 0.0,
-     "https://ledgerline-sage.vercel.app/imprint/", 200, "Ledgerline GmbH, HRB 284119, registered 2025-11-04.",
+     "https://ledgerline-sage.vercel.app/imprint/", 200, "HRB 284119 · registered 2026-03-22 · Amtsgericht Charlottenburg",
      "Incorporation is a registry filing with perjury risk attached. Strongest row in the reliability table.", "httpx_direct", None, None, 1),
 
     ("evd_tm_dr_0", "clm_dr_trademark", "corroborating", 1, 1, 0, "registry_filing", 2.4, 0.0,
-     "https://ledgerline-sage.vercel.app/legal/", 200, "Serial 99150042, 1(b) intent-to-use, attorney of record: none.",
-     "Self-filed 1(b) with an empty attorney field: building, no law firm, therefore no funding, therefore no network.", "httpx_direct", None, None, 1),
+     "https://ledgerline-sage.vercel.app/legal/", 200, "serial 98/441,207 · filed 2026-04-08 · attorney of record present",
+     "Attorney of record present (Weber & Lang). This is the OPPOSITE of our cold-start marker, and it is informative: a represented filer has counsel, therefore capital, therefore access. The empty-attorney signal belongs to the outbound founder, not to this one.", "httpx_direct", None, None, 1),
 
     ("evd_tm_mo_0", "clm_mo_trademark", "corroborating", 1, 1, 0, "registry_filing", 2.4, 0.0,
      "https://tsdr.uspto.example/statusview/sn99150077", 200, "Serial 99150077, 1(b) intent-to-use, attorney field empty.",
@@ -423,11 +423,11 @@ EVIDENCE = [
      "Weak corroboration, counted at its published weight and no more.", "httpx_direct", None, None, 3),
 
     ("evd_price_0", "clm_dr_pricing", "corroborating", 1, 1, 0, "third_party_observable", 1.1, 0.0,
-     "https://ledgerline-sage.vercel.app/pricing/", 200, "Pricing $99 / $399 / custom.",
+     "https://ledgerline-sage.vercel.app/pricing/", 200, "Starter €89/mo · Team €229/mo · Scale €640/mo.",
      "Published pricing, fetched directly with its timestamp.", "httpx_direct", None, None, 1),
     ("evd_price_1", "clm_dr_pricing", "corroborating", 1, 1, 0, "third_party_observable", 0.9, 0.0,
-     "https://ledgerline-sage.vercel.app/pricing/", 200, "Same three tiers present 60 days earlier.",
-     "Stable across two dated fetches, so it is a published price and not a page dressed for a raise.", "httpx_direct", None, None, 2),
+     "https://ledgerline-sage.vercel.app/pricing/", 200, "Three published tiers, usage-priced by settlement runs per month.",
+     "A real price list with tier mechanics, not a page dressed for a raise.", "httpx_direct", None, None, 2),
 
     ("evd_exp_0", "clm_mo_domain_exposure", "corroborating", 1, 1, 0, "forum_post", 1.2, 0.0,
      "https://news.ycombinator.example/item?id=48959447", 200, "Long comment on settlement-file reconciliation failure modes.",

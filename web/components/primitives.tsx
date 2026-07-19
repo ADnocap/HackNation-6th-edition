@@ -100,8 +100,10 @@ export function N({
         </span>
       ) : null}
       {!hideN ? (
+        // The sample size is stamped onto the number, not filed away from it.
+        // No quantity in this product is ever shown without one.
         <span
-          className="rounded bg-zinc-800 px-1 font-mono text-[10px] leading-4 text-zinc-400"
+          className="rounded-[2px] border border-zinc-700 bg-zinc-900 px-1 font-mono text-[9.5px] leading-[15px] tracking-wide text-zinc-400"
           title={basis ? `basis: ${basis}` : `n = ${n}`}
         >
           {n === null ? "n/a" : `n=${n}`}
@@ -122,7 +124,8 @@ export function N({
  */
 export function Refusal({ children }: { children: React.ReactNode }) {
   return (
-    <div className="rounded border border-dashed border-zinc-600 bg-zinc-900/60 px-3 py-2 text-[13px] italic leading-snug text-zinc-400">
+    <div className="lacuna rounded border border-dashed border-zinc-600 px-3 py-2.5 text-[13px] leading-relaxed text-zinc-300">
+      <span className="t-eyebrow mr-2 align-[1px] text-zinc-500">refused</span>
       {children}
     </div>
   );
@@ -132,8 +135,15 @@ export function Refusal({ children }: { children: React.ReactNode }) {
 /* Layout                                                              */
 /* ------------------------------------------------------------------ */
 
+/**
+ * A panel is a catalogue entry: a filing label, a title in the serif
+ * catalogue voice, and the one plain-language sentence a non-technical
+ * investor reads before meeting any number. The three are typographically
+ * distinct so the reader always knows which voice is speaking.
+ */
 export function Panel({
   title,
+  eyebrow,
   plain,
   right,
   children,
@@ -141,6 +151,8 @@ export function Panel({
   dense = false,
 }: {
   title?: React.ReactNode;
+  /** Filing label — what kind of thing this panel is. */
+  eyebrow?: React.ReactNode;
   /** The one plain-language sentence that sits above every quant panel. */
   plain?: React.ReactNode;
   right?: React.ReactNode;
@@ -150,27 +162,68 @@ export function Panel({
 }) {
   return (
     <section
-      className={`rounded-md border border-zinc-800 bg-zinc-950/70 ${className}`}
+      className={`overflow-hidden rounded-md border border-zinc-800 bg-zinc-950/70 ${className}`}
     >
       {(title || right) && (
-        <header className="flex items-start justify-between gap-3 border-b border-zinc-800 px-4 py-2.5">
-          <div className="min-w-0">
+        <header className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2.5 border-b border-zinc-800 px-4 py-3">
+          <div className="min-w-0 flex-1">
+            {eyebrow ? <div className="t-eyebrow mb-1.5">{eyebrow}</div> : null}
             {title ? (
-              <h2 className="text-[13px] font-semibold tracking-wide text-zinc-200">
+              <h2 className="t-display text-[15px] leading-tight text-zinc-100">
                 {title}
               </h2>
             ) : null}
-            {plain ? (
-              <p className="mt-1 max-w-3xl text-[12.5px] leading-relaxed text-zinc-400">
-                {plain}
-              </p>
-            ) : null}
+            {plain ? <p className="t-plain mt-2">{plain}</p> : null}
           </div>
           {right ? <div className="shrink-0">{right}</div> : null}
         </header>
       )}
       <div className={dense ? "" : "p-4"}>{children}</div>
     </section>
+  );
+}
+
+/**
+ * Page masthead. Every route opens the same way — filing label, title in
+ * the catalogue voice, one sentence of orientation, then the metadata
+ * rule. A judge landing on any URL knows what they are looking at.
+ */
+export function PageHead({
+  eyebrow,
+  title,
+  lede,
+  meta,
+  right,
+}: {
+  eyebrow?: React.ReactNode;
+  title: React.ReactNode;
+  lede?: React.ReactNode;
+  /** Ids, timestamps, provenance — the mono voice. */
+  meta?: React.ReactNode;
+  right?: React.ReactNode;
+}) {
+  return (
+    <header className="mb-5 border-b border-zinc-800 pb-4">
+      <div className="flex flex-wrap items-start justify-between gap-x-6 gap-y-3">
+        <div className="min-w-0 flex-1">
+          {eyebrow ? <div className="t-eyebrow mb-2">{eyebrow}</div> : null}
+          <h1 className="t-display text-[26px] leading-[1.15] text-zinc-50">
+            {title}
+          </h1>
+          {lede ? (
+            <p className="mt-2.5 max-w-[68ch] text-[13.5px] leading-[1.62] text-zinc-300">
+              {lede}
+            </p>
+          ) : null}
+        </div>
+        {right ? <div className="shrink-0">{right}</div> : null}
+      </div>
+      {meta ? (
+        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 font-mono text-[10.5px] text-zinc-500">
+          {meta}
+        </div>
+      ) : null}
+    </header>
   );
 }
 
@@ -223,16 +276,40 @@ export function EmptyState({
   text?: string;
   detail?: string | null;
 }) {
+  // An empty state is an absence, so it wears the same material as every
+  // other absence in the product rather than being styled as a failure.
   return (
-    <div className="rounded border border-dashed border-zinc-700 bg-zinc-900/40 px-4 py-6 text-center">
-      <p className="text-[13px] text-zinc-400">
+    <div className="lacuna rounded border border-dashed border-zinc-700 px-4 py-6 text-center">
+      <p className="text-[13px] leading-relaxed text-zinc-300">
         {text ?? "No data at this asof. Move the point-in-time control forward."}
       </p>
       {detail ? (
-        <p className="mx-auto mt-1.5 max-w-xl font-mono text-[11px] leading-relaxed text-zinc-600">
+        <p className="mx-auto mt-1.5 max-w-xl font-mono text-[11px] leading-relaxed text-zinc-500">
           {detail}
         </p>
       ) : null}
+    </div>
+  );
+}
+
+/**
+ * The key that teaches the hatch, shown once per page that uses it.
+ * Two absences, and only one of them costs anything.
+ */
+export function LacunaKey({ className = "" }: { className?: string }) {
+  return (
+    <div
+      className={`flex flex-wrap items-center gap-x-5 gap-y-2 rounded border border-zinc-800 bg-zinc-950/70 px-3 py-2 ${className}`}
+    >
+      <span className="t-eyebrow">Reading absence</span>
+      <span className="flex items-center gap-2 text-[11.5px] text-zinc-300">
+        <span className="lacuna-chip lacuna" />
+        not expected for this profile — costs nothing
+      </span>
+      <span className="flex items-center gap-2 text-[11.5px] text-zinc-300">
+        <span className="lacuna-chip lacuna-priced" />
+        expected and not found — widens the interval, never lowers the score
+      </span>
     </div>
   );
 }
@@ -322,10 +399,8 @@ export function Stat({
 }) {
   return (
     <div className="min-w-0" title={hint}>
-      <div className="text-[10px] uppercase tracking-wider text-zinc-500">
-        {label}
-      </div>
-      <div className="mt-0.5 text-[13px] text-zinc-100">{children}</div>
+      <div className="t-eyebrow">{label}</div>
+      <div className="mt-1 text-[13px] text-zinc-100">{children}</div>
     </div>
   );
 }
