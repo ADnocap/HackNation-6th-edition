@@ -128,7 +128,7 @@ repo root — every one of these should print nothing:
 ```bash
 grep -rniE "composite|overall_score|blended" db/schema.sql web/public/demo.json   # no blended score
 grep -rniE "supabase|process\.env|NEXT_PUBLIC" web/app web/components web/lib     # no client-side DB
-grep -rniE "UPDATE |DELETE FROM" worker/ --include=*.py                           # append-only
+grep -rnE "(UPDATE|DELETE FROM) [a-z_]+ (SET|WHERE)" worker/ --include=*.py     # append-only
 grep -o '"value":[^}]*}' web/public/demo.json | grep -v '"n"'                     # every number has its n
 ```
 

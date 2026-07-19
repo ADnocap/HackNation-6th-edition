@@ -251,6 +251,36 @@ def derive_from_ledger(demo: dict, asof: str) -> list[str]:
             if _claims_are_renderable(claims):
                 opp["claims"] = claims
                 derived.append(f"opportunities.{opp_id}.claims")
+
+                # Recount the distribution from the claims we just adopted.
+                # It was authored, drifted, and ended up declaring "16 claims"
+                # directly above a rendered list of 17 — on the marquee view.
+                # Counting instead of asserting means it cannot drift again.
+                dist = opp.get("claim_distribution")
+                if isinstance(dist, dict):
+                    from collections import Counter  # noqa: PLC0415
+
+                    counts = Counter(c.get("state") for c in claims)
+                    for state in (
+                        "verified",
+                        "unverified",
+                        "contradicted",
+                        "absent_but_expected",
+                    ):
+                        dist[state] = counts.get(state, 0)
+                    dist["n"] = len(claims)
+                    extracted = len(claims) - counts.get("absent_but_expected", 0)
+                    dist["extracted_from_deck"] = {"value": extracted, "n": extracted}
+                    added = counts.get("absent_but_expected", 0)
+                    dist["added_by_manifest"] = {"value": added, "n": added}
+                    dist["reconciliation"] = (
+                        f"{counts.get('verified', 0)} verified + "
+                        f"{counts.get('unverified', 0)} unverified + "
+                        f"{counts.get('contradicted', 0)} contradicted = "
+                        f"{extracted} extracted. Plus {added} absent-but-expected "
+                        f"added by the manifest = {len(claims)}."
+                    )
+                    derived.append(f"opportunities.{opp_id}.claim_distribution")
             elif claims:
                 print(
                     f"  {opp_id}.claims: kept override — ledger returned "

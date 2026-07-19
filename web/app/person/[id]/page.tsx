@@ -4,7 +4,9 @@ import {
   Badge,
   EmptyState,
   KVTable,
+  LacunaKey,
   N,
+  PageHead,
   Panel,
   PanelBoundary,
   ProvenanceBadge,
@@ -114,19 +116,40 @@ export default async function PersonPage({
   return (
     <div className="space-y-4">
       {/* Header */}
-      <div className="rounded-md border border-zinc-800 bg-zinc-950/70 px-4 py-3.5">
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-[18px] font-semibold tracking-tight text-zinc-50">
-                {person.display_name ??
-                  person.person_display_name ??
-                  person.name ??
-                  id}
-              </h1>
-              <Badge className="border-zinc-700 bg-zinc-900 font-mono text-zinc-400">
-                {id}
-              </Badge>
+      <PageHead
+        eyebrow="Founder record · cold-start bench"
+        title={
+          person.display_name ??
+          person.person_display_name ??
+          person.name ??
+          id
+        }
+        lede="A founder with little or no public track record. Rather than score them low for it, we say exactly what we are scoring on, how much of the estimate is a prior rather than evidence, and what would narrow the range."
+        meta={
+          <>
+            <span className="text-zinc-400">{id}</span>
+            {contactStatus ? (
+              <span title="Discovered is not the same as reachable. We print the difference.">
+                contact {humanize(contactStatus)}
+              </span>
+            ) : null}
+            {channels.length ? (
+              <span>
+                channels{" "}
+                {channels
+                  .map((c: Json) => (typeof c === "string" ? c : c?.channel_id))
+                  .filter(Boolean)
+                  .join(", ")}
+              </span>
+            ) : null}
+            {person.first_observed_at ? (
+              <span>first observed {fmtTs(person.first_observed_at)}</span>
+            ) : null}
+          </>
+        }
+        right={
+          <div className="flex flex-col items-end gap-2">
+            <div className="flex flex-wrap justify-end gap-1.5">
               <ProvenanceBadge value={person.provenance_class} />
               {person.pseudonymized || person.is_real_person ? (
                 <Badge
@@ -137,44 +160,22 @@ export default async function PersonPage({
                 </Badge>
               ) : null}
             </div>
-            <div className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11.5px] text-zinc-500">
-              {contactStatus ? (
-                <span title="Discovered is not the same as reachable. We print the difference.">
-                  contact: {humanize(contactStatus)}
-                </span>
-              ) : null}
-              {channels.length ? (
-                <span>
-                  channels:{" "}
-                  {channels
-                    .map((c: Json) => (typeof c === "string" ? c : c?.channel_id))
-                    .filter(Boolean)
-                    .join(", ")}
-                </span>
-              ) : null}
-              {person.first_observed_at ? (
-                <span className="font-mono">
-                  first observed {fmtTs(person.first_observed_at)}
-                </span>
-              ) : null}
-            </div>
+            {linked.length ? (
+              <div className="flex flex-wrap justify-end gap-1.5">
+                {linked.map((o: Json) => (
+                  <Link
+                    key={o.opportunity_id}
+                    href={`/opportunity/${o.opportunity_id}`}
+                    className="rounded border border-zinc-700 bg-zinc-900 px-2 py-1 text-[11.5px] text-zinc-300 transition-colors hover:border-zinc-600 hover:text-zinc-50"
+                  >
+                    {o.org_name ?? o.opportunity_id} →
+                  </Link>
+                ))}
+              </div>
+            ) : null}
           </div>
-
-          {linked.length ? (
-            <div className="flex flex-wrap gap-1.5">
-              {linked.map((o: Json) => (
-                <Link
-                  key={o.opportunity_id}
-                  href={`/opportunity/${o.opportunity_id}`}
-                  className="rounded border border-zinc-700 bg-zinc-900 px-2 py-1 text-[11.5px] text-zinc-300 transition-colors hover:border-zinc-600 hover:text-white"
-                >
-                  {o.org_name ?? o.opportunity_id} →
-                </Link>
-              ))}
-            </div>
-          ) : null}
-        </div>
-      </div>
+        }
+      />
 
       {/* Which "founder score" is which — stated before any number is shown. */}
       {defStrip ? <ScoreDefinitionStrip strip={defStrip} /> : null}
@@ -183,6 +184,7 @@ export default async function PersonPage({
       {founderScore ? (
         <PanelBoundary label="founder score">
           <Panel
+            eyebrow="Memory · append-only · never resets"
             title="Founder Score — belongs to the person, not the company"
             plain="This is not the three-axis score. It lives in Memory, it persists across applications and companies, and there is no code path that resets it. Its two components are kept apart on purpose: a lie about revenue must not erase a real build record."
           >
@@ -209,6 +211,7 @@ export default async function PersonPage({
       {/* Three axes */}
       <PanelBoundary label="axes">
         <Panel
+          eyebrow="Screening · founder / market / idea-vs-market"
           title="Three axes, never averaged"
           plain="Founder, Market and Idea-vs-Market are scored separately and stay separate. Market is a category, not a number, so there is nothing here that could be averaged even if we wanted to."
         >
@@ -233,6 +236,7 @@ export default async function PersonPage({
         {/* Cold-Start Bench */}
         <PanelBoundary label="cold-start bench">
           <Panel
+            eyebrow="No GitHub · no funding · no network"
             title="Cold-Start Bench"
             plain="This founder has no track record to score. So we say what we are actually scoring on, how much of the estimate is a prior rather than evidence, and exactly what would narrow the range."
           >
@@ -255,11 +259,14 @@ export default async function PersonPage({
         </PanelBoundary>
       </div>
 
-      {/* Manifest */}
+      {/* Manifest — the differentiator. Absence is catalogued here as
+          carefully as presence, which is the whole argument of the product. */}
       <PanelBoundary label="manifest">
         <Panel
+          eyebrow="The finding aid"
           title="Expected-evidence manifest"
-          plain="What we went looking for, what we found, and what was missing. Missing things that someone with this profile would plausibly not have are greyed out and cost nothing."
+          plain="We asked what artifacts should exist if this founder's claims were true, then went looking. This is the full list — what we found, what was missing, and what the missing things cost. Absences someone with this profile would plausibly not have cost nothing at all."
+          right={<LacunaKey className="max-w-[30rem]" />}
         >
           <ManifestChecklist manifest={manifest} />
         </Panel>

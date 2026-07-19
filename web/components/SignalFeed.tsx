@@ -115,10 +115,17 @@ function useFlip(keys: string[]) {
       if (reduce) return;
       el.style.transition = "none";
       el.style.transform = `translateY(${dy}px)`;
+      // Rows that travelled furthest lead, so the reorder reads as a
+      // deliberate resettling rather than everything sliding at once.
+      const delay = Math.min(Math.abs(dy) / 14, 90);
       requestAnimationFrame(() => {
-        el.style.transition =
-          "transform 520ms cubic-bezier(0.22, 1, 0.36, 1)";
+        el.style.transition = `transform 560ms cubic-bezier(0.22, 1, 0.36, 1) ${delay}ms`;
         el.style.transform = "";
+        const clear = () => {
+          el.style.transition = "";
+          el.style.transform = "";
+        };
+        el.addEventListener("transitionend", clear, { once: true });
       });
     });
     prev.current = new Map();
@@ -163,19 +170,69 @@ function FunnelStrip({ funnel }: { funnel: Json }) {
     return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
   });
 
+  // Show the shape of the drop-off, not just the counts. The gap between
+  // "discovered" and "contactable" is the structural weakness we print on
+  // purpose, and a reader should be able to see it without doing arithmetic.
+  const vals = entries.map(([k, v]) => ({
+    k,
+    v: typeof v === "number" ? v : Number(qval(v) ?? 0),
+  }));
+  const max = Math.max(1, ...vals.map((e) => e.v));
+
+  let biggestDropAt = -1;
+  let biggestDrop = 0;
+  for (let i = 1; i < vals.length; i++) {
+    const d = vals[i - 1].v - vals[i].v;
+    if (d > biggestDrop) {
+      biggestDrop = d;
+      biggestDropAt = i;
+    }
+  }
+
   return (
-    <div className="flex flex-wrap items-center gap-x-1 gap-y-2">
-      {entries.map(([k, v], i) => (
-        <React.Fragment key={k}>
-          {i > 0 ? <span className="px-1 text-zinc-700">·</span> : null}
-          <span className="flex items-baseline gap-1.5">
-            <span className="font-mono text-[15px] font-semibold tabular-nums text-zinc-100">
-              {typeof v === "number" ? v : fmtNum((v as Json).value, 0)}
+    <div className="space-y-1">
+      {vals.map((e, i) => {
+        const prev = i > 0 ? vals[i - 1].v : null;
+        const drop = prev !== null ? prev - e.v : null;
+        const isWorst = i === biggestDropAt && biggestDrop > 0;
+        return (
+          <div
+            key={e.k}
+            className="grid grid-cols-[minmax(0,10rem)_1fr_auto] items-center gap-3"
+          >
+            <span className="truncate text-[11.5px] text-zinc-300">
+              {humanize(e.k)}
             </span>
-            <span className="text-[11.5px] text-zinc-500">{humanize(k)}</span>
-          </span>
-        </React.Fragment>
-      ))}
+            <div className="relative h-4 rounded-sm bg-zinc-900">
+              <div
+                className={`h-4 rounded-sm ${
+                  isWorst ? "bg-amber-500/70" : "bg-zinc-700"
+                }`}
+                style={{ width: `${Math.max((e.v / max) * 100, 1)}%` }}
+              />
+            </div>
+            <span className="flex w-[9.5rem] shrink-0 items-baseline justify-end gap-2">
+              {drop !== null && drop > 0 ? (
+                <span
+                  className={`font-mono text-[10px] tabular-nums ${
+                    isWorst ? "text-amber-300" : "text-zinc-500"
+                  }`}
+                  title={
+                    isWorst
+                      ? "The largest drop in the funnel — this is where we lose the most people."
+                      : "Lost at this step"
+                  }
+                >
+                  −{drop}
+                </span>
+              ) : null}
+              <span className="font-mono text-[15px] tabular-nums text-zinc-100">
+                {e.v}
+              </span>
+            </span>
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -254,21 +311,28 @@ function FeedRow({
   return (
     <div
       ref={registerRef}
-      className="grid grid-cols-[2.25rem_1fr_auto] items-start gap-3 border-b border-zinc-900 px-3 py-3 transition-colors hover:bg-zinc-900/50 sm:grid-cols-[2.25rem_minmax(0,1fr)_10rem_11rem]"
+      className={`grid grid-cols-[2.75rem_1fr_auto] items-start gap-3 border-b border-zinc-900 px-3 py-3 transition-colors hover:bg-zinc-900/50 sm:grid-cols-[2.75rem_minmax(0,1fr)_10rem_11rem] ${
+        delta !== null && delta !== 0 ? "cp-settle" : ""
+      }`}
     >
-      {/* rank */}
-      <div className="flex flex-col items-center pt-0.5">
-        <span className="font-mono text-[15px] font-semibold tabular-nums text-zinc-300">
+      {/* rank — and, once neutralized, how far this row travelled */}
+      <div className="flex flex-col items-center gap-0.5 pt-0.5">
+        <span className="font-mono text-[16px] tabular-nums text-zinc-200">
           {index + 1}
         </span>
         {delta !== null && delta !== 0 ? (
           <span
-            className={`font-mono text-[10px] ${
-              delta > 0 ? "text-emerald-400" : "text-rose-400"
+            className={`flex items-center gap-0.5 rounded-[2px] border px-1 font-mono text-[10px] tabular-nums ${
+              delta > 0
+                ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-300"
+                : "border-rose-500/40 bg-rose-500/10 text-rose-300"
             }`}
-            title="Position change under pedigree neutralization"
+            title={`Moved ${Math.abs(delta)} ${
+              delta > 0 ? "up" : "down"
+            } once access signals were regressed out`}
           >
-            {delta > 0 ? `▲${delta}` : `▼${Math.abs(delta)}`}
+            {delta > 0 ? "▲" : "▼"}
+            {Math.abs(delta)}
           </span>
         ) : null}
       </div>
@@ -443,19 +507,21 @@ export default function SignalFeed({
 
   return (
     <div className="space-y-4">
-      {/* The claim the whole board is making. */}
+      {/* The claim the whole board is making — the page's thesis, in the
+          catalogue voice, before any table. */}
       {isObj(meta) && meta.headline_line ? (
-        <div className="rounded-md border border-zinc-800 bg-zinc-900/40 px-4 py-3">
-          <p className="max-w-3xl text-[13.5px] leading-relaxed text-zinc-200">
+        <header className="border-b border-zinc-800 pb-4">
+          <div className="t-eyebrow mb-2">Sourcing · ranked board</div>
+          <p className="t-display max-w-[46ch] text-[24px] leading-[1.25] text-zinc-50">
             {String(meta.headline_line)}
           </p>
           {meta.never_met_an_investor ? (
-            <p className="mt-1.5 text-[11.5px] text-zinc-500">
-              never met an investor:{" "}
+            <p className="mt-2.5 flex flex-wrap items-baseline gap-2 text-[12px] text-zinc-300">
+              <span className="t-eyebrow">Never met an investor</span>
               <N q={meta.never_met_an_investor} digits={0} />
             </p>
           ) : null}
-        </div>
+        </header>
       ) : null}
 
       {/* Trigger banner */}
@@ -491,8 +557,9 @@ export default function SignalFeed({
 
       {/* Funnel */}
       <Panel
+        eyebrow="Discovery → contact"
         title="Sourcing funnel"
-        plain="How many people we found, how many we could actually reach, and how many we contacted. The gap between the first two numbers is our largest structural weakness, so we print it."
+        plain="How many people we found, how many we could actually reach, and how many we contacted. The widest drop is highlighted: that step is our largest structural weakness, so we print it rather than reporting only the number that flatters us."
       >
         {isObj(funnel) && Object.keys(funnel).length ? (
           <FunnelStrip funnel={funnel} />
@@ -504,10 +571,12 @@ export default function SignalFeed({
       {/* Board */}
       <Panel
         dense
+        eyebrow="The board"
         title="Signal feed"
-        plain="The ranked board. Flip the switch and the ranking is recomputed with access signals — prior VC-backed employer, company and domain age, whether a funding announcement already exists — regressed out. Watch the order change."
+        plain="The ranked board. Flip the switch and the ranking is recomputed with access signals — a prior VC-backed employer, company and domain age, whether a funding announcement already exists — regressed out. Watch the order change: the rows that climb are founders the usual ranking was under-rating for reasons that have nothing to do with the company."
         right={
           <div className="flex flex-col items-end gap-1.5">
+            <div className="t-eyebrow">Rank by</div>
             <div
               role="tablist"
               aria-label="Ranking mode"
@@ -520,9 +589,9 @@ export default function SignalFeed({
                   aria-selected={mode === m}
                   disabled={m === "neutralized" && !canNeutralize}
                   onClick={() => switchMode(m)}
-                  className={`px-3 py-1.5 text-[11px] font-medium uppercase tracking-wide transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
+                  className={`px-3 py-1.5 font-mono text-[11px] uppercase tracking-wide transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
                     mode === m
-                      ? "bg-zinc-100 text-zinc-900"
+                      ? "bg-zinc-100 text-zinc-950"
                       : "bg-zinc-950 text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200"
                   }`}
                 >
@@ -531,8 +600,13 @@ export default function SignalFeed({
               ))}
             </div>
             {mode === "neutralized" && canNeutralize ? (
-              <span className="text-[11px] text-amber-300">
-                {movers} of {ordered.length} rows moved
+              <span
+                aria-live="polite"
+                className="rounded border border-amber-500/40 bg-amber-500/10 px-2 py-0.5 text-[11px] text-amber-200"
+              >
+                <span className="font-mono tabular-nums">{movers}</span> of{" "}
+                <span className="font-mono tabular-nums">{ordered.length}</span>{" "}
+                rows moved
               </span>
             ) : null}
             {mode === "neutralized" && canNeutralize && isObj(reorder) ? (

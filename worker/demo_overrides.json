@@ -9,7 +9,7 @@
     "hand_authored": true,
     "hand_authored_statement": "This file was written by hand before the worker existed, so that every view could render end-to-end at hour 6 with no backend. worker/export_demo.py replaces these values block by block as the ledger fills, and records which blocks it replaced.",
     "scope_statement": "Sourcing → Screening → Diligence → Decision. Everything downstream of Decision — portfolio monitoring, follow-on, fund ops, exit — is out of scope and has no nav item.",
-    "chokepoint": "worker/ledger.py :: read_observations(asof) — the only function in the codebase that reads the observation table, and it always filters WHERE observed_at <= :asof.",
+    "chokepoint": "worker/store.py :: read_observations(asof) — the only function in the codebase that reads the observation table, and it always filters WHERE observed_at <= :asof.",
     "no_averaged_axes": "There is no averaged axis anywhere in this system. Not in the schema, not in this file, not on screen.",
     "views": ["signal_feed", "person", "claims_and_receipt", "memo_and_decision", "honesty"]
   },
