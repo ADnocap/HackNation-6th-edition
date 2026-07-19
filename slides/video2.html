@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Counterproof — Tech video slides</title>
+<style>
+  :root{
+    --ground:#0a0e11;        /* microfilm blue */
+    --ground-2:#101619;
+    --paper:#f1efe9;         /* warm paper */
+    --paper-dim:#a8b0b4;
+    --rule:#27323a;
+    --verdigris:#63c1a3;     /* found */
+    --ochre:#d8a657;         /* unverified */
+    --minium:#e06a5a;        /* contradicted */
+    --indigo:#7c8cf8;        /* expected & absent */
+    --prussian:#4a8fc7;      /* live fetch */
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:var(--ground); color:var(--paper);
+    font:16px/1.55 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+    overflow:hidden;
+  }
+  .deck{height:100vh;width:100vw;position:relative}
+  .slide{
+    position:absolute; inset:0; padding:4.2vh 5vw 6vh;
+    display:none; flex-direction:column; animation:fade .35s ease both;
+  }
+  .slide.on{display:flex}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.slide{animation:none}}
+
+  .eyebrow{
+    font-family:ui-monospace,"SF Mono",Menlo,monospace;
+    font-size:.72rem; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--paper-dim);
+  }
+  h1{
+    font-family:Palatino,Georgia,"Times New Roman",serif;
+    font-size:clamp(2rem,4.4vw,3.4rem); line-height:1.06; letter-spacing:-.02em;
+    margin:.5rem 0 .2rem; font-weight:600;
+  }
+  h2{
+    font-family:Palatino,Georgia,serif;
+    font-size:clamp(1.4rem,2.5vw,2.05rem); line-height:1.12; letter-spacing:-.015em;
+    margin:.35rem 0 .9rem; font-weight:600;
+  }
+  .lede{font-size:clamp(.95rem,1.35vw,1.16rem); color:#cfd6d9; max-width:64ch}
+  .mono{font-family:ui-monospace,"SF Mono",Menlo,monospace}
+  .dim{color:var(--paper-dim)}
+
+  .row{display:flex; gap:2.2vw; flex:1; min-height:0; align-items:stretch}
+  .col{flex:1; min-width:0; display:flex; flex-direction:column; justify-content:flex-start}
+
+  .card{
+    border:1px solid var(--rule); border-radius:10px; background:var(--ground-2);
+    padding:1.1rem 1.25rem;
+  }
+  .card + .card{margin-top:.7rem}
+
+  .formula{
+    font-family:ui-monospace,Menlo,monospace;
+    font-size:clamp(1rem,1.9vw,1.5rem); line-height:1.5;
+    background:var(--ground-2); border:1px solid var(--rule); border-left:3px solid var(--indigo);
+    border-radius:8px; padding:1rem 1.2rem; color:#e8eef0;
+  }
+
+  .bignum{
+    font-family:ui-monospace,Menlo,monospace; font-variant-numeric:tabular-nums;
+    font-size:clamp(2.1rem,5vw,3.6rem); line-height:1; letter-spacing:-.03em;
+  }
+  .num-label{font-size:.78rem; color:var(--paper-dim); margin-top:.35rem; letter-spacing:.04em}
+  .nums{display:grid; grid-template-columns:repeat(4,1fr); gap:1.6vw; margin-top:.4rem}
+
+  .zero{color:var(--indigo)}
+  .good{color:var(--verdigris)}
+  .bad{color:var(--minium)}
+  .warm{color:var(--ochre)}
+  .fetch{color:var(--prussian)}
+
+  /* lacuna hatch — absence gets its own material */
+  .hatch{
+    background-image:repeating-linear-gradient(45deg,
+      rgba(124,140,248,.16) 0 6px, transparent 6px 12px);
+  }
+
+  ul{list-style:none}
+  li{padding:.42rem 0; border-bottom:1px solid rgba(39,50,58,.7); font-size:.98rem}
+  li:last-child{border-bottom:0}
+  li b{font-weight:600}
+  .tick{color:var(--verdigris); font-family:ui-monospace,monospace}
+  .cross{color:var(--minium); font-family:ui-monospace,monospace}
+
+  .shot{
+    border:1px solid var(--rule); border-radius:10px; overflow:hidden;
+    background:#000; height:100%; min-height:0; position:relative;
+  }
+  .shot img{width:100%; display:block; object-fit:cover; object-position:top center}
+  .shot.crop-loo img{object-position:center 62%}
+  .shot cap, .shot .cap{
+    position:absolute; left:0; right:0; bottom:0; padding:.5rem .8rem;
+    background:linear-gradient(transparent,rgba(10,14,17,.94) 55%);
+    font-family:ui-monospace,monospace; font-size:.72rem; color:var(--paper-dim);
+  }
+
+  /* chokepoint diagram */
+  .flow{display:flex; align-items:center; gap:.6vw; flex-wrap:wrap; margin-top:.6rem}
+  .node{
+    border:1px solid var(--rule); border-radius:7px; padding:.5rem .75rem;
+    font-family:ui-monospace,monospace; font-size:.82rem; background:var(--ground-2);
+    white-space:nowrap;
+  }
+  .node.key{border-color:var(--indigo); color:#dfe4ff; box-shadow:0 0 0 1px rgba(124,140,248,.2) inset}
+  .arrow{color:var(--paper-dim); font-family:ui-monospace,monospace}
+
+  footer{
+    display:flex; justify-content:space-between; align-items:center;
+    border-top:1px solid var(--rule); padding-top:.7rem; margin-top:1rem;
+    font-family:ui-monospace,monospace; font-size:.72rem; color:var(--paper-dim);
+  }
+  .bar{position:fixed; left:0; bottom:0; height:2px; background:var(--indigo); transition:width .3s}
+  .hint{position:fixed; right:1rem; bottom:.8rem; font-family:ui-monospace,monospace;
+        font-size:.68rem; color:#4a565c}
+</style>
+</head>
+<body>
+<div class="deck" id="deck">
+
+<!-- 1 ───────────────────────────── 0:00–0:14  THE MECHANISM -->
+<section class="slide on">
+  <div class="eyebrow">Counterproof · Challenge 02 · The VC Brain</div>
+  <h1>We don't ask what evidence exists.<br>We ask what <em>should</em>.</h1>
+  <p class="lede">For any claim, derive the artifacts that would be observable if it were
+    true — each with a findability prior for that founder's resource class. Then score
+    the <b>gap</b>, as a likelihood ratio.</p>
+
+  <div class="row" style="margin-top:1.4vh">
+    <div class="col">
+      <div class="formula">llr<sub>absent</sub> = log( (1 − p<sub>true</sub>) / (1 − p<sub>false</sub>) )</div>
+      <div class="card" style="margin-top:.9rem">
+        <ul>
+          <li><span class="cross">▸</span> <b>Inflating a deck</b> — missing-but-expected evidence is a <span class="bad">refutation</span></li>
+          <li><span class="tick">▸</span> <b>No paper trail</b> — the prior predicted it, term is <span class="zero">exactly zero</span></li>
+        </ul>
+      </div>
+      <div class="card hatch" style="margin-top:.7rem;border-left:3px solid var(--indigo)">
+        <div class="eyebrow">measured, in the leave-one-out panel</div>
+        <div style="display:flex;align-items:baseline;gap:.8rem;margin-top:.25rem">
+          <span class="bignum zero" style="font-size:2.4rem">−0.00</span>
+          <span class="lede" style="font-size:.92rem">drop the expected-and-absent
+          evidence and <b>nothing changes</b></span>
+        </div>
+      </div>
+      <p class="lede" style="margin-top:.7rem">Lie detector and cold-start engine,
+        <b>same code</b>. No special case, no branch to forget.</p>
+    </div>
+    <div class="col" style="flex:1.05">
+      <div class="shot crop-loo">
+        <img src="img/claims.png" alt="Claim list showing four trust states, with absent-but-expected rows hatched">
+        <div class="cap">per-claim trust · 6 verified / 6 unverified / 3 contradicted / 2 <span class="zero">absent-but-expected</span></div>
+      </div>
+    </div>
+  </div>
+
+  <footer><span>0:00 – 0:14 · the mechanism</span><span>1 / 4</span></footer>
+</section>
+
+<!-- 2 ───────────────────────────── 0:14–0:30  THE DATA LAYER -->
+<section class="slide">
+  <div class="eyebrow">Memory · append-only · one read path</div>
+  <h2>Same code path. Four dates. Strictly fewer rows.</h2>
+
+  <div class="flow">
+    <span class="node">USPTO trademark</span><span class="arrow">→</span>
+    <span class="node">Hacker News</span><span class="arrow">→</span>
+    <span class="node">arXiv</span><span class="arrow">→</span>
+    <span class="node">domain probe</span>
+    <span class="arrow">⟶</span>
+    <span class="node key">read_observations(asof)</span>
+    <span class="arrow">⟶</span>
+    <span class="node">scoring</span>
+  </div>
+  <p class="lede mono" style="margin-top:.7rem;font-size:.86rem">
+    every read filters <span class="zero">WHERE observed_at &lt;= :asof</span> — one chokepoint, whole system
+  </p>
+
+  <div class="nums">
+    <div><div class="bignum dim">759</div><div class="num-label">asof −90d</div></div>
+    <div><div class="bignum dim">943</div><div class="num-label">asof −60d</div></div>
+    <div><div class="bignum">1,213</div><div class="num-label">asof −30d</div></div>
+    <div><div class="bignum good">1,815</div><div class="num-label">now</div></div>
+  </div>
+
+  <div class="row" style="margin-top:1.6vh">
+    <div class="col">
+      <div class="card">
+        <ul>
+          <li><b>1,815</b> observations · <b>845</b> people · <b>1,789 live</b></li>
+          <li>4 collectors — each fires for someone with <b>no track record</b></li>
+          <li>Flagship: self-filed trademark, <b>attorney field empty</b></li>
+          <li class="dim">Set asof to now → live brain. Set it to the past → backtest.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="shot"><img src="img/board.png" alt="Ranked board of surfaced founders">
+        <div class="cap">the board · access-neutralized ranking</div></div>
+    </div>
+  </div>
+
+  <footer><span>0:14 – 0:30 · the data layer</span><span>2 / 4</span></footer>
+</section>
+
+<!-- 3 ───────────────────────────── 0:30–0:44  ENFORCEMENT -->
+<section class="slide">
+  <div class="eyebrow">Enforced, not promised</div>
+  <h2>The database refuses. The receipts are re-fetched.</h2>
+
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <div class="eyebrow">Append-only — by trigger, not discipline</div>
+        <div class="formula" style="margin-top:.6rem;font-size:.9rem;border-left-color:var(--minium)">
+          UPDATE observation … <span class="bad">→ rejected</span><br>
+          DELETE FROM observation <span class="bad">→ rejected</span>
+        </div>
+        <p class="lede" style="margin-top:.7rem;font-size:.92rem">
+          “observation rows are facts, not state.”<br>
+          <span class="dim">The Founder Score <b>cannot</b> be reset — there is no code path.</span>
+        </p>
+      </div>
+
+      <div class="card hatch" style="margin-top:.7rem">
+        <div class="eyebrow">Privacy gate</div>
+        <p class="lede" style="font-size:.92rem;margin-top:.3rem">
+          Export <b>refuses to publish</b> if a real person's name reaches the rendered file.
+          845 people from public records — all pseudonymized.
+        </p>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="card">
+        <div class="eyebrow">verify.check — every cited URL re-fetched</div>
+        <div class="nums" style="grid-template-columns:repeat(2,1fr);margin-top:.6rem">
+          <div><div class="bignum good">0</div><div class="num-label">mismatches</div></div>
+          <div><div class="bignum">17/17</div><div class="num-label">live URLs resolve</div></div>
+        </div>
+        <ul style="margin-top:.8rem">
+          <li><span class="tick">✓</span> the quote we cite is <b>actually on the page</b></li>
+          <li><span class="tick">✓</span> a <b>404</b> where we predicted absence = <b>pass</b></li>
+          <li class="dim">exits non-zero on any drift — a rehearsal gate</li>
+        </ul>
+      </div>
+      <div class="card" style="margin-top:.7rem">
+        <div class="eyebrow">Every number carries its n</div>
+        <p class="lede" style="font-size:.92rem;margin-top:.3rem">
+          A mechanical audit runs on the exact bytes before publish.
+          <b>No sample size → the build fails.</b>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <footer><span>0:30 – 0:44 · enforcement</span><span>3 / 4</span></footer>
+</section>
+
+<!-- 4 ───────────────────────────── 0:44–1:00  STACK + CUT LIST -->
+<section class="slide">
+  <div class="eyebrow">Stack · and what we deleted</div>
+  <h2>The model never emits a score.</h2>
+
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <div class="eyebrow">Architecture</div>
+        <ul style="margin-top:.4rem">
+          <li><b>Next.js · TypeScript · Tailwind</b><br><span class="dim">pure renderer over one committed demo.json — no DB client, no API routes, no client env</span></li>
+          <li><b>Python 3.11 · uv · SQLite</b><br><span class="dim">append-only ledger, Postgres-compatible DDL</span></li>
+          <li><b>Claude (opus-4-8)</b> — extraction &amp; claim typing only<br><span class="dim">scoring is closed-form → leave-one-out is <b>exact</b>, not a story the model tells</span></li>
+          <li><b>Tavily</b> — only for entities already indexed; receipts use a direct fetch</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="card hatch">
+        <div class="eyebrow">Deleted on purpose</div>
+        <ul style="margin-top:.4rem">
+          <li><span class="cross">✕</span> conformal coverage <span class="dim">— no target variable</span></li>
+          <li><span class="cross">✕</span> Benjamini–Hochberg <span class="dim">— no p-values</span></li>
+          <li><span class="cross">✕</span> SPRT operating characteristic <span class="dim">— no null</span></li>
+          <li><span class="cross">✕</span> Kelly sizing <span class="dim">— the check is fixed at $100K</span></li>
+        </ul>
+        <p class="lede" style="margin-top:.8rem;font-size:.95rem">
+          A tautological number in front of a finance-native judge is
+          <b>worse than none</b>.
+        </p>
+      </div>
+      <div class="card" style="margin-top:.7rem">
+        <div class="eyebrow">Honest limits, on screen</div>
+        <p class="lede" style="font-size:.92rem;margin-top:.3rem">
+          Leakage probe: the model identified <b>9 of 15</b> redacted pre-fame artifacts.
+          <span class="dim">That's memory, not skill — so we publish <b>no</b> retrodiction hit rate.</span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <footer><span>0:44 – 1:00 · stack &amp; cut list</span><span>4 / 4</span></footer>
+</section>
+
+</div>
+
+<div class="bar" id="bar" style="width:25%"></div>
+<div class="hint">← → or space · F for fullscreen</div>
+
+<script>
+  const slides=[...document.querySelectorAll('.slide')];
+  let i=0;
+  const bar=document.getElementById('bar');
+  function show(n){
+    i=Math.max(0,Math.min(slides.length-1,n));
+    slides.forEach((s,k)=>s.classList.toggle('on',k===i));
+    bar.style.width=((i+1)/slides.length*100)+'%';
+  }
+  addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();show(i+1);}
+    if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();show(i-1);}
+    if(e.key==='Home')show(0);
+    if(e.key==='End')show(slides.length-1);
+    if(e.key.toLowerCase()==='f'){
+      document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen();
+    }
+  });
+  addEventListener('click',e=>{ if(!e.target.closest('a')) show(i+1); });
+  show(0);
+</script>
+</body>
+</html>
