@@ -82,17 +82,26 @@ LIMITATION = (
     "Foreign-domiciled applicants have been required to appoint US counsel since August 2019 "
     "(37 CFR 2.11), so an empty attorney-of-record field can only occur for a US-domiciled "
     "applicant. This channel therefore systematically selects for US-domiciled founders and is "
-    "blind to unrepresented founders everywhere else — and the data agrees: 14 of 14 filings "
-    "passing our filter are US-domiciled, which is the rule showing up in the output rather "
-    "than a coincidence. Two further limits, both un-evaluated rather than approximated: "
+    "blind to unrepresented founders everywhere else. Two further limits, both un-evaluated "
+    "rather than approximated: "
     "(a) TEAS Plus tier is published nowhere in TSDR. We tested the absence of a 'NEW "
     "APPLICATION OFFICE SUPPLIED DATA ENTERED' prosecution event as a proxy and rejected it — "
-    "that event is present on 100% of n=90 records, so it carries no information. The "
-    "cheapest-tier criterion is therefore NOT applied, and the funnel says so. (b) USPTO "
+    "that event is present throughout the sampled serial band, so it carries no information. "
+    "The cheapest-tier criterion is therefore NOT applied, and the funnel says so. (b) USPTO "
     "publishes no formation date for an owning LLC, so 'LLC under 180 days old' cannot be "
     "evaluated from this source; it is relaxed to 'owner is an individual or an LLC' pending a "
     "Secretary-of-State lookup we have not built."
 )
+
+
+def limitation_for(funnel: "Funnel") -> str:
+    """Attach counts from this run instead of preserving a stale sample size."""
+    measured = (
+        f" In this run, {funnel.us_domiciled_among_passed} of {funnel.passed} filings passing "
+        "the filter are US-domiciled."
+    )
+    return LIMITATION + measured
+
 
 RATIONALE = (
     "A trademark is ~$250 against a patent's $10K+, so it is the unfunded first-time founder's "
@@ -259,9 +268,9 @@ class Filing:
         The reasoning was sound: TEAS Plus requires a complete application up front (IDs drawn
         from the ID Manual), so the Office should not need to supply data later, and a
         'NEW APPLICATION OFFICE SUPPLIED DATA ENTERED' event should mark a TEAS Standard filing.
-        Measured against the register, the event is present on **100% of n=90 records**, including
-        all 29 self-filed ones. It is a routine docketing entry, not a tier marker, so it carries
-        exactly zero information about filing tier.
+        Measured against the register, the event appears throughout the sampled serial band,
+        including self-filed records. It is a routine docketing entry, not a tier marker, so it
+        carries exactly zero information about filing tier.
 
         TEAS Plus is therefore NOT EVALUABLE from TSDR. The criterion is dropped from the filter
         and reported as un-evaluated rather than approximated, because a filter stage that always
@@ -732,7 +741,7 @@ def main(argv: list[str] | None = None) -> int:
     print(f"n = {funnel.retrieved} filings ingested, {funnel.passed} passing the full filter")
     if run.errors:
         print(f"first errors: {run.errors[:3]}")
-    print(f"\nknown limitation (stated, not hidden):\n  {LIMITATION}\n")
+    print(f"\nknown limitation (stated, not hidden):\n  {limitation_for(funnel)}\n")
     return 0
 
 

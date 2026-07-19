@@ -33,7 +33,16 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
-COLLECTORS = ["uspto", "hn", "arxiv", "domains"]
+# The USPTO snapshot is committed precisely because a live TSDR sweep is slow,
+# throttle-prone, and can return a partial serial band.  A normal rebuild must
+# replay that dated fixture; refreshing it is an explicit collector operation.
+# The other collectors use their content-addressed response caches.
+COLLECTORS: list[tuple[str, list[str]]] = [
+    ("uspto", ["--offline"]),
+    ("hn", []),
+    ("arxiv", []),
+    ("domains", []),
+]
 
 # Windows consoles default to cp1252, which cannot encode the em-dashes and arrows
 # our collectors print. Without this, a rebuild dies on a PRINT statement after
@@ -86,7 +95,10 @@ def main(argv: list[str] | None = None) -> int:
         ("seed", "worker.seed", []),
     ]
     if not opts.skip_collectors:
-        steps += [(f"collect:{name}", f"worker.collectors.{name}", []) for name in COLLECTORS]
+        steps += [
+            (f"collect:{name}", f"worker.collectors.{name}", args)
+            for name, args in COLLECTORS
+        ]
         steps.append(("channels", "worker.collectors.channels", []))
     if not opts.no_export:
         steps.append(("export", "worker.export_demo", ["--from-ledger"]))
