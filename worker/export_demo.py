@@ -291,6 +291,71 @@ def derive_from_ledger(demo: dict, asof: str) -> list[str]:
         except Exception as exc:
             print(f"  {opp_id}.claims: kept override ({exc})")
 
+    # -- leave-one-evidence-out, computed per claim --------------------------
+    #
+    # The brief's FAQ names agentic traceability as the single highest-leverage
+    # stretch goal, and the renderer for it was already built and sitting dead
+    # for want of data. This fills it by actually recomputing: drop one evidence
+    # item, re-sum the log-odds, re-derive the posterior and the resulting
+    # state. The sum is additive so the delta is exact, but the POSTERIOR and
+    # the state are not — a claim can cross a threshold and change verdict when
+    # one item is removed, and that is the interesting part. Measured deltas,
+    # not the model narrating a story about itself.
+    def _state_for(total: float) -> str:
+        if total <= -2.0:
+            return "contradicted"
+        if total >= 2.0:
+            return "verified"
+        return "unverified"
+
+    try:
+        import math  # noqa: PLC0415
+
+        n_loo = 0
+        for opp in demo.get("opportunities", {}).values():
+            if not isinstance(opp, dict):
+                continue
+            for claim in opp.get("claims") or []:
+                terms = ((claim.get("log_odds") or {}).get("terms")) or []
+                scored = [t for t in terms if isinstance(t.get("value"), (int, float))]
+                if len(scored) < 2:
+                    continue  # nothing to leave out
+                total = sum(float(t["value"]) for t in scored)
+                rows = []
+                for t in scored:
+                    without = total - float(t["value"])
+                    rows.append(
+                        {
+                            "dropped": t.get("label") or t.get("source_class") or "evidence",
+                            "evidence_id": t.get("evidence_id"),
+                            "source_class": t.get("source_class"),
+                            "delta": round(-float(t["value"]), 3),
+                            "log_odds_without": round(without, 3),
+                            "posterior_without": round(1 / (1 + math.exp(-without)), 4),
+                            "state_without": _state_for(without),
+                            "flips_state": _state_for(without) != claim.get("state"),
+                            "n": 1,
+                        }
+                    )
+                rows.sort(key=lambda r: abs(r["delta"]), reverse=True)
+                claim["loo_waterfall"] = rows
+                flips = [r for r in rows if r["flips_state"]]
+                claim["loo_caption"] = (
+                    f"Each row is a recomputation, not an attribution guess: drop that "
+                    f"item and re-derive. "
+                    + (
+                        f"{len(flips)} of {len(rows)} would change the verdict on their own."
+                        if flips
+                        else f"No single item changes the verdict — the claim rests on all {len(rows)}."
+                    )
+                )
+                n_loo += 1
+        if n_loo:
+            derived.append("claims.loo_waterfall")
+            print(f"  claims.loo_waterfall: computed for {n_loo} claims")
+    except Exception as exc:  # noqa: BLE001
+        print(f"  claims.loo_waterfall: skipped ({type(exc).__name__}: {exc})")
+
     # -- real fetch metadata on every receipt --------------------------------
     #
     # The receipt pane's whole point is that the right-hand side is a real HTTP

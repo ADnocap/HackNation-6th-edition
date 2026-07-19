@@ -18,7 +18,7 @@
       "n_receipts_populated": {"value": 17, "n": 17},
       "statement": "Fetch timestamps on receipts are from a real retrieval run, not authored. Re-run with: uv run python -m worker.verify.check"
     },
-    "generated_at": "2026-07-19T08:10:47Z",
+    "generated_at": "2026-07-19T08:30:30Z",
     "generated_by": "worker/export_demo.py",
     "provenance_of_this_file": {
       "hand_authored_source": "worker/demo_overrides.json",
@@ -29,13 +29,14 @@
         "opportunities.opp_ledgerline.claim_distribution",
         "opportunities.opp_northgate.claims",
         "opportunities.opp_northgate.claim_distribution",
+        "claims.loo_waterfall",
         "evidence.fetched_at",
         "people.per_dr.axes",
         "people.per_mo.axes",
         "honesty.days_of_edge",
         "honesty.not_collected"
       ],
-      "n_blocks_derived": {"value": 11, "n": 11},
+      "n_blocks_derived": {"value": 12, "n": 12},
       "statement": "Every block not listed as derived came from the hand-authored overrides file, which is committed and readable. We would rather show you which numbers we wrote by hand than let you guess."
     }
   },
@@ -2055,7 +2056,32 @@
                 "provenance_class": "synthetic"
               }
             ]
-          }
+          },
+          "loo_waterfall": [
+            {
+              "dropped": "Prior — founder self-report",
+              "evidence_id": "evd_cmp_0",
+              "source_class": "self_report",
+              "delta": 1.2,
+              "log_odds_without": 0.4,
+              "posterior_without": 0.5987,
+              "state_without": "unverified",
+              "flips_state": false,
+              "n": 1
+            },
+            {
+              "dropped": "Corroborating — The round is real but the stage is not comparable, so it does not price this company",
+              "evidence_id": "evd_cmp_1",
+              "source_class": "press",
+              "delta": -0.4,
+              "log_odds_without": -1.2,
+              "posterior_without": 0.2315,
+              "state_without": "unverified",
+              "flips_state": false,
+              "n": 1
+            }
+          ],
+          "loo_caption": "Each row is a recomputation, not an attribution guess: drop that item and re-derive. No single item changes the verdict — the claim rests on all 2."
         },
         {
           "claim_id": "clm_dr_domain_live",
@@ -2136,7 +2162,32 @@
             }
           ],
           "state_in_ledger": "verified",
-          "log_odds_sum_in_ledger": 2.2
+          "log_odds_sum_in_ledger": 2.2,
+          "loo_waterfall": [
+            {
+              "dropped": "Corroborating — A live payment endpoint is costly to fake and cheap to check. Transacting today",
+              "evidence_id": "evd_dom_dr_0",
+              "source_class": "third_party_observable",
+              "delta": -1.1,
+              "log_odds_without": 1.1,
+              "posterior_without": 0.7503,
+              "state_without": "unverified",
+              "flips_state": true,
+              "n": 1
+            },
+            {
+              "dropped": "Corroborating — Parked is checked before transacting, because a false 'taking revenue' is the most expensive error this channel makes",
+              "evidence_id": "evd_dom_dr_1",
+              "source_class": "third_party_observable",
+              "delta": -1.1,
+              "log_odds_without": 1.1,
+              "posterior_without": 0.7503,
+              "state_without": "unverified",
+              "flips_state": true,
+              "n": 1
+            }
+          ],
+          "loo_caption": "Each row is a recomputation, not an attribution guess: drop that item and re-derive. 2 of 2 would change the verdict on their own."
         },
         {
           "claim_id": "clm_dr_founding",
@@ -2247,7 +2298,32 @@
                 "provenance_class": "synthetic"
               }
             ]
-          }
+          },
+          "loo_waterfall": [
+            {
+              "dropped": "Direct contradiction — Stated founding is June 2024, but the entity was not registered until March 2026 and the earliest public artifact is the April 2026 release. The claimed 18 months of work leaves no trace anywhere we can observe",
+              "evidence_id": "evd_fd_1",
+              "source_class": "third_party_observable",
+              "delta": 1.6,
+              "log_odds_without": -1.2,
+              "posterior_without": 0.2315,
+              "state_without": "unverified",
+              "flips_state": true,
+              "n": 1
+            },
+            {
+              "dropped": "Prior — founder self-report",
+              "evidence_id": "evd_fd_0",
+              "source_class": "self_report",
+              "delta": 1.2,
+              "log_odds_without": -1.6,
+              "posterior_without": 0.168,
+              "state_without": "unverified",
+              "flips_state": true,
+              "n": 1
+            }
+          ],
+          "loo_caption": "Each row is a recomputation, not an attribution guess: drop that item and re-derive. 2 of 2 would change the verdict on their own."
         },
         {
           "claim_id": "clm_dr_headcount",
@@ -2358,7 +2434,32 @@
                 "provenance_class": "synthetic"
               }
             ]
-          }
+          },
+          "loo_waterfall": [
+            {
+              "dropped": "Direct contradiction — 12 stated against 3 traceable. Checked with a team page and a job board, never LinkedIn — we declined LinkedIn in our own not-collected ledger",
+              "evidence_id": "evd_hc_1",
+              "source_class": "third_party_observable",
+              "delta": 2.2,
+              "log_odds_without": -1.2,
+              "posterior_without": 0.2315,
+              "state_without": "unverified",
+              "flips_state": true,
+              "n": 1
+            },
+            {
+              "dropped": "Prior — founder self-report",
+              "evidence_id": "evd_hc_0",
+              "source_class": "self_report",
+              "delta": 1.2,
+              "log_odds_without": -2.2,
+              "posterior_without": 0.0998,
+              "state_without": "contradicted",
+              "flips_state": false,
+              "n": 1
+            }
+          ],
+          "loo_caption": "Each row is a recomputation, not an attribution guess: drop that item and re-derive. 1 of 2 would change the verdict on their own."
         },
         {
           "claim_id": "clm_dr_incorporation",
@@ -2706,7 +2807,65 @@
                 "provenance_class": "synthetic"
               }
             ]
-          }
+          },
+          "loo_waterfall": [
+            {
+              "dropped": "Direct contradiction — Observable usage and ship cadence imply well under 200 users. €41K MRR at published pricing needs roughly an order of magnitude more",
+              "evidence_id": "evd_mrr_2",
+              "source_class": "third_party_observable",
+              "delta": 2.8,
+              "log_odds_without": -1.9,
+              "posterior_without": 0.1301,
+              "state_without": "unverified",
+              "flips_state": true,
+              "n": 1
+            },
+            {
+              "dropped": "Direct contradiction — Review volume is inconsistent with the claimed customer count at any plausible review rate",
+              "evidence_id": "evd_mrr_3",
+              "source_class": "third_party_observable",
+              "delta": 1.3,
+              "log_odds_without": -3.4,
+              "posterior_without": 0.0323,
+              "state_without": "contradicted",
+              "flips_state": false,
+              "n": 1
+            },
+            {
+              "dropped": "Prior — founder self-report",
+              "evidence_id": "evd_mrr_0",
+              "source_class": "self_report",
+              "delta": 1.2,
+              "log_odds_without": -3.5,
+              "posterior_without": 0.0293,
+              "state_without": "contradicted",
+              "flips_state": false,
+              "n": 1
+            },
+            {
+              "dropped": "Corroborating — At a €229 mid-tier, €41K MRR implies roughly 180 paying accounts. The price point is not the problem — the customer count is",
+              "evidence_id": "evd_mrr_1",
+              "source_class": "third_party_observable",
+              "delta": -0.6,
+              "log_odds_without": -5.3,
+              "posterior_without": 0.005,
+              "state_without": "contradicted",
+              "flips_state": false,
+              "n": 1
+            },
+            {
+              "dropped": "Expected and absent — Open roles expected at P=0.58 (n=21) for a company at the stated revenue and headcount. None found (P=0.58, n=21)",
+              "evidence_id": "evd_or_1",
+              "source_class": null,
+              "delta": -0.0,
+              "log_odds_without": -4.7,
+              "posterior_without": 0.009,
+              "state_without": "contradicted",
+              "flips_state": false,
+              "n": 1
+            }
+          ],
+          "loo_caption": "Each row is a recomputation, not an attribution guess: drop that item and re-derive. 1 of 5 would change the verdict on their own."
         },
         {
           "claim_id": "clm_dr_pipeline",
@@ -2822,7 +2981,32 @@
             }
           ],
           "state_in_ledger": "verified",
-          "log_odds_sum_in_ledger": 2.0
+          "log_odds_sum_in_ledger": 2.0,
+          "loo_waterfall": [
+            {
+              "dropped": "Corroborating — Published pricing, fetched directly with its timestamp",
+              "evidence_id": "evd_price_0",
+              "source_class": "third_party_observable",
+              "delta": -1.1,
+              "log_odds_without": 0.9,
+              "posterior_without": 0.7109,
+              "state_without": "unverified",
+              "flips_state": true,
+              "n": 1
+            },
+            {
+              "dropped": "Corroborating — A real price list with tier mechanics, not a page dressed for a raise",
+              "evidence_id": "evd_price_1",
+              "source_class": "third_party_observable",
+              "delta": -0.9,
+              "log_odds_without": 1.1,
+              "posterior_without": 0.7503,
+              "state_without": "unverified",
+              "flips_state": true,
+              "n": 1
+            }
+          ],
+          "loo_caption": "Each row is a recomputation, not an attribution guess: drop that item and re-derive. 2 of 2 would change the verdict on their own."
         },
         {
           "claim_id": "clm_dr_round_terms",
@@ -2984,7 +3168,43 @@
             }
           ],
           "state_in_ledger": "verified",
-          "log_odds_sum_in_ledger": 2.1
+          "log_odds_sum_in_ledger": 2.1,
+          "loo_waterfall": [
+            {
+              "dropped": "Corroborating — A dated public changelog is the cheapest honest proof that something ships",
+              "evidence_id": "evd_ship_0",
+              "source_class": "third_party_observable",
+              "delta": -1.1,
+              "log_odds_without": 1.0,
+              "posterior_without": 0.7311,
+              "state_without": "unverified",
+              "flips_state": true,
+              "n": 1
+            },
+            {
+              "dropped": "Corroborating — GitHub as a CONFIRMATION source keyed to a person we already found — never as discovery",
+              "evidence_id": "evd_ship_1",
+              "source_class": "code_host",
+              "delta": -0.8,
+              "log_odds_without": 1.3,
+              "posterior_without": 0.7858,
+              "state_without": "unverified",
+              "flips_state": true,
+              "n": 1
+            },
+            {
+              "dropped": "Corroborating — Barely positive. Most early-stage press is a rewritten founder self-report",
+              "evidence_id": "evd_ship_2",
+              "source_class": "press",
+              "delta": -0.2,
+              "log_odds_without": 1.9,
+              "posterior_without": 0.8699,
+              "state_without": "unverified",
+              "flips_state": true,
+              "n": 1
+            }
+          ],
+          "loo_caption": "Each row is a recomputation, not an attribution guess: drop that item and re-derive. 3 of 3 would change the verdict on their own."
         },
         {
           "claim_id": "clm_dr_stripe",
@@ -3086,7 +3306,43 @@
             }
           ],
           "state_in_ledger": "verified",
-          "log_odds_sum_in_ledger": 2.1
+          "log_odds_sum_in_ledger": 2.1,
+          "loo_waterfall": [
+            {
+              "dropped": "Corroborating — Payments wired to a real PSP, observed directly rather than claimed",
+              "evidence_id": "evd_stripe_0",
+              "source_class": "third_party_observable",
+              "delta": -1.1,
+              "log_odds_without": 1.0,
+              "posterior_without": 0.7311,
+              "state_without": "unverified",
+              "flips_state": true,
+              "n": 1
+            },
+            {
+              "dropped": "Corroborating — Consistent with the endpoint. Two independent surfaces agreeing",
+              "evidence_id": "evd_stripe_1",
+              "source_class": "code_host",
+              "delta": -0.8,
+              "log_odds_without": 1.3,
+              "posterior_without": 0.7858,
+              "state_without": "unverified",
+              "flips_state": true,
+              "n": 1
+            },
+            {
+              "dropped": "Corroborating — Weak corroboration, counted at its published weight and no more",
+              "evidence_id": "evd_stripe_2",
+              "source_class": "press",
+              "delta": -0.2,
+              "log_odds_without": 1.9,
+              "posterior_without": 0.8699,
+              "state_without": "unverified",
+              "flips_state": true,
+              "n": 1
+            }
+          ],
+          "loo_caption": "Each row is a recomputation, not an attribution guess: drop that item and re-derive. 3 of 3 would change the verdict on their own."
         },
         {
           "claim_id": "clm_dr_trademark",
@@ -3747,7 +4003,32 @@
             }
           ],
           "state_in_ledger": "verified",
-          "log_odds_sum_in_ledger": 2.2
+          "log_odds_sum_in_ledger": 2.2,
+          "loo_waterfall": [
+            {
+              "dropped": "Corroborating — She is transacting today, eleven days after a $250 trademark filing and with no funding on record",
+              "evidence_id": "evd_dom_mo_0",
+              "source_class": "third_party_observable",
+              "delta": -1.1,
+              "log_odds_without": 1.1,
+              "posterior_without": 0.7503,
+              "state_without": "unverified",
+              "flips_state": true,
+              "n": 1
+            },
+            {
+              "dropped": "Corroborating — Domain page read, not domain registration. Everyone tracks the registration; nobody fetches the page",
+              "evidence_id": "evd_dom_mo_1",
+              "source_class": "third_party_observable",
+              "delta": -1.1,
+              "log_odds_without": 1.1,
+              "posterior_without": 0.7503,
+              "state_without": "unverified",
+              "flips_state": true,
+              "n": 1
+            }
+          ],
+          "loo_caption": "Each row is a recomputation, not an attribution guess: drop that item and re-derive. 2 of 2 would change the verdict on their own."
         },
         {
           "claim_id": "clm_mo_domain_exposure",
@@ -3826,7 +4107,32 @@
             }
           ],
           "state_in_ledger": "verified",
-          "log_odds_sum_in_ledger": 2.0
+          "log_odds_sum_in_ledger": 2.0,
+          "loo_waterfall": [
+            {
+              "dropped": "Corroborating — Scored on lived-exposure markers — operational detail only someone who did the work would know. Never on karma",
+              "evidence_id": "evd_exp_0",
+              "source_class": "forum_post",
+              "delta": -1.2,
+              "log_odds_without": 0.8,
+              "posterior_without": 0.69,
+              "state_without": "unverified",
+              "flips_state": true,
+              "n": 1
+            },
+            {
+              "dropped": "Corroborating — Two dated utterances agreeing on detail. Consistency across time is what a single post cannot give us",
+              "evidence_id": "evd_exp_1",
+              "source_class": "forum_post",
+              "delta": -0.8,
+              "log_odds_without": 1.2,
+              "posterior_without": 0.7685,
+              "state_without": "unverified",
+              "flips_state": true,
+              "n": 1
+            }
+          ],
+          "loo_caption": "Each row is a recomputation, not an attribution guess: drop that item and re-derive. 2 of 2 would change the verdict on their own."
         },
         {
           "claim_id": "clm_mo_github",
@@ -4230,7 +4536,43 @@
                 "provenance_class": "synthetic"
               }
             ]
-          }
+          },
+          "loo_waterfall": [
+            {
+              "dropped": "Corroborating — 2 of 3 offered pointers verified, and she volunteered the concession unprompted. Conceding scores UP",
+              "evidence_id": "evd_mo_int",
+              "source_class": "interview",
+              "delta": -1.4,
+              "log_odds_without": -0.3,
+              "posterior_without": 0.4256,
+              "state_without": "unverified",
+              "flips_state": false,
+              "n": 1
+            },
+            {
+              "dropped": "Prior — founder self-report",
+              "evidence_id": "evd_mo_prior",
+              "source_class": "self_report",
+              "delta": 1.2,
+              "log_odds_without": 2.3,
+              "posterior_without": 0.9089,
+              "state_without": "verified",
+              "flips_state": true,
+              "n": 1
+            },
+            {
+              "dropped": "Corroborating — The named acquisition channel exists on the stated date",
+              "evidence_id": "evd_mo_reddit",
+              "source_class": "third_party_observable",
+              "delta": -0.9,
+              "log_odds_without": 0.2,
+              "posterior_without": 0.5498,
+              "state_without": "unverified",
+              "flips_state": false,
+              "n": 1
+            }
+          ],
+          "loo_caption": "Each row is a recomputation, not an attribution guess: drop that item and re-derive. 1 of 3 would change the verdict on their own."
         }
       ],
       "claims_note": "Outbound: no deck. Claims are derived from observations and from the elicitation response, and follow the identical claim shape. Nine claims against Ledgerline's sixteen, because there was no deck to extract from — which is the point: the file was opened by a $250 filing and a page fetch, not by an application.",
