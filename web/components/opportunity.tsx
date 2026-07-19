@@ -36,7 +36,7 @@ export function OpportunityHeader({
             Opportunity · {opp?.opportunity_id ?? "—"}
           </div>
           <div className="flex flex-wrap items-center gap-2.5">
-            <h1 className="t-display text-[26px] leading-tight text-zinc-50">
+            <h1 className="t-title text-[26px] leading-tight text-zinc-50">
               {opp?.org_name ?? opp?.opportunity_id ?? "Opportunity"}
             </h1>
             <ProvenanceBadge value={opp?.provenance_class} />

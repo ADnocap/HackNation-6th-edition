@@ -162,6 +162,15 @@ table {
   letter-spacing: -0.012em;
 }
 
+/* At page-title size the serif carries itself; bold would shout. Set as
+   its own class rather than a `font-normal` utility, because both are
+   single-class selectors and source order — not intent — would decide. */
+.t-title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.016em;
+}
+
 /* The filing label above a title: what kind of thing this is. */
 .t-eyebrow {
   font-family: var(--font-mono);
@@ -266,8 +275,11 @@ table {
     background-color: transparent;
   }
 }
+/* No fill-mode on purpose: `both` would retain the final
+   `background-color: transparent` and permanently outrank the row's
+   :hover background, which is a real bug and not a cosmetic one. */
 .cp-settle {
-  animation: cp-settle 1100ms ease-out 380ms both;
+  animation: cp-settle 1100ms ease-out 380ms;
 }
 
 @media (prefers-reduced-motion: reduce) {

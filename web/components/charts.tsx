@@ -238,7 +238,7 @@ export function ScoreHistoryChart({ history }: { history: Json }) {
               x2={W - PAD.r}
               y1={y(tv)}
               y2={y(tv)}
-              stroke="#27272a"
+              stroke="#27323a"
               strokeWidth="1"
             />
             <text
@@ -253,7 +253,17 @@ export function ScoreHistoryChart({ history }: { history: Json }) {
           </g>
         ))}
 
-        {bandPath ? <path d={bandPath} fill="rgba(16,185,129,0.13)" /> : null}
+        {/* The interval ribbon sits behind the line and must stay behind it:
+            filled too strongly it reads as a solid block and the step — the
+            actual subject of the chart — disappears into it. */}
+        {bandPath ? (
+          <path
+            d={bandPath}
+            fill="rgba(63,169,138,0.10)"
+            stroke="rgba(99,193,163,0.35)"
+            strokeWidth="1"
+          />
+        ) : null}
 
         {boundaries.map((b, i) => (
           <g key={i}>
@@ -262,7 +272,7 @@ export function ScoreHistoryChart({ history }: { history: Json }) {
               x2={x(b.t)}
               y1={PAD.t}
               y2={PAD.t + innerH}
-              stroke="#f59e0b"
+              stroke="#d5a955"
               strokeWidth="1"
               strokeDasharray="3 3"
             />
@@ -281,16 +291,24 @@ export function ScoreHistoryChart({ history }: { history: Json }) {
           <path
             d={stepPath.join(" ")}
             fill="none"
-            stroke="#e4e4e7"
-            strokeWidth="1.75"
+            stroke="#f1efe9"
+            strokeWidth="2.25"
             strokeLinejoin="round"
+            strokeLinecap="round"
           />
         ) : null}
 
         {pts.map((p, i) =>
           p.point !== null ? (
             <g key={i}>
-              <circle cx={x(p.t)} cy={y(p.point)} r="3" fill="#fafafa" />
+              <circle
+                cx={x(p.t)}
+                cy={y(p.point)}
+                r="3.5"
+                fill="#f1efe9"
+                stroke="#0a0e11"
+                strokeWidth="1.5"
+              />
               <title>
                 {`${p.label} · ${fmtNum(p.point)}${
                   p.lo !== null && p.hi !== null

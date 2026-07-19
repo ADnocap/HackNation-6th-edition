@@ -291,6 +291,63 @@ def derive_from_ledger(demo: dict, asof: str) -> list[str]:
         except Exception as exc:
             print(f"  {opp_id}.claims: kept override ({exc})")
 
+    # -- real fetch metadata on every receipt --------------------------------
+    #
+    # The receipt pane's whole point is that the right-hand side is a real HTTP
+    # retrieval, so a null fetch timestamp quietly undoes the beat. These values
+    # come from `worker.verify.check`, whose report is committed at
+    # data/verification/receipts.json — so the timestamp on screen is a fetch
+    # that actually happened, is reproducible offline, and can be diffed by a
+    # judge against the evidence it backs.
+    try:
+        receipts_path = REPO_ROOT / "data" / "verification" / "receipts.json"
+        if receipts_path.exists():
+            report = json.loads(receipts_path.read_text(encoding="utf-8"))
+            by_id = {
+                r["evidence_id"]: r
+                for r in report.get("rows", [])
+                if r.get("evidence_id")
+            }
+            filled = 0
+            for opp in demo.get("opportunities", {}).values():
+                if not isinstance(opp, dict):
+                    continue
+                for claim in opp.get("claims") or []:
+                    for ev in claim.get("evidence") or []:
+                        row = by_id.get(ev.get("evidence_id"))
+                        if not row or not row.get("fetched_at"):
+                            continue
+                        # A SKIPPED row is a reserved-TLD URL we deliberately
+                        # never retrieved. Stamping it with a timestamp and
+                        # http_status 0 would invent a fetch that did not
+                        # happen — the precise failure this pane exists to
+                        # prevent. Leave those null and let the UI say nothing.
+                        if row.get("verdict") == "SKIPPED" or not row.get("http_status"):
+                            continue
+                        ev["fetched_at"] = row["fetched_at"]
+                        if row.get("final_url"):
+                            ev.setdefault("final_url", row["final_url"])
+                        if row.get("http_status") is not None:
+                            ev["http_status"] = row["http_status"]
+                        ev["fetch_method"] = report.get("fetch_method", "httpx_get")
+                        ev["verification_verdict"] = row.get("verdict")
+                        filled += 1
+            if filled:
+                demo.setdefault("meta", {})["verification"] = {
+                    "source": "data/verification/receipts.json",
+                    "generated_by": report.get("generated_by"),
+                    "counts": report.get("counts"),
+                    "n_receipts_populated": {"value": filled, "n": filled},
+                    "statement": (
+                        "Fetch timestamps on receipts are from a real retrieval run, "
+                        "not authored. Re-run with: uv run python -m worker.verify.check"
+                    ),
+                }
+                derived.append("evidence.fetched_at")
+                print(f"  evidence.fetched_at: populated {filled} receipts from a real fetch run")
+    except Exception as exc:  # noqa: BLE001
+        print(f"  evidence.fetched_at: skipped ({type(exc).__name__}: {exc})")
+
     # -- three axes, recomputed at this asof ---------------------------------
     #
     # Trend is the reason this is worth deriving rather than authoring: the axes

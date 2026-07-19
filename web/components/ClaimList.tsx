@@ -492,6 +492,9 @@ function PersonConsequence({ pc }: { pc: Json }) {
 }
 
 function ReceiptModal({ claim, onClose }: { claim: Json; onClose: () => void }) {
+  const closeRef = React.useRef<HTMLButtonElement>(null);
+  const returnTo = React.useRef<Element | null>(null);
+
   React.useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -499,9 +502,17 @@ function ReceiptModal({ claim, onClose }: { claim: Json; onClose: () => void }) 
     window.addEventListener("keydown", onKey);
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+
+    // Move focus into the dialog, and put it back on the row that opened it
+    // when the dialog closes — otherwise a keyboard user is dropped at the
+    // top of the document.
+    returnTo.current = document.activeElement;
+    closeRef.current?.focus();
+
     return () => {
       window.removeEventListener("keydown", onKey);
       document.body.style.overflow = prev;
+      (returnTo.current as HTMLElement | null)?.focus?.();
     };
   }, [onClose]);
 
@@ -516,6 +527,7 @@ function ReceiptModal({ claim, onClose }: { claim: Json; onClose: () => void }) 
       onClick={onClose}
       role="dialog"
       aria-modal="true"
+      aria-labelledby="receipt-title"
     >
       <div
         className="cp-fade-in my-4 w-full max-w-6xl rounded-lg border border-zinc-700 bg-zinc-950 shadow-2xl"
@@ -539,7 +551,10 @@ function ReceiptModal({ claim, onClose }: { claim: Json; onClose: () => void }) 
                 </Badge>
               ) : null}
             </div>
-            <h2 className="mt-1 text-[15px] font-semibold text-zinc-50">
+            <h2
+              id="receipt-title"
+              className="t-display mt-1.5 max-w-[54ch] text-[18px] leading-snug text-zinc-50"
+            >
               {receipt?.title ?? claim?.claim_text ?? claim?.claim_id ?? "Claim"}
             </h2>
             <p className="mt-0.5 font-mono text-[10.5px] text-zinc-500">
@@ -550,9 +565,10 @@ function ReceiptModal({ claim, onClose }: { claim: Json; onClose: () => void }) 
             </p>
           </div>
           <button
+            ref={closeRef}
             type="button"
             onClick={onClose}
-            className="shrink-0 rounded border border-zinc-700 px-2 py-1 text-[11px] text-zinc-400 transition-colors hover:border-zinc-500 hover:text-zinc-100"
+            className="shrink-0 rounded border border-zinc-700 px-2.5 py-1 text-[11px] text-zinc-300 transition-colors hover:border-zinc-500 hover:text-zinc-50"
           >
             Close ⎋
           </button>
@@ -566,17 +582,18 @@ function ReceiptModal({ claim, onClose }: { claim: Json; onClose: () => void }) 
             in between.
           </p>
 
+          {/* Two columns that must never be mistaken for each other: what
+              they asserted, and what we independently went and got. The left
+              edge of each carries the distinction. */}
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            <div className="rounded border border-zinc-800 bg-zinc-900/40 p-3">
-              <div className="mb-2 text-[10px] uppercase tracking-widest text-zinc-500">
-                Claimed
-              </div>
+            <div className="rounded border border-l-2 border-zinc-800 border-l-zinc-600 bg-zinc-900/40 p-3">
+              <div className="t-eyebrow mb-2">Claimed by the founder</div>
               <ReceiptLeft left={receipt?.left} />
             </div>
 
-            <div className="rounded border border-zinc-800 bg-zinc-900/40 p-3">
-              <div className="mb-2 text-[10px] uppercase tracking-widest text-zinc-500">
-                Found — {right.length} external check
+            <div className="rounded border border-l-2 border-zinc-800 border-l-sky-500/70 bg-zinc-900/40 p-3">
+              <div className="t-eyebrow mb-2">
+                Found by us — {right.length} external check
                 {right.length === 1 ? "" : "s"}
               </div>
               {right.length ? (
@@ -646,7 +663,11 @@ function EvidenceTable({ rows }: { rows: Json }) {
                 <tr
                   key={e?.evidence_id ?? i}
                   className={`border-b border-zinc-900 ${
-                    expectedAbsent ? "bg-violet-500/[0.04]" : ""
+                    expectedAbsent
+                      ? "lacuna-priced"
+                      : e?.found === false
+                      ? "lacuna"
+                      : ""
                   }`}
                 >
                   <td className="px-3 py-1.5">
@@ -749,7 +770,11 @@ function ClaimRow({ claim, onOpen }: { claim: Json; onOpen: () => void }) {
         }
       }}
       className={`group grid cursor-pointer grid-cols-[auto_1fr_auto] items-start gap-3 border-b border-zinc-900 px-3 py-2.5 transition-colors hover:bg-zinc-900/60 ${
-        state === "contradicted" ? "bg-rose-500/[0.035]" : ""
+        state === "contradicted"
+          ? "bg-rose-500/[0.05]"
+          : state === "absent_but_expected"
+          ? "lacuna-priced"
+          : ""
       }`}
     >
       <span className={`mt-[7px] h-2 w-2 shrink-0 rounded-full ${style.dot}`} />

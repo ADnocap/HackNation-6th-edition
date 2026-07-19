@@ -198,7 +198,7 @@ function FunnelStrip({ funnel }: { funnel: Json }) {
         return (
           <div
             key={e.k}
-            className="grid grid-cols-[minmax(0,10rem)_1fr_auto] items-center gap-3"
+            className="grid grid-cols-[minmax(0,6.5rem)_1fr_auto] items-center gap-3 sm:grid-cols-[minmax(0,11rem)_1fr_auto]"
           >
             <span className="truncate text-[11.5px] text-zinc-300">
               {humanize(e.k)}
@@ -211,7 +211,7 @@ function FunnelStrip({ funnel }: { funnel: Json }) {
                 style={{ width: `${Math.max((e.v / max) * 100, 1)}%` }}
               />
             </div>
-            <span className="flex w-[9.5rem] shrink-0 items-baseline justify-end gap-2">
+            <span className="flex w-[6rem] shrink-0 items-baseline justify-end gap-2 sm:w-[9.5rem]">
               {drop !== null && drop > 0 ? (
                 <span
                   className={`font-mono text-[10px] tabular-nums ${
@@ -512,7 +512,7 @@ export default function SignalFeed({
       {isObj(meta) && meta.headline_line ? (
         <header className="border-b border-zinc-800 pb-4">
           <div className="t-eyebrow mb-2">Sourcing · ranked board</div>
-          <p className="t-display max-w-[46ch] text-[24px] leading-[1.25] text-zinc-50">
+          <p className="t-title max-w-[46ch] text-[24px] leading-[1.25] text-zinc-50">
             {String(meta.headline_line)}
           </p>
           {meta.never_met_an_investor ? (

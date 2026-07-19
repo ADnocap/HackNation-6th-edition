@@ -207,7 +207,7 @@ export function PageHead({
       <div className="flex flex-wrap items-start justify-between gap-x-6 gap-y-3">
         <div className="min-w-0 flex-1">
           {eyebrow ? <div className="t-eyebrow mb-2">{eyebrow}</div> : null}
-          <h1 className="t-display text-[26px] leading-[1.15] text-zinc-50">
+          <h1 className="t-title text-[26px] leading-[1.15] text-zinc-50">
             {title}
           </h1>
           {lede ? (
@@ -352,12 +352,29 @@ export function KVTable({ obj, exclude = [] }: { obj: Json; exclude?: string[] }
     ([k, v]) => !exclude.includes(k) && v !== null && v !== undefined
   );
   if (!entries.length) return <EmptyState />;
+
+  // A long prose value right-aligned against a short label is unreadable, so
+  // anything sentence-length gets its own full-width row and reads left-to-
+  // right like the note it actually is.
+  const isLong = (v: Json) => typeof v === "string" && v.length > 48;
+
   return (
     <dl className="grid grid-cols-1 gap-x-6 gap-y-1.5 sm:grid-cols-2">
       {entries.map(([k, v]) => (
-        <div key={k} className="flex items-baseline justify-between gap-3 border-b border-zinc-900 py-1">
-          <dt className="text-[12px] text-zinc-500">{titleize(k)}</dt>
-          <dd className="text-right text-[12.5px] text-zinc-200">
+        <div
+          key={k}
+          className={`border-b border-zinc-900 py-1.5 ${
+            isLong(v)
+              ? "sm:col-span-2"
+              : "flex items-baseline justify-between gap-3"
+          }`}
+        >
+          <dt className="text-[12px] text-zinc-400">{titleize(k)}</dt>
+          <dd
+            className={`text-[12.5px] text-zinc-200 ${
+              isLong(v) ? "mt-1 leading-relaxed" : "text-right"
+            }`}
+          >
             <ScalarOrQuantity v={v} />
           </dd>
         </div>
