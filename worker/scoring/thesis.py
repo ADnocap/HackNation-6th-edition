@@ -828,7 +828,7 @@ def _findability_priors(c: sqlite3.Connection | None) -> list[dict[str, Any]]:
     try:
         rows = c.execute(
             "SELECT artifact_type, sector, solo_or_team, resource_tier, p, n, thin_cell "
-            "FROM findability_prior WHERE computed_from = 'own_crawl'"
+            "FROM findability_prior WHERE computed_from IN ('own_crawl', 'hand_set')"
         ).fetchall()
     except sqlite3.Error:
         return []

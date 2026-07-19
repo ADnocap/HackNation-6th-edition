@@ -359,7 +359,7 @@ export function ColdStartBench({
 
       {isObj(refClass) ? (
         <div className="rounded border border-zinc-800 bg-zinc-900/40 p-3">
-          <div className="mb-1.5 text-[10px] uppercase tracking-wider text-zinc-500">
+          <div className="mb-1.5 t-eyebrow">
             Reference class — contains no pedigree field
           </div>
           <KVTable obj={refClass} />
@@ -372,7 +372,7 @@ export function ColdStartBench({
 
       {narrow ? (
         <div>
-          <div className="mb-1.5 text-[10px] uppercase tracking-wider text-zinc-500">
+          <div className="mb-1.5 t-eyebrow">
             Here is what would narrow it
           </div>
           <Bullets items={narrow} />
@@ -381,7 +381,7 @@ export function ColdStartBench({
 
       {notNarrow ? (
         <div>
-          <div className="mb-1.5 text-[10px] uppercase tracking-wider text-zinc-500">
+          <div className="mb-1.5 t-eyebrow">
             And what would not
           </div>
           <div className="opacity-60">

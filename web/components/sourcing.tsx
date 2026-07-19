@@ -74,7 +74,7 @@ export function SourcingOrigin({ origin }: { origin: Json }) {
             why it can feed the Idea-vs-Market axis directly. */}
         {origin.goods_and_services_text ? (
           <div className="rounded border border-zinc-800 bg-zinc-900/40 p-3">
-            <div className="mb-1 text-[10px] uppercase tracking-wider text-zinc-500">
+            <div className="mb-1 t-eyebrow">
               Goods and services — parsed, feeds the Idea-vs-Market axis
             </div>
             <p className="font-mono text-[11.5px] leading-relaxed text-zinc-300">

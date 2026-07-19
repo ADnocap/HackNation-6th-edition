@@ -22,48 +22,60 @@ export function OpportunityHeader({
   ];
 
   return (
-    <div className="mb-4">
-      <div className="flex flex-wrap items-center gap-2">
-        <Link
-          href="/"
-          className="text-[11.5px] text-zinc-500 transition-colors hover:text-zinc-300"
-        >
-          ← Signal feed
-        </Link>
-        <span className="text-zinc-700">/</span>
-        <h1 className="text-[18px] font-semibold tracking-tight text-zinc-50">
-          {opp?.org_name ?? opp?.opportunity_id ?? "Opportunity"}
-        </h1>
-        <ProvenanceBadge value={opp?.provenance_class} />
-        {opp?.track ? (
-          <Badge className="border-zinc-700 bg-zinc-900 text-zinc-400">
-            {opp.track}
-          </Badge>
-        ) : null}
-        {opp?.sector ? (
-          <Badge className="border-zinc-700 bg-zinc-900 text-zinc-400">
-            {humanize(opp.sector)}
-          </Badge>
-        ) : null}
+    <div className="mb-5">
+      <Link
+        href="/"
+        className="text-[11.5px] text-zinc-400 transition-colors hover:text-zinc-200"
+      >
+        ← Signal feed
+      </Link>
+
+      <div className="mt-2 flex flex-wrap items-start justify-between gap-x-6 gap-y-3">
+        <div className="min-w-0">
+          <div className="t-eyebrow mb-1.5">
+            Opportunity · {opp?.opportunity_id ?? "—"}
+          </div>
+          <div className="flex flex-wrap items-center gap-2.5">
+            <h1 className="t-display text-[26px] leading-tight text-zinc-50">
+              {opp?.org_name ?? opp?.opportunity_id ?? "Opportunity"}
+            </h1>
+            <ProvenanceBadge value={opp?.provenance_class} />
+            {opp?.track ? (
+              <Badge className="border-zinc-700 bg-zinc-900 text-zinc-400">
+                {opp.track}
+              </Badge>
+            ) : null}
+            {opp?.sector ? (
+              <Badge className="border-zinc-700 bg-zinc-900 text-zinc-400">
+                {humanize(opp.sector)}
+              </Badge>
+            ) : null}
+          </div>
+        </div>
+
         {opp?.person_id ? (
           <Link
             href={`/person/${opp.person_id}`}
-            className="ml-auto text-[12px] text-sky-400 transition-colors hover:text-sky-300 hover:underline"
+            className="shrink-0 rounded border border-zinc-700 bg-zinc-900 px-2.5 py-1.5 text-[12px] text-sky-300 transition-colors hover:border-sky-500/50 hover:text-sky-200"
           >
             {opp?.person_display_name ?? opp.person_id} — founder score →
           </Link>
         ) : null}
       </div>
 
-      <nav className="mt-3 flex gap-1 border-b border-zinc-800">
+      <nav
+        className="mt-4 flex gap-1 border-b border-zinc-800"
+        aria-label="Opportunity views"
+      >
         {tabs.map((t) => (
           <Link
             key={t.key}
             href={t.href}
-            className={`-mb-px border-b-2 px-3 py-1.5 text-[12.5px] transition-colors ${
+            aria-current={active === t.key ? "page" : undefined}
+            className={`-mb-px border-b-2 px-3 py-2 text-[12.5px] transition-colors ${
               active === t.key
-                ? "border-zinc-100 text-zinc-100"
-                : "border-transparent text-zinc-500 hover:text-zinc-300"
+                ? "border-amber-400 text-zinc-50"
+                : "border-transparent text-zinc-400 hover:border-zinc-700 hover:text-zinc-200"
             }`}
           >
             {t.label}

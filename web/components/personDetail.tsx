@@ -283,7 +283,7 @@ export function EntityResolution({ er }: { er: Json }) {
 
       {reasons.length ? (
         <div>
-          <div className="mb-1 text-[10px] uppercase tracking-wider text-zinc-500">
+          <div className="mb-1 t-eyebrow">
             Matched on
           </div>
           <Bullets items={reasons} />
@@ -292,7 +292,7 @@ export function EntityResolution({ er }: { er: Json }) {
 
       {er.did_not_match_on ? (
         <div>
-          <div className="mb-1 text-[10px] uppercase tracking-wider text-zinc-500">
+          <div className="mb-1 t-eyebrow">
             Did not match on
           </div>
           <p className="text-[12.5px] leading-relaxed text-amber-200/80">

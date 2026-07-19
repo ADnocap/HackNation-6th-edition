@@ -106,7 +106,7 @@ export function LogOddsLedger({ lo }: { lo: Json }) {
         <div className="overflow-x-auto">
           <table className="w-full text-[12px]">
             <thead>
-              <tr className="border-b border-zinc-800 text-left text-[10px] uppercase tracking-wider text-zinc-500">
+              <tr className="border-b border-zinc-800 text-left t-eyebrow">
                 <th className="px-3 py-1.5 font-medium">Term</th>
                 <th className="px-3 py-1.5 font-medium">Source class</th>
                 <th className="px-3 py-1.5 text-right font-medium">Δ</th>
@@ -366,7 +366,7 @@ function ReceiptLeft({ left }: { left: Json }) {
 
       {arr(left.atoms).length ? (
         <div>
-          <div className="mb-1.5 text-[10px] uppercase tracking-wider text-zinc-500">
+          <div className="mb-1.5 t-eyebrow">
             Checkable atoms
           </div>
           <div className="flex flex-wrap gap-1.5">
@@ -468,7 +468,7 @@ function PersonConsequence({ pc }: { pc: Json }) {
 
   return (
     <div className="rounded border border-zinc-700 bg-zinc-900/60 p-2.5">
-      <div className="text-[10px] uppercase tracking-wider text-zinc-500">
+      <div className="t-eyebrow">
         Consequence for the person
       </div>
       {pc.headline ? (
@@ -628,7 +628,7 @@ function EvidenceTable({ rows }: { rows: Json }) {
       <div className="overflow-x-auto">
         <table className="w-full text-[11.5px]">
           <thead>
-            <tr className="border-b border-zinc-800 text-left text-[10px] uppercase tracking-wider text-zinc-500">
+            <tr className="border-b border-zinc-800 text-left t-eyebrow">
               <th className="px-3 py-1.5 font-medium">Artifact</th>
               <th className="px-3 py-1.5 font-medium">Kind</th>
               <th className="px-3 py-1.5 text-center font-medium">Found</th>
@@ -903,7 +903,7 @@ export default function ClaimList({
 
         {states.length ? (
           <div className="mt-3 flex flex-wrap items-center gap-1.5">
-            <span className="text-[10px] uppercase tracking-wider text-zinc-500">
+            <span className="t-eyebrow">
               Filter
             </span>
             <button

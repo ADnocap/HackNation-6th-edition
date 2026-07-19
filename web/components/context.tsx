@@ -93,7 +93,7 @@ export function ThesisPanel({ thesis }: { thesis: Json }) {
       {/* Risk appetite is a mechanic, so show the whole map, not just the setting. */}
       {appetiteMap ? (
         <div className="rounded border border-zinc-800 bg-zinc-900/40 p-3">
-          <div className="mb-2 text-[10px] uppercase tracking-wider text-zinc-500">
+          <div className="mb-2 t-eyebrow">
             Risk appetite → maximum interval width at which capital deploys
           </div>
           <div className="flex flex-wrap gap-2">
@@ -129,7 +129,7 @@ export function ThesisPanel({ thesis }: { thesis: Json }) {
 
       {arr(thesis.hard_filters).length ? (
         <div>
-          <div className="mb-1 text-[10px] uppercase tracking-wider text-zinc-500">
+          <div className="mb-1 t-eyebrow">
             Hard filters
           </div>
           <div className="flex flex-wrap gap-1.5">
@@ -147,7 +147,7 @@ export function ThesisPanel({ thesis }: { thesis: Json }) {
 
       {isObj(thesis.soft_weights) ? (
         <div>
-          <div className="mb-1 text-[10px] uppercase tracking-wider text-zinc-500">
+          <div className="mb-1 t-eyebrow">
             Soft weights — per axis, never summed into one number
           </div>
           <div className="grid grid-cols-1 gap-x-6 sm:grid-cols-2">
@@ -208,7 +208,7 @@ export function MemoryPanel({ memory }: { memory: Json }) {
       <div className="grid grid-cols-2 gap-x-6 gap-y-1 sm:grid-cols-4">
         {counts.map(([label, q]) => (
           <div key={label}>
-            <div className="text-[10px] uppercase tracking-wider text-zinc-500">
+            <div className="t-eyebrow">
               {label}
             </div>
             <div className="mt-0.5 font-mono text-[13px] text-zinc-100">
@@ -220,7 +220,7 @@ export function MemoryPanel({ memory }: { memory: Json }) {
 
       {ingest.length ? (
         <div>
-          <div className="mb-1 text-[10px] uppercase tracking-wider text-zinc-500">
+          <div className="mb-1 t-eyebrow">
             Ingest types
           </div>
           <div className="flex flex-wrap gap-1.5">
@@ -242,7 +242,7 @@ export function MemoryPanel({ memory }: { memory: Json }) {
       {/* Each axis writes back into Memory so the next company starts sharper. */}
       {writeback && arr(writeback.rows).length ? (
         <div className="rounded border border-zinc-800 bg-zinc-900/40 p-3">
-          <div className="text-[10px] uppercase tracking-wider text-zinc-500">
+          <div className="t-eyebrow">
             {writeback.title ?? "Axis write-back"}
           </div>
           {writeback.plain_line ? (

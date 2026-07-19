@@ -29,7 +29,7 @@ export function DaysOfEdge({ block }: { block: Json }) {
     >
       {block.design_rule ? (
         <div className="mb-3 rounded border border-zinc-800 bg-zinc-900/50 px-3 py-2 text-[12px] leading-relaxed text-zinc-300">
-          <span className="mr-1.5 font-mono text-[10px] uppercase tracking-wider text-zinc-500">
+          <span className="mr-1.5 font-mono t-eyebrow">
             design rule
           </span>
           {block.design_rule}
@@ -133,7 +133,7 @@ export function ChannelOutcomes({ block }: { block: Json }) {
             <div className="mt-3 overflow-x-auto rounded border border-zinc-800">
               <table className="w-full text-[11.5px]">
                 <thead>
-                  <tr className="border-b border-zinc-800 text-left text-[10px] uppercase tracking-wider text-zinc-500">
+                  <tr className="border-b border-zinc-800 text-left t-eyebrow">
                     {cols.map((c: Json, i: number) => (
                       <th key={i} className="px-3 py-1.5 font-medium">
                         {String(c)}
@@ -188,7 +188,7 @@ export function NotCollected({ block }: { block: Json }) {
         <div className="overflow-x-auto">
           <table className="w-full text-[12.5px]">
             <thead>
-              <tr className="border-b border-zinc-800 text-left text-[10px] uppercase tracking-wider text-zinc-500">
+              <tr className="border-b border-zinc-800 text-left t-eyebrow">
                 <th className="px-4 py-1.5 font-medium">Source</th>
                 <th className="px-4 py-1.5 font-medium">Reason class</th>
                 <th className="px-4 py-1.5 font-medium">Why</th>
@@ -196,9 +196,14 @@ export function NotCollected({ block }: { block: Json }) {
             </thead>
             <tbody>
               {rows.map((r: Json, i: number) => (
-                <tr key={i} className="border-b border-zinc-900 align-top last:border-b-0">
+                // A source we chose not to collect is a catalogued absence, so
+                // it wears the same material as every other absence here.
+                <tr
+                  key={i}
+                  className="lacuna border-b border-zinc-900 align-top last:border-b-0"
+                >
                   <td className="px-4 py-2">
-                    <div className="text-zinc-200">{r?.source_name ?? "—"}</div>
+                    <div className="text-zinc-100">{r?.source_name ?? "—"}</div>
                     {r?.brief_named ? (
                       <Badge
                         className="mt-1 border-sky-500/40 bg-sky-500/10 text-sky-300"
@@ -218,7 +223,7 @@ export function NotCollected({ block }: { block: Json }) {
                       {humanize(r?.reason_class)}
                     </Badge>
                   </td>
-                  <td className="max-w-2xl px-4 py-2 leading-relaxed text-zinc-400">
+                  <td className="max-w-2xl px-4 py-2 leading-relaxed text-zinc-300">
                     {r?.reason_text ?? "—"}
                   </td>
                 </tr>
@@ -262,7 +267,7 @@ export function RecognitionProbe({ block }: { block: Json }) {
     >
       <div className="flex flex-wrap items-start gap-x-8 gap-y-3">
         <div>
-          <div className="text-[10px] uppercase tracking-wider text-zinc-500">
+          <div className="t-eyebrow">
             Leak rate
           </div>
           <div className="mt-0.5 flex items-baseline gap-2">
@@ -300,7 +305,7 @@ export function RecognitionProbe({ block }: { block: Json }) {
         <div className="mt-3 overflow-x-auto rounded border border-zinc-800">
           <table className="w-full text-[12px]">
             <thead>
-              <tr className="border-b border-zinc-800 text-left text-[10px] uppercase tracking-wider text-zinc-500">
+              <tr className="border-b border-zinc-800 text-left t-eyebrow">
                 <th className="px-3 py-1.5 font-medium">Redacted artifact</th>
                 <th className="px-3 py-1.5 font-medium">Identified</th>
                 <th className="px-3 py-1.5 font-medium">Model answer</th>
@@ -459,7 +464,7 @@ export function ResearchDesign({ block }: { block: Json }) {
       <dl className="space-y-2.5">
         {RA3_FIELDS.filter((f) => block[f.key]).map((f) => (
           <div key={f.key}>
-            <dt className="text-[10px] uppercase tracking-wider text-zinc-500">
+            <dt className="t-eyebrow">
               {f.label}
             </dt>
             <dd className="mt-0.5 max-w-4xl text-[12.5px] leading-relaxed text-zinc-300">
@@ -614,7 +619,7 @@ export function CouldNotValidate({ block }: { block: Json }) {
         <div className="overflow-x-auto">
           <table className="w-full text-[12.5px]">
             <thead>
-              <tr className="border-b border-zinc-800 text-left text-[10px] uppercase tracking-wider text-zinc-500">
+              <tr className="border-b border-zinc-800 text-left t-eyebrow">
                 <th className="px-4 py-1.5 font-medium">Unvalidated</th>
                 <th className="px-4 py-1.5 font-medium">Why</th>
                 <th className="px-4 py-1.5 font-medium">The experiment</th>

@@ -222,8 +222,8 @@ export function MemoSection({
   if (!section) {
     return (
       <div className="border-b border-zinc-900 py-3 last:border-b-0">
-        <h3 className="text-[13px] font-semibold text-zinc-300">{spec.label}</h3>
-        <div className="mt-1.5">
+        <h3 className="t-display text-[15px] text-zinc-300">{spec.label}</h3>
+        <div className="mt-2">
           <Refusal>
             Required section not produced at this asof. It is named here rather
             than dropped, so a four-section memo cannot pass as a five-section
@@ -239,8 +239,8 @@ export function MemoSection({
 
   return (
     <div className="border-b border-zinc-900 py-3 last:border-b-0">
-      <div className="flex flex-wrap items-baseline gap-2">
-        <h3 className="text-[13px] font-semibold text-zinc-200">
+      <div className="flex flex-wrap items-baseline gap-2.5">
+        <h3 className="t-display text-[15px] text-zinc-100">
           {section.title ?? spec.label}
         </h3>
         {section.n !== undefined && section.n !== null ? (
@@ -249,9 +249,7 @@ export function MemoSection({
       </div>
 
       {section.plain_line ? (
-        <p className="mt-1 max-w-3xl text-[12px] leading-relaxed text-zinc-500">
-          {section.plain_line}
-        </p>
+        <p className="t-plain mt-2">{section.plain_line}</p>
       ) : null}
 
       <div className="mt-2">
@@ -289,6 +287,7 @@ export function GapsBlock({ gaps, oppId }: { gaps: Json; oppId?: string }) {
 
   return (
     <Panel
+      eyebrow="The gaps ledger"
       title={gaps.title ?? "What we could not establish"}
       plain={
         gaps.plain_line ??
@@ -301,12 +300,17 @@ export function GapsBlock({ gaps, oppId }: { gaps: Json; oppId?: string }) {
         <table className="w-full text-[12.5px]">
           <tbody>
             {rows.map((r: Json, i: number) => (
-              <tr key={i} className="border-b border-zinc-900 last:border-b-0">
-                <td className="w-52 px-4 py-2 align-top text-zinc-400">
+              // Each row is a gap in the record, hatched like every other
+              // absence in the product so it is read, not skimmed past.
+              <tr
+                key={i}
+                className="lacuna border-b border-zinc-900 last:border-b-0"
+              >
+                <td className="w-52 px-4 py-2 align-top text-zinc-300">
                   {r?.label ?? "—"}
                 </td>
                 <td className="px-4 py-2 align-top">
-                  <span className="italic text-zinc-300">{r?.value ?? "—"}</span>
+                  <span className="text-zinc-200">{r?.value ?? "—"}</span>
                   {r?.brief_quoted ? (
                     <Badge
                       className="ml-2 border-zinc-700 bg-zinc-900 text-zinc-500"
@@ -575,7 +579,7 @@ export function DecisionCard({ decision }: { decision: Json }) {
           </Stat>
 
           <div className="min-w-0 flex-1">
-            <div className="text-[10px] uppercase tracking-wider text-zinc-500">
+            <div className="t-eyebrow">
               Implied ownership
             </div>
             <div className="mt-0.5">
@@ -826,7 +830,7 @@ export function PortfolioConflictCheck({ check }: { check: Json }) {
   return (
     <div className="rounded border border-zinc-800 bg-zinc-950 px-3 py-2">
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-[10px] uppercase tracking-wider text-zinc-500">
+        <span className="t-eyebrow">
           Portfolio conflict check
         </span>
         <Badge

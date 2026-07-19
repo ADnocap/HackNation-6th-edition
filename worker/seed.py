@@ -522,7 +522,7 @@ def seed(reset: bool = True, db_path: str | None = None) -> dict[str, int]:
         ledger.append_row("findability_prior", {
             "prior_id": f"fp_{i:03d}", "artifact_type": artifact, "sector": sector,
             "solo_or_team": solo, "resource_tier": tier, "p": p, "n": n, "n_cell": n,
-            "thin_cell": thin, "shrunk_to_margin": thin, "computed_from": "own_crawl",
+            "thin_cell": thin, "shrunk_to_margin": thin, "computed_from": "hand_set",
             "computed_asof": ASOF_NOW, "observed_at": "2026-07-18T12:00:00Z",
         })
     counts["findability_prior"] = len(FINDABILITY_PRIORS)

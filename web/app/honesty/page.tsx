@@ -9,7 +9,12 @@ import {
   ReliabilityTable,
   ResearchDesign,
 } from "@/components/honesty";
-import { EmptyState, Panel, PanelBoundary } from "@/components/primitives";
+import {
+  EmptyState,
+  PageHead,
+  Panel,
+  PanelBoundary,
+} from "@/components/primitives";
 import { getHonesty, loadDemo } from "@/lib/data";
 
 export const dynamic = "force-dynamic";
@@ -33,15 +38,14 @@ export default function HonestyPage() {
 
   return (
     <div className="space-y-4">
-      <header className="rounded-md border border-zinc-800 bg-zinc-950/70 px-4 py-3">
-        <h1 className="text-[16px] font-semibold tracking-tight text-zinc-50">
-          Honesty
-        </h1>
-        <p className="mt-1 max-w-3xl text-[13px] leading-relaxed text-zinc-300">
-          {h?.plain_line ??
-            "Everything on this page is a limitation we found in our own system and chose to show you."}
-        </p>
-      </header>
+      <PageHead
+        eyebrow="Limitations · stated by us, about us"
+        title="Honesty"
+        lede={
+          h?.plain_line ??
+          "Everything on this page is a limitation we found in our own system and chose to show you. Every number carries the sample size it was computed from, and the error bars are real — where they cross zero, we say the result is not yet a result."
+        }
+      />
 
       {empty ? (
         <Panel
@@ -90,7 +94,7 @@ export default function HonestyPage() {
         </>
       )}
 
-      <p className="px-1 pb-6 text-[13px] leading-relaxed text-zinc-400">
+      <p className="t-display max-w-[52ch] border-t border-zinc-800 pt-4 pb-6 text-[16px] leading-[1.5] text-zinc-200">
         {h?.closing_line ??
           "Here is what we could not validate in twenty-one hours, and here is the experiment that would."}
       </p>
