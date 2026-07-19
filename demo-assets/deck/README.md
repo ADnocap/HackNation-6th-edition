@@ -2,7 +2,7 @@
 
 **AUTHORED fixture.** This deck was written by us, not received from a founder. We planted four
 contradictions and one gap on purpose; the demo's validator catches them by cross-referencing
-the fixture sites (C2). See `wl/plan_wacil.md` for the full fact sheet.
+the fixture sites (C2).
 
 ## Files
 

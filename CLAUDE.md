@@ -38,46 +38,21 @@ Key constraints from the brief (`docs/assets/challenges/02-maschmeyer-vc-brain.p
   exact. Tavily for verification of already-indexed public entities.
 - **Deploy:** Vercel (static export). See "Staging" below.
 
-## Team & ownership
+## Status
 
-Four-way split designed so people can work for eighteen hours and merge with near-zero conflicts.
-Full task briefs are in `docs/TASKS.md`.
+**Submitted 19 July 2026.** Built by Alexandre Dalban, Ali Dor and Wacil, with Claude Code.
+The sprint is over — everything lives on `main` and the feature branches are gone.
 
-| Area | Owner | Owns |
-|---|---|---|
-| Sourcing + verification | **Ali** | `worker/collectors/`, `worker/verify/` |
-| Scoring & modelling | **Alexandre** | `worker/scoring/` |
-| Demo assets & submission | **Wacil** | `demo-assets/` |
-| Integration, memo, frontend | **Claude/Alexandre** | `web/`, `worker/export_demo.py`, `worker/memo/`, `db/` |
+**Contract files — read before editing:** `db/schema.sql`, `worker/ledger.py`, `worker/db.py`,
+`web/lib/types.ts`, `web/public/demo.json`. Every other module reads through these, so a change
+here ripples. In particular `read_observations(asof)` in `worker/store.py` is the single path to
+the observation table; adding a second one breaks point-in-time replay everywhere.
 
-**Contract files — read, never edit:** `db/schema.sql`, `worker/ledger.py`, `worker/db.py`,
-`web/lib/types.ts`, `web/public/demo.json`. Need a schema change? Ask; don't just make it.
+Two commands that are safe to run and prove the architecture:
+`uv run python -m worker.prove_asof` (point-in-time chokepoint, uses a scratch database) and
+`uv run python -m worker.verify.check` (re-fetches every cited evidence URL).
 
-### If you are Claude working for a teammate — read this
-
-**Stay in your lane. Do not build the whole product.** The other three areas are being actively
-built by other people right now; anything you "helpfully" add there will be thrown away in a merge
-conflict, or worse, will silently overwrite working code.
-
-- Work **only** inside your owner's directories from the table above.
-- **Never edit a contract file.** If your task genuinely needs a new column or a new demo.json field,
-  write the request in `docs/HANDOFF.md` and tell Alexandre. Do not edit the schema.
-- **Never commit to `main`.** Work on your branch (`feat/ali-sourcing`, `feat/wacil-demo-assets`,
-  `feat/alex-scoring`). Alexandre merges.
-- **Do not refactor, reformat, or "clean up" code you don't own.** Not even obvious improvements.
-  A tidy diff in someone else's file costs more in merge time than it saves.
-- **Push at least every 45 minutes**, even mid-task, even broken. Unpushed work on a dying laptop is
-  the only unrecoverable failure in a hackathon. Commit messages can be terrible.
-- If you finish your assigned work, **do not invent new scope** — check `docs/TASKS.md` for the
-  "if you finish" note in your section, or ask.
-
-### Branches
-
-`main` is always green and only Alexandre merges into it. Merge branches into `main` roughly every
-3 hours — not once at the end. Because the directories are disjoint, a merge should take seconds;
-a big-bang merge at hour 19 is how this project dies.
-
-## Non-negotiables (we lose points if these slip)
+## Non-negotiables (the design commitments that are load-bearing)
 
 These come straight from the brief and the FAQ. They are cheap to preserve and expensive to retrofit.
 

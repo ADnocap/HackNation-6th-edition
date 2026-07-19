@@ -5,6 +5,11 @@
 Our entry for the [Hack-Nation 6th Global AI Hackathon](https://hack-nation.ai/) (18–19 July 2026),
 **Challenge 02 — The VC Brain**, sponsored by Maschmeyer Group.
 
+### ▶ **[Live demo — adnocap.github.io/counterproof](https://adnocap.github.io/counterproof/)**
+
+No install, no keys, no database. The frontend is a static export over a committed
+`demo.json`, so what you click is exactly what we recorded.
+
 ---
 
 ## What it does
@@ -142,7 +147,6 @@ grep -rn "FROM observation" worker/ --include=*.py
 ## Docs
 
 - [The concept, architecture and build plan](docs/IDEA.md)
-- [Task assignments & ownership](docs/TASKS.md)
 - [Challenge briefs](docs/CHALLENGES.md) · [Competition schedule](docs/HACKATHON.md)
 - [One-pager](docs/ONEPAGER.md)
 - [Area of Research 3 — test design](docs/RESEARCH.md)

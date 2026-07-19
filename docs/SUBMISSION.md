@@ -3,7 +3,7 @@
 **Deadline: Sunday 19 July, 09:00 ET / 15:00 Paris. Feature freeze 07:00 ET / 13:00 Paris.**
 **Portal: https://projects.hack-nation.ai/**
 
-Owner: **Wacil** (see `docs/TASKS.md` § C5). This is the authoritative checklist — don't create a
+This is the authoritative checklist — don't create a
 second one in `demo-assets/`.
 
 > **Find the submission form early.** List every field it asks for and tell the team what we're
@@ -32,7 +32,7 @@ fresh `git clone` of `main` into a scratch directory —
   before the 07:00 ET check.
 
 **Demo video shot list:** written, beat-by-beat with routes, spoken lines, per-beat visibility
-requirements, the 2:30 backup cut, and fallbacks — `demo-assets/SHOTLIST.md`. Record the first
+requirements, the 2:30 backup cut, and fallbacks. Record the first
 full take EARLY; it is the submission until a better one exists.
 
 ---

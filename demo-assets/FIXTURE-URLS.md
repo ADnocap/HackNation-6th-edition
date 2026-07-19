@@ -9,7 +9,7 @@ Redeploy: `npx vercel deploy --prod --yes` from the site's directory.
 
 **→ Integration (Alexandre/Claude):** swap the placeholder domains in
 `worker/demo_overrides.json` (`ledgerline.dev`, `northgatesettle.com`, `kestrelops.archive`)
-for the live origins below — that edit belongs to your lane, see `docs/HANDOFF.md`.
+for the live origins below. Done — the seed cites these URLs directly.
 
 ## Ledgerline — live origin: `https://ledgerline-sage.vercel.app`
 

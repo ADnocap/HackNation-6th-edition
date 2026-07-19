@@ -6,7 +6,7 @@ the outreach panel, and here. The recipient is fictional; the mechanism is what'
 
 This is the polished version of the draft embedded in the demo data
 (`opportunities.opp_northgate.elicitation.outreach.draft_body`). If the two ever diverge, the
-demo data wins — flag it in `docs/HANDOFF.md` rather than editing `worker/`.
+demo data wins — the seed in `worker/seed.py` is the source of truth.
 
 ---
 
