@@ -18,7 +18,7 @@
       "n_receipts_populated": {"value": 17, "n": 17},
       "statement": "Fetch timestamps on receipts are from a real retrieval run, not authored. Re-run with: uv run python -m worker.verify.check"
     },
-    "generated_at": "2026-07-19T08:30:30Z",
+    "generated_at": "2026-07-19T12:25:31Z",
     "generated_by": "worker/export_demo.py",
     "provenance_of_this_file": {
       "hand_authored_source": "worker/demo_overrides.json",

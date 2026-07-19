@@ -398,32 +398,39 @@ def parse_llm(text: str, *, timeout: float = 8.0) -> dict[str, Any] | None:
     product understands. It runs at all only when a key is already in the
     environment — the demo never depends on a network call.
     """
-    key = os.environ.get("OPENAI_API_KEY")
+    # Accept either name: the project's .env uses CLAUDE_API_KEY, the SDK reads
+    # ANTHROPIC_API_KEY. Checking both means neither convention silently no-ops.
+    key = os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("CLAUDE_API_KEY")
     if not key:
         return None
-    try:
-        import httpx
 
-        base = os.environ.get("OPENAI_BASE_URL", "https://api.openai.com/v1")
-        model = os.environ.get("COUNTERPROOF_PARSE_MODEL", "gpt-4o-mini")
-        resp = httpx.post(
-            f"{base}/chat/completions",
-            headers={"Authorization": f"Bearer {key}"},
-            timeout=timeout,
-            json={
-                "model": model,
-                "temperature": 0,
-                "messages": [{"role": "system", "content": _LLM_SYSTEM},
-                             {"role": "user", "content": text}],
-                "response_format": {
+    model = os.environ.get("COUNTERPROOF_PARSE_MODEL", "claude-opus-4-8")
+    try:
+        import anthropic
+
+        client = anthropic.Anthropic(api_key=key, timeout=timeout)
+        response = client.messages.create(
+            model=model,
+            max_tokens=2048,
+            system=_LLM_SYSTEM,
+            messages=[{"role": "user", "content": text}],
+            # Structured outputs: the schema is enforced by the API, so the
+            # model cannot hand back a shape the caller has to defend against.
+            output_config={
+                "format": {
                     "type": "json_schema",
-                    "json_schema": {"name": "query_parse", "strict": True,
-                                    "schema": _LLM_SCHEMA},
-                },
+                    "schema": _LLM_SCHEMA,
+                }
             },
         )
-        resp.raise_for_status()
-        parsed = json.loads(resp.json()["choices"][0]["message"]["content"])
+        # A refusal is a successful HTTP 200 with an empty/partial content list,
+        # so check stop_reason before indexing into content.
+        if getattr(response, "stop_reason", None) == "refusal":
+            return None
+        payload = "".join(
+            block.text for block in response.content if getattr(block, "type", None) == "text"
+        )
+        parsed = json.loads(payload)
     except Exception:
         return None
 
