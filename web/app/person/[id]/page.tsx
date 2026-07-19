@@ -251,7 +251,27 @@ export default async function PersonPage({
         {/* Score history */}
         <PanelBoundary label="founder score history">
           <Panel
-            title="Founder Score — full history, two ventures"
+            title={
+              // Count the ventures actually plotted. The heading used to assert
+              // "two ventures" for everyone, which was false on any founder with
+              // a single one — a caption contradicting its own chart, on the page
+              // the whole cold-start argument rests on.
+              (() => {
+                const names = Array.from(
+                  new Set(
+                    (Array.isArray(history) ? history : [])
+                      .map((h: Json) => h?.org_name ?? h?.venture)
+                      .filter(Boolean)
+                      .map(String)
+                  )
+                );
+                if (names.length > 1)
+                  return `Founder Score — full history, ${names.length} ventures`;
+                if (names.length === 1)
+                  return `Founder Score — full history, one venture so far`;
+                return "Founder Score — full history";
+              })()
+            }
             plain="The score belongs to the person, not the company. It is stored as append-only versions, so when the venture changes the line carries over instead of resetting. There is no code path that could reset it."
           >
             {history ? (
