@@ -17,7 +17,6 @@ import {
 } from "@/components/primitives";
 import { getHonesty, loadDemo } from "@/lib/data";
 
-export const dynamic = "force-dynamic";
 
 export default function HonestyPage() {
   const { demo, ok, error } = loadDemo();

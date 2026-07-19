@@ -9,7 +9,11 @@ import { at, getClaims, getOpportunities, getPerson, getSignalRows, getThesis, l
 import type { Json } from "@/lib/types";
 import { arr, fmtNum, fmtTs, humanize, isObj, qval } from "@/lib/util";
 
-export const dynamic = "force-dynamic";
+
+
+export function generateStaticParams() {
+  return [{"id": "per_ks"}, {"id": "per_tl"}, {"id": "per_nb"}, {"id": "per_ry"}, {"id": "per_em"}, {"id": "per_jc"}, {"id": "per_sv"}, {"id": "per_dw"}, {"id": "per_pk"}, {"id": "per_hs"}, {"id": "per_aj"}, {"id": "per_lf"}, {"id": "per_bi"}, {"id": "per_gn"}, {"id": "per_cq"}, {"id": "per_ov"}, {"id": "per_yt"}, {"id": "per_zr"}, {"id": "per_mo"}, {"id": "per_dr"}];
+}
 
 const CHANNEL_EXPLANATIONS: Record<string, string> = {
   hn_algolia: "A technical discussion showed real building activity before a funding announcement. Followers and popularity were not used.",

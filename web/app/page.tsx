@@ -3,7 +3,6 @@ import { EmptyState, Panel } from "@/components/primitives";
 import { at, getFunnel, getSignalRows, getThesis, loadDemo, pick } from "@/lib/data";
 import type { Json } from "@/lib/types";
 
-export const dynamic = "force-dynamic";
 
 function getTrigger(demo: Json): Json {
   return at(demo, "signal_feed.trigger") ?? pick(demo, "trigger_banner", "trigger", "trigger_event") ?? null;

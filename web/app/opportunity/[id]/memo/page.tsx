@@ -10,7 +10,11 @@ import { EmptyState, Panel, PanelBoundary, Refusal } from "@/components/primitiv
 import { getOpportunity, loadDemo } from "@/lib/data";
 import { arr, humanize, isObj } from "@/lib/util";
 
-export const dynamic = "force-dynamic";
+
+
+export function generateStaticParams() {
+  return [{"id": "opp_ledgerline"}, {"id": "opp_northgate"}];
+}
 
 export default async function MemoPage({
   params,

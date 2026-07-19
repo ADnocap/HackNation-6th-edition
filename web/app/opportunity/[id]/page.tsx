@@ -16,7 +16,11 @@ import type { Json } from "@/lib/types";
 import { humanize, isObj, qval } from "@/lib/util";
 import Link from "next/link";
 
-export const dynamic = "force-dynamic";
+
+
+export function generateStaticParams() {
+  return [{"id": "opp_ledgerline"}, {"id": "opp_northgate"}];
+}
 
 export default async function OpportunityPage({
   params,

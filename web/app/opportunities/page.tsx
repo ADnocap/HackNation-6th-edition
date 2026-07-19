@@ -4,7 +4,6 @@ import { currentStage, getClaims, getOpportunities, loadDemo } from "@/lib/data"
 import type { Json } from "@/lib/types";
 import { fmtTs, humanize, isObj, qval } from "@/lib/util";
 
-export const dynamic = "force-dynamic";
 
 const STATE_ORDER = ["verified", "unverified", "contradicted", "absent_but_expected"];
 
